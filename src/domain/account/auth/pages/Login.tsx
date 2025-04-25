@@ -1,5 +1,7 @@
 import {Link, useNavigate} from 'react-router-dom';
 import {useEffect, useState} from 'react';
+import api from "../../../../common/libs/api.ts";
+import {AxiosError} from "axios";
 
 interface LoginProps {
     setIsLoggedIn?: (value: (((prevState: boolean) => boolean) | boolean)) => void;
@@ -29,23 +31,14 @@ const Login = ({ setIsLoggedIn }: LoginProps) => {
     }, [navigate, setIsLoggedIn]);
 
     const handleSocialLogin = async (provider: 'naver' | 'kakao' | 'google') => {
-        const url = `${import.meta.env.VITE_CORE_API_BASE_URL}/rest-api/v1/oauth2/redirect-url/${provider}`;
         try {
-            const response = await fetch(url, {
-                method: 'GET',
-                credentials: 'include',
-            });
+            const response = await api.get(`/rest-api/v1/oauth2/redirect-url/${provider}`);
+            const redirectUrl = response.data?.data;
 
-            if (response.ok) {
-                const result = await response.json();
-                const redirectUrl = result.data; // 여기서 redirect URL 추출
-                if (redirectUrl) {
-                    window.location.href = redirectUrl; // 바로 리디렉션
-                } else {
-                    console.error(`${provider} 로그인 실패: redirect URL 없음`);
-                }
+            if (redirectUrl) {
+                window.location.href = redirectUrl;
             } else {
-                console.error(`${provider} 로그인 실패`);
+                console.error(`${provider} 로그인 실패: redirect URL 없음`);
             }
         } catch (err) {
             console.error(`${provider} 로그인 중 에러 발생`, err);
@@ -53,36 +46,28 @@ const Login = ({ setIsLoggedIn }: LoginProps) => {
     };
 
     const handleLogin = async () => {
-        const url = `${import.meta.env.VITE_CORE_API_BASE_URL}/rest-api/v1/auth/login`;
         try {
-            const response = await fetch(url, {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
+            const response = await api.post('/rest-api/v1/auth/login', {
+                email,
+                password,
             });
 
-            if (response.ok) {
-                const result = await response.json();
-                const tokens = result.data;
+            const tokens = response.data?.data;
+            const userData = {
+                accessToken: tokens.accessToken,
+                refreshToken: tokens.refreshToken,
+            };
 
-                const userData = {
-                    accessToken: tokens.accessToken,
-                    refreshToken: tokens.refreshToken,
-                };
-
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('userToken', JSON.stringify(userData));
-                setIsLoggedIn?.(true);
-                navigate('/community');
-            } else {
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userToken', JSON.stringify(userData));
+            setIsLoggedIn?.(true);
+            navigate('/community');
+        } catch (error: unknown) {
+            if (error instanceof AxiosError && error.response?.status === 401) {
                 alert('로그인 실패: 이메일 또는 비밀번호를 확인해주세요.');
+            } else {
+                alert('로그인 요청 중 오류가 발생했습니다.');
             }
-        } catch (error) {
-            console.error('로그인 중 오류 발생:', error);
-            alert('로그인 요청 중 오류가 발생했습니다.');
         }
     };
 
