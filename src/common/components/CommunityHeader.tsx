@@ -40,7 +40,7 @@ const CommunityHeader: React.FC = () => {
 
             {/* 알람 아이콘과 send 아이콘을 한 줄에 배치 */}
             <div className="flex items-center space-x-7">
-                <div onClick={() => navigate('/notifications')} className="cursor-pointer">
+                <div onClick={() => navigate('/notification')} className="cursor-pointer">
                     <img src="/src/assets/icons/media/notification_line.svg" alt="Notification" className="h-8" />
                 </div>
                 <img
