@@ -6,7 +6,7 @@ import Profile from './domain/account/member/pages/Profile';
 import ChatMessage from './domain/chat/pages/ChatMessage';
 import ChatRoom from './domain/chat/pages/ChatRoom';
 import Community from './domain/community/pages/Community';
-import GoogleMap from './domain/map/pages/GoogleMap.tsx';
+import Map from './domain/map/pages/Map.tsx';
 import Notificate from './domain/notification/pages/Notificate.tsx';
 import Recommend from './domain/recommend/pages/Recommend.tsx';
 import Schedule from './domain/schedule/pages/Schedule.tsx';
@@ -29,7 +29,7 @@ const App = () => {
                     <Route path="/chat-message" element={isLoggedIn ? <ChatMessage /> : <Link to="/login" />} />
                     <Route path="/chat-room" element={isLoggedIn ? <ChatRoom /> : <Link to="/login" />} />
                     <Route path="/community" element={isLoggedIn ? <Community /> : <Link to="/login" />} />
-                    <Route path="/map" element={isLoggedIn ? <GoogleMap /> : <Link to="/login" />} />
+                    <Route path="/map" element={<Map />} />
                     <Route path="/notification" element={isLoggedIn ? <Notificate /> : <Link to="/login" />} />
                     <Route path="/recommend" element={isLoggedIn ? <Recommend /> : <Link to="/login" />} />
                     <Route path="/schedule" element={isLoggedIn ? <Schedule /> : <Link to="/login" />} />
