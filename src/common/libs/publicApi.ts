@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const api = axios.create({
+const publicApi = axios.create({
     baseURL: import.meta.env.VITE_CORE_API_BASE_URL,
     withCredentials: true,
     headers: {
@@ -8,4 +8,4 @@ const api = axios.create({
     },
 });
 
-export default api;
+export default publicApi;
