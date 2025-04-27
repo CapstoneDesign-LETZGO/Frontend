@@ -102,4 +102,4 @@ const MapView: React.FC<MapViewProps> = ({ onSelectPlace }) => {
   );
 };
 
-export default MapView;
+export default React.memo(MapView);

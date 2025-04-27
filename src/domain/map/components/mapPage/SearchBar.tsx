@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 
-const SearchBar: React.FC = () => {
+interface SearchBarProps {
+  onSearch: (query: string) => void;
+}
+
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   const [query, setQuery] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -8,12 +12,13 @@ const SearchBar: React.FC = () => {
   };
 
   const handleSearch = () => {
-    // 이 부분에 검색 기능 연결 (예: API 요청, 지도 이동 등)
-    console.log("검색어:", query);
+    if (query.trim() === "") return; // 빈 검색어는 무시
+    onSearch(query);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
+      e.preventDefault(); // << 이거 중요, 폼 submit 막아야 함
       handleSearch();
     }
   };
