@@ -1,15 +1,20 @@
 import { useState } from 'react';
 import { AxiosRequestConfig } from 'axios';
-import { fetchWithAuth } from '../services/authFetch';
+import { fetchWithAuth } from '../services/authFetchService.ts';
 
-export const useAuthFetch = (setIsLoggedIn: (v: boolean) => void) => {
+export const useAuthFetch = () => {
     const [loading, setLoading] = useState(false);
-    // 인증된 fetch 요청 함수
-    const authFetch = async (url: string, options: AxiosRequestConfig = {}) => {  // AxiosRequestConfig으로 변경
+
+    const authFetch = async (
+        url: string,
+        options: AxiosRequestConfig = {},
+        method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET'  // 기본 HTTP 메서드는 'GET'
+    ) => {
         setLoading(true);
-        const response = await fetchWithAuth(url, options, setIsLoggedIn);
+        const response = await fetchWithAuth(url, { ...options, method });  // 옵션에 메서드 추가
         setLoading(false);
         return response;
     };
+
     return { authFetch, loading };
 };
