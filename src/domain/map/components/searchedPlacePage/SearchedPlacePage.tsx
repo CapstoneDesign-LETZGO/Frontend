@@ -1,4 +1,3 @@
-// SearchedPlacePage.tsx
 import React from "react";
 import { PlaceInfo } from "../../types/MapTypes";
 
@@ -13,33 +12,22 @@ const SearchedPlacePage: React.FC<Props> = ({ places, onPlaceClick }) => {
       {places.map((place) => (
         <div
           key={place.placeId}
-          style={styles.item}
+          className="flex items-center p-2 border-b border-gray-200 cursor-pointer hover:bg-gray-50"
           onClick={() => onPlaceClick(place)}
         >
-          <img src={place.placePhoto} alt={place.name} style={styles.image} />
+          <img
+            src={place.placePhoto}
+            alt={place.name}
+            className="w-15 h-15 object-cover mr-3 rounded-md"
+          />
           <div>
-            <h3>{place.name}</h3>
-            <p>{place.address}</p>
+            <h3 className="text-base font-semibold">{place.name}</h3>
+            <p className="text-sm text-gray-500">{place.address}</p>
           </div>
         </div>
       ))}
     </div>
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-  item: {
-    display: "flex",
-    padding: "10px",
-    borderBottom: "1px solid #eee",
-    cursor: "pointer",
-  },
-  image: {
-    width: "60px",
-    height: "60px",
-    objectFit: "cover",
-    marginRight: "10px",
-  },
 };
 
 export default SearchedPlacePage;

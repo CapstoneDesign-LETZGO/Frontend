@@ -1,13 +1,5 @@
 import React from "react";
-
-interface Review {
-  id: number;
-  name: string;
-  title: string;
-  rating: number;
-  content: string;
-  photoDir: string;
-}
+import { Review } from "../../types/MapTypes";
 
 interface ReviewListProps {
   reviews: Review[];
@@ -15,57 +7,26 @@ interface ReviewListProps {
 
 const ReviewList: React.FC<ReviewListProps> = ({ reviews }) => {
   return (
-    <div style={styles.container}>
-      <h3 style={styles.heading}>리뷰</h3>
+    <div className="p-4 bg-gray-100">
+      <h3 className="text-lg font-bold mb-3">리뷰</h3>
       {reviews.length === 0 ? (
-        <p style={styles.noReview}>아직 작성된 리뷰가 없습니다.</p>
+        <p className="text-sm text-gray-500">아직 작성된 리뷰가 없습니다.</p>
       ) : (
         reviews.map((review) => (
-          <div key={review.id} style={styles.reviewCard}>
-            <p style={styles.name}>{review.name}</p>
-            <img src={review.photoDir} />
-            <p style={styles.title}>{review.title}</p>
-            <p style={styles.rating}>{review.rating}</p>
-            <p style={styles.content}>{review.content}</p>
+          <div
+            key={review.id}
+            className="mb-3 p-3 bg-white rounded-lg shadow-sm"
+          >
+            <p className="font-bold mb-1">{review.name}</p>
+            <img src={review.photoDir} alt={review.title} className="w-full h-auto rounded-md mb-2" />
+            <p className="text-base font-semibold">{review.title}</p>
+            <p className="text-yellow-500 font-medium">{review.rating}</p>
+            <p className="text-sm mt-1">{review.content}</p>
           </div>
         ))
       )}
     </div>
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    padding: "16px",
-    backgroundColor: "#f9f9f9",
-  },
-  heading: {
-    fontSize: "18px",
-    fontWeight: "bold",
-    marginBottom: "12px",
-  },
-  noReview: {
-    fontSize: "14px",
-    color: "#999",
-  },
-  reviewCard: {
-    marginBottom: "12px",
-    padding: "12px",
-    backgroundColor: "#fff",
-    borderRadius: "8px",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-  },
-  author: {
-    fontWeight: "bold",
-    marginBottom: "4px",
-  },
-  content: {
-    marginBottom: "4px",
-  },
-  date: {
-    fontSize: "12px",
-    color: "#aaa",
-  },
 };
 
 export default ReviewList;

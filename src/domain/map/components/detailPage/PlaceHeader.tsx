@@ -10,36 +10,14 @@ const PlaceHeader: React.FC<Prop> = ({ placeInfo }) => {
   const { name, address, placePhoto } = placeInfo;
 
   return (
-    <div style={styles.container}>
-      <img src={placePhoto} alt={name} style={styles.image} />
-      <div style={styles.textWrapper}>
-        <h2 style={styles.name}>{name}</h2>
-        <p style={styles.address}>{address}</p>
+    <div className="p-4 bg-white border-b border-gray-200">
+      <img src={placePhoto} alt={name} className="w-full h-auto rounded-md" />
+      <div className="flex flex-col mt-4">
+        <h2 className="text-xl font-bold m-0">{name}</h2>
+        <p className="text-gray-600 text-sm mt-1">{address}</p>
       </div>
     </div>
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    padding: "16px",
-    backgroundColor: "#ffffff",
-    borderBottom: "1px solid #eee",
-  },
-  textWrapper: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  name: {
-    margin: 0,
-    fontSize: "20px",
-    fontWeight: "bold",
-  },
-  address: {
-    margin: "4px 0 0",
-    color: "#666",
-    fontSize: "14px",
-  },
 };
 
 export default PlaceHeader;

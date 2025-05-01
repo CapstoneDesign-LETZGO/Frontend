@@ -31,7 +31,7 @@ const App = () => {
                     <Route path="/community" element={isLoggedIn ? <Community /> : <Link to="/login" />} />
                     <Route path="/map" element={<Map />} />
                     <Route path="/notification" element={isLoggedIn ? <Notificate /> : <Link to="/login" />} />
-                    <Route path="/recommend" element={isLoggedIn ? <Recommend /> : <Link to="/login" />} />
+                    <Route path="/recommend" element={<Recommend />} />
                     <Route path="/schedule" element={isLoggedIn ? <Schedule /> : <Link to="/login" />} />
 
                     {/* 기본 경로는 로그인 상태에 따라 다르게 리디렉션 */}
