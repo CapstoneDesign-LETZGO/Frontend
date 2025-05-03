@@ -14,6 +14,7 @@
     "@types/axios": "^0.14.4",
     "@types/sockjs-client": "^1.5.4",
     "axios": "^1.8.4",
+    "framer-motion": "^12.9.4",
     "lodash": "^4.17.21",
     "lucide-react": "^0.486.0",
     "react": "^19.1.0",

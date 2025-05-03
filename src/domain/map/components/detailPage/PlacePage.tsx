@@ -11,7 +11,7 @@ interface PlacePageProps {
 
 const PlacePage: React.FC<PlacePageProps> = ({ placeInfo, reviews, onClose }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md w-full max-w-md h-[80vh] flex flex-col overflow-hidden">
+    <div className="bg-white rounded-lg shadow-md w-full max-w-md max-h-[80vh] flex flex-col overflow-hidden">
       {/* 닫기 버튼 */}
       <div className="p-2 border-b border-gray-200 flex justify-end">
         <button
@@ -27,8 +27,8 @@ const PlacePage: React.FC<PlacePageProps> = ({ placeInfo, reviews, onClose }) =>
         <PlaceHeader placeInfo={placeInfo} />
       </div>
 
-      {/* 리뷰 스크롤 영역 */}
-      <div className="flex-grow overflow-y-auto">
+      {/* 리뷰 영역: 자동 높이 + 최대치 초과 시 스크롤 */}
+      <div className="overflow-y-auto" style={{ maxHeight: "calc(80vh - 200px)" }}>
         <ReviewList reviews={reviews} />
       </div>
     </div>

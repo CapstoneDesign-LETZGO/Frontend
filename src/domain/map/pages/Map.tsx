@@ -7,6 +7,7 @@ import PlacePage from "../components/detailPage/PlacePage";
 import SearchedPlacePage from "../components/searchedPlacePage/SearchedPlacePage";
 import { PlaceInfo, Review } from "../types/MapTypes";
 import { usePlaceInfo } from "../hooks/usePlaceInfo";
+import { motion, AnimatePresence } from "framer-motion";
 
 const MyComponent: React.FC = () => {
   const [placeInfo, setPlaceInfo] = useState<PlaceInfo | null>(null);
@@ -55,7 +56,6 @@ const MyComponent: React.FC = () => {
           return;
         }
 
-        // fallback mock
         throw new Error("API 실패 처리 진입");
       } catch {
         const mockPlace: PlaceInfo = {
@@ -84,7 +84,6 @@ const MyComponent: React.FC = () => {
             content: "크게 특별하진 않네요.",
             photoDir: "https://via.placeholder.com/300x200.png?text=Review+2",
           },
-
           {
             id: 3,
             name: "이순신",
@@ -93,7 +92,6 @@ const MyComponent: React.FC = () => {
             content: "크게 특별하진 않네요.",
             photoDir: "https://via.placeholder.com/300x200.png?text=Review+2",
           },
-
           {
             id: 4,
             name: "이순신",
@@ -140,9 +138,9 @@ const MyComponent: React.FC = () => {
             <div className="p-2 border-b border-gray-200 flex justify-end">
               <button
                 onClick={handleCloseSearch}
-                className="bg-red-500 text-white border-none px-3 py-1 rounded text-sm cursor-pointer"
+                className="bg-gray-800 text-white border-none px-3 py-1 rounded text-sm cursor-pointer"
               >
-                ❌ 닫기
+                X 닫기
               </button>
             </div>
             <SearchedPlacePage
@@ -152,19 +150,27 @@ const MyComponent: React.FC = () => {
           </div>
         )}
 
-        {placeInfo && (
-          <div className="absolute inset-0 flex items-center justify-center z-80 px-4 py-6">
-            <div className = "w-full max-w-md">
-            <PlacePage
-              placeInfo={placeInfo}
-              reviews={placeReviews}
-              onClose={() => setPlaceInfo(null)}
-            />
+        <AnimatePresence>
+          {placeInfo && (
+            <div className="absolute inset-0 flex items-center justify-center z-80 bg-black/40 backdrop-blur-sm px-4">
+              <motion.div
+                className="w-full max-w-md"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 50 }}
+                transition={{ duration: 0.3 }}
+              >
+                <PlacePage
+                  placeInfo={placeInfo}
+                  reviews={placeReviews}
+                  onClose={() => setPlaceInfo(null)}
+                />
+              </motion.div>
             </div>
-          </div>
-        )}
+          )}
+        </AnimatePresence>
 
-        <div className="absolute bottom-0 left-0 right-0 z-100">
+        <div className="absolute bottom-0 left-0 right-0 z-70">
           <NavigationBar />
         </div>
       </div>
