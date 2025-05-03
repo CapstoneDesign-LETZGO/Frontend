@@ -1,16 +1,22 @@
 import React, { useState, useCallback } from "react";
 import MapView from "../components/mapPage/MapView";
 import SearchBar from "../components/mapPage/SearchBar";
-import BottomNavBar from "../components/mapPage/BottomNavBar";
+import NavigationBar from "../../../common/components/NavigationBar";
 import CategoryFilter from "../components/mapPage/CategoryFilter";
 import PlacePage from "../components/detailPage/PlacePage";
 import SearchedPlacePage from "../components/searchedPlacePage/SearchedPlacePage";
-import { PlaceInfo } from "../types/MapTypes";
+import { PlaceInfo, Review } from "../types/MapTypes";
+import { usePlaceInfo } from "../hooks/usePlaceInfo";
+import { motion, AnimatePresence } from "framer-motion";
 
 const MyComponent: React.FC = () => {
   const [placeInfo, setPlaceInfo] = useState<PlaceInfo | null>(null);
+  const [placeReviews, setPlaceReviews] = useState<Review[]>([]);
   const [searchResults, setSearchResults] = useState<PlaceInfo[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  const { fetchPlaceInfo, loading, error } = usePlaceInfo();
 
   const handleSearch = useCallback((query: string) => {
     if (!query) return;
@@ -39,10 +45,70 @@ const MyComponent: React.FC = () => {
     setPlaceInfo(null);
   }, []);
 
-  const handleSelectPlace = useCallback((place: PlaceInfo) => {
-    setPlaceInfo(place);
-    setIsSearching(false);
-  }, []);
+  const handleSelectPlace = useCallback(
+    async (place: PlaceInfo) => {
+      try {
+        const result = await fetchPlaceInfo(place.placeId);
+        if (result) {
+          setPlaceInfo(result.placeInfo);
+          setPlaceReviews(result.reviews);
+          setIsSearching(false);
+          return;
+        }
+
+        throw new Error("API 실패 처리 진입");
+      } catch {
+        const mockPlace: PlaceInfo = {
+          name: "모의 장소명",
+          address: "서울특별시 중구 세종대로 110",
+          placeId: place.placeId,
+          placePhoto: "https://via.placeholder.com/300x200.png?text=Mock+Place",
+          lat: place.lat,
+          lng: place.lng,
+        };
+
+        const mockReviews: Review[] = [
+          {
+            id: 1,
+            name: "홍길동",
+            title: "좋았어요",
+            rating: 5,
+            content: "가족이랑 즐겁게 놀다 왔어요!",
+            photoDir: "https://via.placeholder.com/300x200.png?text=Review+1",
+          },
+          {
+            id: 2,
+            name: "이순신",
+            title: "보통이었음",
+            rating: 3,
+            content: "크게 특별하진 않네요.",
+            photoDir: "https://via.placeholder.com/300x200.png?text=Review+2",
+          },
+          {
+            id: 3,
+            name: "이순신",
+            title: "보통이었음",
+            rating: 3,
+            content: "크게 특별하진 않네요.",
+            photoDir: "https://via.placeholder.com/300x200.png?text=Review+2",
+          },
+          {
+            id: 4,
+            name: "이순신",
+            title: "보통이었음",
+            rating: 3,
+            content: "크게 특별하진 않네요.",
+            photoDir: "https://via.placeholder.com/300x200.png?text=Review+2",
+          },
+        ];
+
+        setPlaceInfo(mockPlace);
+        setPlaceReviews(mockReviews);
+        setIsSearching(false);
+      }
+    },
+    [fetchPlaceInfo]
+  );
 
   const handleCloseSearch = () => {
     setIsSearching(false);
@@ -50,17 +116,32 @@ const MyComponent: React.FC = () => {
   };
 
   return (
-    <div style={styles.wrapper}>
-      <SearchBar onSearch={handleSearch} />
-      
-      <div style={styles.mapWrapper}>
-        <MapView onSelectPlace={handleSelectPlace} />
-        
+    <div className="flex flex-col min-h-screen items-center bg-[#F5F5F5]">
+      <div className="flex flex-col w-full max-w-md min-h-screen relative">
+        <div className="absolute top-0 left-0 right-0 z-70">
+          <SearchBar onSearch={handleSearch} />
+        </div>
+
+        <div className="absolute top-[60px] left-0 right-0 z-70">
+          <CategoryFilter onCategorySelect={setSelectedCategory} />
+        </div>
+
+        <div className="flex-grow relative w-full z-60">
+          <MapView
+            onSelectPlace={handleSelectPlace}
+            selectedCategory={selectedCategory}
+          />
+        </div>
+
         {isSearching && (
-          <div style={styles.searchPage}>
-            {/* 닫기버튼 */}
-            <div style={styles.searchHeader}>
-              <button onClick={handleCloseSearch} style={styles.closeButton}>❌ 닫기</button>
+          <div className="absolute top-12 bottom-0 left-0 w-[350px] overflow-y-auto bg-white z-70 border-r border-gray-300 flex flex-col">
+            <div className="p-2 border-b border-gray-200 flex justify-end">
+              <button
+                onClick={handleCloseSearch}
+                className="bg-gray-800 text-white border-none px-3 py-1 rounded text-sm cursor-pointer"
+              >
+                X 닫기
+              </button>
             </div>
             <SearchedPlacePage
               places={searchResults}
@@ -69,87 +150,32 @@ const MyComponent: React.FC = () => {
           </div>
         )}
 
-        <div style={styles.categoryFilter}>
-          <CategoryFilter />
+        <AnimatePresence>
+          {placeInfo && (
+            <div className="absolute inset-0 flex items-center justify-center z-80 bg-black/40 backdrop-blur-sm px-4">
+              <motion.div
+                className="w-full max-w-md"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 50 }}
+                transition={{ duration: 0.3 }}
+              >
+                <PlacePage
+                  placeInfo={placeInfo}
+                  reviews={placeReviews}
+                  onClose={() => setPlaceInfo(null)}
+                />
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        <div className="absolute bottom-0 left-0 right-0 z-70">
+          <NavigationBar />
         </div>
-
-        {placeInfo && (
-           <div style={styles.placePage}>
-           <PlacePage
-             placeInfo={placeInfo}
-             onClose={() => setPlaceInfo(null)} // 클릭하면 창 닫기
-           />
-         </div>
-        )}
       </div>
-
-      <BottomNavBar />
     </div>
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-  wrapper: {
-    display: "flex",
-    flexDirection: "column",
-    height: "100vh",
-    width: "100vw",
-    margin: 0,
-    padding: 0,
-    boxSizing: "border-box",
-  },
-  mapWrapper: {
-    flex: 1,
-    position: "relative",
-    height: "100%",
-    width: "100%",
-    margin: 0,
-    padding: 0,
-  },
-  searchPage: {
-    position: "absolute",
-    top: "50px",
-    bottom: "0",
-    left: "0",
-    width: "350px",
-    overflowY: "auto",
-    backgroundColor: "#fff",
-    zIndex: 5,
-    borderRight: "1px solid #ddd",
-    display: "flex",
-    flexDirection: "column",
-  },
-  searchHeader: {
-    padding: "8px",
-    borderBottom: "1px solid #eee",
-    display: "flex",
-    justifyContent: "flex-end",
-  },
-  closeButton: {
-    backgroundColor: "#f44336",
-    color: "white",
-    border: "none",
-    padding: "6px 12px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "14px",
-  },
-  categoryFilter: {
-    position: "absolute",
-    top: "50px",
-    left: "0",
-    right: "0",
-    zIndex: 4,
-    padding: "0 10px",
-  },
-  placePage: {
-    position: "absolute",
-    bottom: "300px",
-    left: "0",
-    right: "0",
-    zIndex: 5,
-    padding: "0 10px",
-  },
 };
 
 export default React.memo(MyComponent);

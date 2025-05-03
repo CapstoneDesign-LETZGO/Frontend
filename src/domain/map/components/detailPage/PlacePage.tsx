@@ -1,47 +1,38 @@
 import React from "react";
-import { PlaceInfo } from "../../types/MapTypes";
+import { PlaceInfo, Review } from "../../types/MapTypes";
 import PlaceHeader from "./PlaceHeader";
 import ReviewList from "./ReviewList";
 
 interface PlacePageProps {
   placeInfo: PlaceInfo;
-  onClose: () => void; // 닫기 핸들러 추가
+  reviews: Review[];
+  onClose: () => void;
 }
 
-const PlacePage: React.FC<PlacePageProps> = ({ placeInfo, onClose }) => {
+const PlacePage: React.FC<PlacePageProps> = ({ placeInfo, reviews, onClose }) => {
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <button onClick={onClose} style={styles.closeButton}>❌ 닫기</button>
+    <div className="bg-white rounded-lg shadow-md w-full max-w-md max-h-[80vh] flex flex-col overflow-hidden">
+      {/* 닫기 버튼 */}
+      <div className="p-2 border-b border-gray-200 flex justify-end">
+        <button
+          onClick={onClose}
+          className="bg-black text-white text-sm px-3 py-1.5 rounded hover:bg-gray-800"
+        >
+          X 닫기
+        </button>
       </div>
-      <PlaceHeader placeInfo={placeInfo} />
-      <ReviewList reviews={[]} />
+
+      {/* 장소 정보 고정 */}
+      <div className="flex-shrink-0">
+        <PlaceHeader placeInfo={placeInfo} />
+      </div>
+
+      {/* 리뷰 영역: 자동 높이 + 최대치 초과 시 스크롤 */}
+      <div className="overflow-y-auto" style={{ maxHeight: "calc(80vh - 200px)" }}>
+        <ReviewList reviews={reviews} />
+      </div>
     </div>
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    backgroundColor: "#fff",
-    borderRadius: "8px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-    overflow: "hidden",
-  },
-  header: {
-    padding: "8px",
-    borderBottom: "1px solid #eee",
-    display: "flex",
-    justifyContent: "flex-end",
-  },
-  closeButton: {
-    backgroundColor: "#f44336",
-    color: "white",
-    border: "none",
-    padding: "6px 12px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "14px",
-  },
 };
 
 export default PlacePage;
