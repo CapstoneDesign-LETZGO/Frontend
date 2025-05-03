@@ -1,26 +1,36 @@
 import React from "react";
-import { PlaceInfo } from "../../types/MapTypes";
+import { PlaceInfo, Review } from "../../types/MapTypes";
 import PlaceHeader from "./PlaceHeader";
 import ReviewList from "./ReviewList";
 
 interface PlacePageProps {
   placeInfo: PlaceInfo;
+  reviews: Review[];
   onClose: () => void;
 }
 
-const PlacePage: React.FC<PlacePageProps> = ({ placeInfo, onClose }) => {
+const PlacePage: React.FC<PlacePageProps> = ({ placeInfo, reviews, onClose }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+    <div className="bg-white rounded-lg shadow-md w-full max-w-md h-[80vh] flex flex-col overflow-hidden">
+      {/* 닫기 버튼 */}
       <div className="p-2 border-b border-gray-200 flex justify-end">
         <button
           onClick={onClose}
-          className="bg-red-500 text-white text-sm px-3 py-1.5 rounded hover:bg-red-600"
+          className="bg-black text-white text-sm px-3 py-1.5 rounded hover:bg-gray-800"
         >
-          ❌ 닫기
+          X 닫기
         </button>
       </div>
-      <PlaceHeader placeInfo={placeInfo} />
-      <ReviewList reviews={[]} />
+
+      {/* 장소 정보 고정 */}
+      <div className="flex-shrink-0">
+        <PlaceHeader placeInfo={placeInfo} />
+      </div>
+
+      {/* 리뷰 스크롤 영역 */}
+      <div className="flex-grow overflow-y-auto">
+        <ReviewList reviews={reviews} />
+      </div>
     </div>
   );
 };

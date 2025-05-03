@@ -1,13 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import { PlaceInfo } from "../../types/MapTypes";
+import { useAuthFetch } from "../../../../common/hooks/useAuthFetch";
 
 interface MapViewProps {
   onSelectPlace: (placeInfo: PlaceInfo) => void;
+  selectedCategory: string | null;
 }
 
-const MapView: React.FC<MapViewProps> = ({ onSelectPlace }) => {
+const MapView: React.FC<MapViewProps> = ({ onSelectPlace, selectedCategory }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
+  const markersRef = useRef<google.maps.Marker[]>([]);
+  const { authFetch } = useAuthFetch();
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
   const [lat, setLat] = useState<number | null>(null);
@@ -55,7 +59,7 @@ const MapView: React.FC<MapViewProps> = ({ onSelectPlace }) => {
     };
 
     getLocation();
-    loadMapScript(); // 먼저 스크립트 로드
+    loadMapScript();
   }, []);
 
   useEffect(() => {
@@ -74,8 +78,6 @@ const MapView: React.FC<MapViewProps> = ({ onSelectPlace }) => {
         ],
       });
 
-      console.log("Map Instance: ", mapInstance.current); // 맵 인스턴스가 정상적으로 초기화되었는지 확인
-
       mapInstance.current.addListener("click", (event: any) => {
         if (event.placeId) {
           event.stop();
@@ -93,10 +95,53 @@ const MapView: React.FC<MapViewProps> = ({ onSelectPlace }) => {
     }
   }, [lat, lng]);
 
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      if (!selectedCategory || !lat || !lng || !mapInstance.current) return;
+  
+      try {
+        const response = await authFetch(
+          'api/map-api/places',
+          {
+            params: {
+              query: selectedCategory,
+              lat: lat.toString(),
+              lng: lng.toString(),
+              radius: 1000,
+              num: 10,
+            },
+          },
+          'GET'
+        );
+  
+        // 기존 마커 제거
+        markersRef.current.forEach((marker) => marker.setMap(null));
+        markersRef.current = [];
+  
+        if (response?.data?.data) {
+          const places = response.data.data;
+  
+          places.forEach((place: any) => {
+            const marker = new window.google.maps.Marker({
+              map: mapInstance.current!,
+              position: { lat: place.lat, lng: place.lng },
+              title: place.name,
+            });
+            markersRef.current.push(marker);
+          });
+        }
+      } catch (err) {
+        console.error("백엔드로부터 장소 데이터 가져오기 실패:", err);
+      }
+    };
+  
+    fetchPlaces();
+  }, [selectedCategory, lat, lng]);
+
   return (
     <div
       ref={mapRef}
-      className="w-full h-full m-0 p-0 min-h-screen z-10" // z-index 추가, 화면 전체를 채우도록 설정
+      className="w-full h-full m-0 p-0 min-h-screen z-10"
     />
   );
 };

@@ -1,13 +1,13 @@
 import axios from "axios";
 import { ApiResponse } from "../types/MapTypes";
 
-const fetchPlaceInfo = async (
+const fetchPlace = async (
   placeId: string,
   token: string
 ): Promise<ApiResponse | null> => {
   try {
     const response = await axios.get<ApiResponse>(
-      `http://localhost:3000/api/place/${placeId}`,
+      `/map-api/place/${placeId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -22,4 +22,4 @@ const fetchPlaceInfo = async (
   }
 };
 
-export default fetchPlaceInfo;
+export default fetchPlace;
