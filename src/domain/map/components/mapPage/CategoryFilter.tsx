@@ -24,7 +24,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({ onCategorySelect }) => 
             key={category}
             onClick={() => handleCategoryClick(category)}
             className={`px-4 py-2 mr-2 rounded-full text-sm whitespace-nowrap border ${
-              isSelected ? "bg-green-500 text-white border-green-500" : "bg-gray-100 text-black border-gray-300"
+              isSelected ? "bg-gray-800 text-white border-gray-500" : "bg-gray-100 text-black border-gray-300"
             }`}
           >
             {category}

@@ -30,7 +30,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
         />
         <button
           onClick={() => onSearch(query)}
-          className="ml-2 bg-blue-500 text-white py-2 px-4 rounded-md"
+          className="ml-2 bg-gray-800 text-white py-2 px-4 rounded-md"
         >
           검색
         </button>

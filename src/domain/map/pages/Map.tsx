@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import MapView from "../components/mapPage/MapView";
 import SearchBar from "../components/mapPage/SearchBar";
 import NavigationBar from "../../../common/components/NavigationBar";
@@ -9,102 +9,84 @@ import { PlaceInfo, Review } from "../types/MapTypes";
 import { usePlaceInfo } from "../hooks/usePlaceInfo";
 import { motion, AnimatePresence } from "framer-motion";
 
-const MyComponent: React.FC = () => {
+const Map: React.FC = () => {
   const [placeInfo, setPlaceInfo] = useState<PlaceInfo | null>(null);
   const [placeReviews, setPlaceReviews] = useState<Review[]>([]);
-  const [searchResults, setSearchResults] = useState<PlaceInfo[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
+  const [isPoiClick, setIsPoiClick] = useState(false);
 
-  const { fetchPlaceInfo, loading, error } = usePlaceInfo();
+  const {
+    fetchPlaceInfo,
+    fetchPlaceSearch,
+    searchResults,
+    loading,
+    error,
+  } = usePlaceInfo();
 
-  const handleSearch = useCallback((query: string) => {
-    if (!query) return;
-
-    const dummyResults: PlaceInfo[] = [
-      {
-        name: `${query} 맛집1`,
-        address: "서울시 강남구",
-        placeId: "1",
-        placePhoto: "https://via.placeholder.com/80",
-        lat: 37.5,
-        lng: 127.0,
-      },
-      {
-        name: `${query} 맛집2`,
-        address: "서울시 강북구",
-        placeId: "2",
-        placePhoto: "https://via.placeholder.com/80",
-        lat: 37.6,
-        lng: 127.1,
-      },
-    ];
-
-    setSearchResults(dummyResults);
-    setIsSearching(true);
-    setPlaceInfo(null);
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const loc = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          setUserLocation(loc);
+          setMapCenter(loc);
+        },
+        (err) => {
+          console.warn("위치 정보를 가져오는 데 실패했습니다:", err);
+        }
+      );
+    }
   }, []);
 
+  const handleSearch = useCallback(
+    async (query: string) => {
+      if (!query || !userLocation) return;
+      const radius = 1000;
+      const num = 10;
+
+      await fetchPlaceSearch(query, userLocation.lat, userLocation.lng, radius, num);
+      setIsSearching(true);
+      setPlaceInfo(null);
+      setIsPoiClick(false); // 검색으로 진입 시 POI 클릭 아님
+    },
+    [fetchPlaceSearch, userLocation]
+  );
+
   const handleSelectPlace = useCallback(
-    async (place: PlaceInfo) => {
+    async (place: PlaceInfo, triggeredByPoi = false) => {
       try {
         const result = await fetchPlaceInfo(place.placeId);
         if (result) {
           setPlaceInfo(result.placeInfo);
           setPlaceReviews(result.reviews);
           setIsSearching(false);
+          setMapCenter({ lat: place.lat, lng: place.lng });
+          setIsPoiClick(triggeredByPoi);
           return;
         }
-
         throw new Error("API 실패 처리 진입");
       } catch {
         const mockPlace: PlaceInfo = {
-          name: "모의 장소명",
-          address: "서울특별시 중구 세종대로 110",
+          name: "api연결 오류",
+          address: "",
           placeId: place.placeId,
-          placePhoto: "https://via.placeholder.com/300x200.png?text=Mock+Place",
+          placePhoto: "",
           lat: place.lat,
           lng: place.lng,
         };
-
-        const mockReviews: Review[] = [
-          {
-            id: 1,
-            name: "홍길동",
-            title: "좋았어요",
-            rating: 5,
-            content: "가족이랑 즐겁게 놀다 왔어요!",
-            photoDir: "https://via.placeholder.com/300x200.png?text=Review+1",
-          },
-          {
-            id: 2,
-            name: "이순신",
-            title: "보통이었음",
-            rating: 3,
-            content: "크게 특별하진 않네요.",
-            photoDir: "https://via.placeholder.com/300x200.png?text=Review+2",
-          },
-          {
-            id: 3,
-            name: "이순신",
-            title: "보통이었음",
-            rating: 3,
-            content: "크게 특별하진 않네요.",
-            photoDir: "https://via.placeholder.com/300x200.png?text=Review+2",
-          },
-          {
-            id: 4,
-            name: "이순신",
-            title: "보통이었음",
-            rating: 3,
-            content: "크게 특별하진 않네요.",
-            photoDir: "https://via.placeholder.com/300x200.png?text=Review+2",
-          },
-        ];
+        const mockReviews: Review[] = [];
 
         setPlaceInfo(mockPlace);
         setPlaceReviews(mockReviews);
         setIsSearching(false);
+        setMapCenter({ lat: place.lat, lng: place.lng });
+        setIsPoiClick(triggeredByPoi);
       }
     },
     [fetchPlaceInfo]
@@ -112,7 +94,6 @@ const MyComponent: React.FC = () => {
 
   const handleCloseSearch = () => {
     setIsSearching(false);
-    setSearchResults([]);
   };
 
   return (
@@ -127,10 +108,15 @@ const MyComponent: React.FC = () => {
         </div>
 
         <div className="flex-grow relative w-full z-60">
-          <MapView
-            onSelectPlace={handleSelectPlace}
-            selectedCategory={selectedCategory}
-          />
+          {mapCenter && (
+            <MapView
+              onSelectPlace={(place) => handleSelectPlace(place, true)}
+              selectedCategory={selectedCategory}
+              center={mapCenter}
+              isPoiClick={isPoiClick}
+              selectedPlace={placeInfo}
+            />
+          )}
         </div>
 
         {isSearching && (
@@ -145,7 +131,7 @@ const MyComponent: React.FC = () => {
             </div>
             <SearchedPlacePage
               places={searchResults}
-              onPlaceClick={handleSelectPlace}
+              onPlaceClick={(place) =>  handleSelectPlace(place, false)}
             />
           </div>
         )}
@@ -178,4 +164,4 @@ const MyComponent: React.FC = () => {
   );
 };
 
-export default React.memo(MyComponent);
+export default React.memo(Map);
