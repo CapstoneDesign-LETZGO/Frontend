@@ -18,7 +18,7 @@ const PlaceCard: React.FC<PlaceCardProps> = ({
   return (
     <div
       className="flex items-center border border-gray-300 rounded-lg p-3 mb-3 bg-white shadow-sm cursor-pointer"
-      onClick={onClick} // ✅ 클릭 이벤트 연결!
+      onClick={onClick}
     >
       <img
         src={image}
@@ -31,7 +31,7 @@ const PlaceCard: React.FC<PlaceCardProps> = ({
         <button
           className="px-3 py-1 text-xs text-gray-600 bg-gray-100 border border-gray-300 rounded hover:bg-gray-200 w-fit"
           onClick={(e) => {
-            e.stopPropagation(); // ✅ 클릭 버블링 방지
+            e.stopPropagation();
             onIgnore();
           }}
         >

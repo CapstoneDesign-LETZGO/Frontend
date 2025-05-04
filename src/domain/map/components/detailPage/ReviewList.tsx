@@ -28,6 +28,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews, onDelete }) => {
               key={review.id}
               className="mb-3 p-3 bg-white rounded-lg shadow-sm flex gap-4 relative"
             >
+              {/* 삭제 버튼 - 작성자일 경우만 */}
               {isAuthor && onDelete && (
                 <button
                   onClick={() => onDelete(review.id)}
@@ -36,6 +37,8 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews, onDelete }) => {
                   ✕
                 </button>
               )}
+
+              {/* 이미지 or placeholder */}
               {review.photoDir ? (
                 <img
                   src={review.photoDir}
@@ -47,12 +50,17 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews, onDelete }) => {
                   이미지 없음
                 </div>
               )}
+
+              {/* 텍스트 영역 */}
               <div className="flex flex-col justify-between flex-1">
-                <div>
-                  <p className="text-base font-semibold">{review.title}</p>
-                  <p className="text-yellow-500 font-medium">⭐{review.rating}</p>
+                <p className="text-base font-semibold mb-0 leading-tight">{review.title}</p>
+
+                <div className="flex justify-between items-center mt-0 leading-tight">
+                  <p className="text-yellow-500 font-medium m-0">⭐{review.rating}</p>
+                  <span className="text-xs text-gray-400 whitespace-nowrap m-0">{review.account}</span>
                 </div>
-                <p className="text-sm text-gray-700 mt-1 whitespace-pre-wrap">
+
+                <p className="text-sm text-gray-700 mt-2 whitespace-pre-wrap">
                   {review.content}
                 </p>
               </div>
