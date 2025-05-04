@@ -26,7 +26,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           value={query}
           onChange={handleInputChange}
           onKeyDown={handleKeyPress}
-          className="flex-1 h-9 text-base px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+          className="flex-1 h-9 text-base px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
         />
         <button
           onClick={() => onSearch(query)}
@@ -37,7 +37,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
       </div>
     </div>
   );
-  
+
 };
 
 export default SearchBar;

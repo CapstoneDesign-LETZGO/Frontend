@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { PlaceInfo } from "../../types/MapTypes";
 import { usePlaceInfo } from "../../hooks/usePlaceInfo";
 import markerImage from "../../../../assets/icons/map/marker_image.png"
+import mapStyle from "../../style/MapStyle.json"
 
 interface MapViewProps {
   onSelectPlace: (placeInfo: PlaceInfo) => void;
@@ -18,7 +19,7 @@ const MapView: React.FC<MapViewProps> = ({ onSelectPlace, selectedCategory, cent
   const selectedMarkerRef = useRef<google.maps.Marker | null>(null); // 선택 장소용 마커
   const { fetchPlaceSearch, searchResults } = usePlaceInfo();
 
-  
+
   // 구글 맵 스크립트 로드 + 초기화
   useEffect(() => {
     const loadMapScript = () => {
@@ -35,7 +36,7 @@ const MapView: React.FC<MapViewProps> = ({ onSelectPlace, selectedCategory, cent
         script.onload = () => resolve();
         script.onerror = (err) => reject(err);
         document.head.appendChild(script);
-      }); 
+      });
     };
 
     const initMap = () => {
@@ -44,13 +45,7 @@ const MapView: React.FC<MapViewProps> = ({ onSelectPlace, selectedCategory, cent
           center,
           zoom: 17,
           disableDefaultUI: true,
-          styles: [
-            {
-              featureType: "road",
-              elementType: "labels",
-              stylers: [{ visibility: "off" }],
-            },
-          ],
+          styles: mapStyle
         });
 
 
@@ -75,7 +70,7 @@ const MapView: React.FC<MapViewProps> = ({ onSelectPlace, selectedCategory, cent
 
     loadMapScript().then(initMap).catch(console.error);
   }, []);
- 
+
   useEffect(() => {
     if (mapInstance.current && center) {
       mapInstance.current.setCenter(center);
@@ -109,10 +104,10 @@ const MapView: React.FC<MapViewProps> = ({ onSelectPlace, selectedCategory, cent
 
           onSelectPlace(placeInfo);
         });
-      
+
         selectedMarkerRef.current = marker;
       }
-      
+
     }
   }, [center, isPoiClick, selectedPlace]);
 
@@ -145,7 +140,7 @@ const MapView: React.FC<MapViewProps> = ({ onSelectPlace, selectedCategory, cent
       marker.addListener("click", () => {
         onSelectPlace(place); // triggeredByPoi=false로 인식됨
       });
-      
+
       markersRef.current.push(marker);
     });
   }, [searchResults]);
