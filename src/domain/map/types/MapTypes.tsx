@@ -9,7 +9,7 @@ export interface PlaceInfo {
 
 export interface Review {
   id: number;
-  name: string;
+  account: string;
   title: string;
   rating: number;
   content: string;
