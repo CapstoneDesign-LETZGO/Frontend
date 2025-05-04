@@ -9,7 +9,7 @@ const PlaceHeader: React.FC<Prop> = ({ placeInfo }) => {
   if (!placeInfo) return null;
   const { name, address, placePhoto } = placeInfo;
 
-  console.log("placePhoto API호출됨");
+  console.log("placePhoto API호출됨:");
   return (
     <div className="p-4 bg-white border-b border-gray-200">
       {placePhoto ? (

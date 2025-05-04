@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { PlaceInfo, Review } from "../../types/MapTypes";
 import PlaceHeader from "./PlaceHeader";
 import ReviewList from "./ReviewList";
-import ReviewForm from "./ReviewForm"; // 리뷰 작성 폼 컴포넌트
+import ReviewForm from "./ReviewForm";
 import { usePlaceInfo } from "../../hooks/usePlaceInfo";
 
 interface PlacePageProps {
@@ -11,25 +11,53 @@ interface PlacePageProps {
   onClose: () => void;
 }
 
-const PlacePage: React.FC<PlacePageProps> = ({ placeInfo, reviews, onClose }) => {
+const PlacePage: React.FC<PlacePageProps> = ({
+  placeInfo: initialPlaceInfo,
+  reviews: initialReviews,
+  onClose,
+}) => {
   const [showForm, setShowForm] = useState(false);
-  const { postReview } = usePlaceInfo();
+  const [placeInfo, setPlaceInfo] = useState<PlaceInfo>(initialPlaceInfo);
+  const [reviews, setReviews] = useState<Review[]>(initialReviews);
+
+  const { postReview, fetchPlaceInfo, deleteReview } = usePlaceInfo();
+
+  const refreshReviews = async () => {
+    const updated = await fetchPlaceInfo(placeInfo.placeId);
+    if (updated) {
+      setPlaceInfo(updated.placeInfo);
+      setReviews(updated.reviews);
+    }
+  };
 
   const handleReviewSubmit = async (formData: FormData) => {
     const success = await postReview(placeInfo.placeId, formData);
     if (success) {
       alert("리뷰가 성공적으로 등록되었습니다.");
       setShowForm(false);
-      // 새로고침 없이 처리하려면 fetchPlaceInfo로 갱신 필요 (추후 연결)
+      await refreshReviews();
     } else {
       alert("리뷰 등록에 실패했습니다.");
+    }
+  };
+
+  const handleDeleteReview = async (reviewId: number) => {
+    const ok = window.confirm("정말 이 리뷰를 삭제하시겠습니까?");
+    if (!ok) return;
+
+    const success = await deleteReview(reviewId);
+    if (success) {
+      alert("리뷰가 삭제되었습니다.");
+      await refreshReviews();
+    } else {
+      alert("리뷰 삭제에 실패했습니다.");
     }
   };
 
   return (
     <div className="bg-white rounded-lg shadow-md w-full max-w-md max-h-[90vh] overflow-y-auto flex flex-col">
       {/* 닫기 버튼 */}
-      <div className="p-2 border-b border-gray-200 flex justify-end">
+      <div className="sticky top-0 z-10 bg-white p-2 border-b border-gray-200 flex justify-end">
         <button
           onClick={onClose}
           className="bg-black text-white text-sm px-3 py-1.5 rounded hover:bg-gray-800"
@@ -60,9 +88,9 @@ const PlacePage: React.FC<PlacePageProps> = ({ placeInfo, reviews, onClose }) =>
         </div>
       )}
 
-      {/* 리뷰 영역 */}
+      {/* 리뷰 리스트 */}
       <div className="mt-4 px-4 pb-6">
-        <ReviewList reviews={reviews} />
+        <ReviewList reviews={reviews} onDelete={handleDeleteReview} />
       </div>
     </div>
   );
