@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import PostCard from '../components/PostCard';
 import CommentModal from '../components/CommentModal';
-import CommunityHeader from '../../../common/components/CommunityHeader';
 import NavigationBar from '../../../common/components/NavigationBar.tsx';
 import { useUserInfo } from '../../../common/hooks/useUserInfo';
+import CommunityHeader from "../components/CommunityHeader.tsx";
 
 const Community: React.FC = () => {
     const [isCommentOpen, setIsCommentOpen] = useState(false);
