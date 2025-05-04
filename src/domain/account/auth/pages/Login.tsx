@@ -16,14 +16,18 @@ const Login = ({ setIsLoggedIn }: LoginProps) => {
     } = useLogin(setIsLoggedIn);
 
     return (
-        <LoginForm
-            email={email}
-            password={password}
-            setEmail={setEmail}
-            setPassword={setPassword}
-            handleSocialLogin={handleSocialLogin}
-            handleLogin={handleLogin}
-        />
+        <div className="flex min-h-screen bg-[#F5F5F5]">
+            <div className="flex flex-col min-h-screen w-full max-w-md mx-auto px-4 bg-white">
+                <LoginForm
+                    email={email}
+                    password={password}
+                    setEmail={setEmail}
+                    setPassword={setPassword}
+                    handleSocialLogin={handleSocialLogin}
+                    handleLogin={handleLogin}
+                />
+            </div>
+        </div>
     );
 };
 
