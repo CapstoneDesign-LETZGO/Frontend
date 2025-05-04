@@ -1,40 +1,26 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { PlaceInfo } from "../../types/MapTypes";
-import { useAuthFetch } from "../../../../common/hooks/useAuthFetch";
+import { usePlaceInfo } from "../../hooks/usePlaceInfo";
+import markerImage from "../../../../assets/icons/map/marker_image.png"
 
 interface MapViewProps {
   onSelectPlace: (placeInfo: PlaceInfo) => void;
   selectedCategory: string | null;
+  center?: { lat: number; lng: number };
+  isPoiClick?: boolean;
+  selectedPlace?: PlaceInfo | null;
 }
 
-const MapView: React.FC<MapViewProps> = ({ onSelectPlace, selectedCategory }) => {
+const MapView: React.FC<MapViewProps> = ({ onSelectPlace, selectedCategory, center, isPoiClick, selectedPlace }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
-  const { authFetch } = useAuthFetch();
-  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const selectedMarkerRef = useRef<google.maps.Marker | null>(null); // 선택 장소용 마커
+  const { fetchPlaceSearch, searchResults } = usePlaceInfo();
 
-  const [lat, setLat] = useState<number | null>(null);
-  const [lng, setLng] = useState<number | null>(null);
-
+  
+  // 구글 맵 스크립트 로드 + 초기화
   useEffect(() => {
-    const getLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            setLat(position.coords.latitude);
-            setLng(position.coords.longitude);
-          },
-          (error) => {
-            console.error(error);
-            alert("위치 정보를 가져올 수 없습니다.");
-          }
-        );
-      } else {
-        alert("GPS를 지원하지 않습니다.");
-      }
-    };
-
     const loadMapScript = () => {
       if (document.querySelector("#google-maps-script")) {
         return Promise.resolve();
@@ -43,107 +29,128 @@ const MapView: React.FC<MapViewProps> = ({ onSelectPlace, selectedCategory }) =>
       return new Promise<void>((resolve, reject) => {
         const script = document.createElement("script");
         script.id = "google-maps-script";
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}&libraries=places`;
         script.async = true;
         script.defer = true;
-        script.onload = () => {
-          console.log("Google Maps API Loaded");
-          resolve();
-        };
-        script.onerror = (error) => {
-          console.error("Error loading Google Maps API:", error);
-          reject(error);
-        };
+        script.onload = () => resolve();
+        script.onerror = (err) => reject(err);
         document.head.appendChild(script);
-      });
+      }); 
     };
 
-    getLocation();
-    loadMapScript();
-  }, []);
-
-  useEffect(() => {
-    if (lat !== null && lng !== null && mapRef.current && window.google && window.google.maps) {
-      console.log("Initializing Google Maps...");
-      mapInstance.current = new window.google.maps.Map(mapRef.current, {
-        center: { lat, lng },
-        zoom: 16,
-        disableDefaultUI: true,
-        styles: [
-          {
-            featureType: "road",
-            elementType: "labels",
-            stylers: [{ visibility: "off" }],
-          },
-        ],
-      });
-
-      mapInstance.current.addListener("click", (event: any) => {
-        if (event.placeId) {
-          event.stop();
-          const placeInfo: PlaceInfo = {
-            name: "선택한 장소 이름(" + event.placeId + ")",
-            address: "선택한 장소 주소",
-            placeId: event.placeId,
-            placePhoto: "",
-            lat: event.latLng.lat(),
-            lng: event.latLng.lng(),
-          };
-          onSelectPlace(placeInfo);
-        }
-      });
-    }
-  }, [lat, lng]);
-
-  useEffect(() => {
-    const fetchPlaces = async () => {
-      if (!selectedCategory || !lat || !lng || !mapInstance.current) return;
-  
-      try {
-        const response = await authFetch(
-          'api/map-api/places',
-          {
-            params: {
-              query: selectedCategory,
-              lat: lat.toString(),
-              lng: lng.toString(),
-              radius: 1000,
-              num: 10,
+    const initMap = () => {
+      if (mapRef.current && center && window.google && window.google.maps) {
+        mapInstance.current = new window.google.maps.Map(mapRef.current, {
+          center,
+          zoom: 17,
+          disableDefaultUI: true,
+          styles: [
+            {
+              featureType: "road",
+              elementType: "labels",
+              stylers: [{ visibility: "off" }],
             },
-          },
-          'GET'
-        );
-  
-        // 기존 마커 제거
-        markersRef.current.forEach((marker) => marker.setMap(null));
-        markersRef.current = [];
-  
-        if (response?.data?.data) {
-          const places = response.data.data;
-  
-          places.forEach((place: any) => {
-            const marker = new window.google.maps.Marker({
-              map: mapInstance.current!,
-              position: { lat: place.lat, lng: place.lng },
-              title: place.name,
-            });
-            markersRef.current.push(marker);
-          });
-        }
-      } catch (err) {
-        console.error("백엔드로부터 장소 데이터 가져오기 실패:", err);
+          ],
+        });
+
+
+        mapInstance.current.addListener("click", (event: any) => {
+          if (event.placeId) {
+            event.stop();
+
+            const placeInfo: PlaceInfo = {
+              name: "",
+              address: "",
+              placeId: event.placeId,
+              placePhoto: "",
+              lat: event.latLng.lat(),
+              lng: event.latLng.lng(),
+            };
+
+            onSelectPlace(placeInfo); // 이때 isPoiClick === true로 설정됨
+          }
+        });
       }
     };
-  
-    fetchPlaces();
-  }, [selectedCategory, lat, lng]);
 
-  return (
-    <div
-      ref={mapRef}
-      className="w-full h-full m-0 p-0 min-h-screen z-10"
-    />
-  );
+    loadMapScript().then(initMap).catch(console.error);
+  }, []);
+ 
+  useEffect(() => {
+    if (mapInstance.current && center) {
+      mapInstance.current.setCenter(center);
+
+      if (!isPoiClick && selectedPlace) {
+        // 기존 선택 마커 제거
+        if (selectedMarkerRef.current) {
+          selectedMarkerRef.current.setMap(null);
+        }
+
+        // 새로운 마커 표시
+        const marker = new window.google.maps.Marker({
+          position: { lat: selectedPlace.lat, lng: selectedPlace.lng },
+          map: mapInstance.current,
+          title: "선택한 장소",
+          icon: {
+            url: markerImage,
+            scaledSize: new window.google.maps.Size(50, 50)
+          }
+        });
+
+        marker.addListener("click", () => {
+          const placeInfo: PlaceInfo = {
+            name: "",
+            address: "",
+            placeId: selectedPlace.placeId,
+            placePhoto: "",
+            lat: center.lat,
+            lng: center.lng,
+          };
+
+          onSelectPlace(placeInfo);
+        });
+      
+        selectedMarkerRef.current = marker;
+      }
+      
+    }
+  }, [center, isPoiClick, selectedPlace]);
+
+
+  // 카테고리 기반 장소 검색
+  useEffect(() => {
+    if (selectedCategory && center) {
+      fetchPlaceSearch(selectedCategory, center.lat, center.lng);
+    }
+  }, [selectedCategory]);
+
+  // 검색 결과 마커 표시
+  useEffect(() => {
+    if (!mapInstance.current) return;
+
+    // 기존 검색 마커 제거
+    markersRef.current.forEach((marker) => marker.setMap(null));
+    markersRef.current = [];
+
+    searchResults.forEach((place) => {
+      const marker = new window.google.maps.Marker({
+        map: mapInstance.current!,
+        position: { lat: place.lat, lng: place.lng },
+        title: place.name,
+        icon: {
+          url: markerImage,
+          scaledSize: new window.google.maps.Size(50, 50)
+        }
+      });
+      marker.addListener("click", () => {
+        onSelectPlace(place); // triggeredByPoi=false로 인식됨
+      });
+      
+      markersRef.current.push(marker);
+    });
+  }, [searchResults]);
+
+  return <div ref={mapRef} className="w-full h-full m-0 p-0 min-h-screen z-10" />;
 };
 
 export default React.memo(MapView);
