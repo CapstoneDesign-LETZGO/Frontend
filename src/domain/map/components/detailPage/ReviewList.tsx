@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Review } from "../../types/MapTypes";
-import { useProfile } from "../../../account/member/hooks/useProfile";
+import { useMyPost } from "../../../account/member/hooks/useMyPost.ts";
 
 interface ReviewListProps {
   reviews: Review[];
@@ -8,7 +8,7 @@ interface ReviewListProps {
 }
 
 const ReviewList: React.FC<ReviewListProps> = ({ reviews, onDelete }) => {
-  const { memberInfo, fetchMemberInfo } = useProfile();
+  const { memberInfo, fetchMemberInfo } = useMyPost();
 
   useEffect(() => {
     fetchMemberInfo();
