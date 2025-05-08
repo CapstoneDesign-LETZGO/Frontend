@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useAuthFetch } from './useAuthFetch';
-import { UserInfo } from '../interfaces/AuthInterface';
+import { MemberDto } from '../interfaces/MemberInterface';
 
 export const useUserInfo = () => {
-    const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+    const [userInfo, setUserInfo] = useState<MemberDto | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-
     const { authFetch } = useAuthFetch();
 
     useEffect(() => {
@@ -14,8 +13,8 @@ export const useUserInfo = () => {
             setLoading(true);
             try {
                 const response = await authFetch('/rest-api/v1/member', {}, 'GET');
-                if (response && response.data.returnCode === 'SUCCESS') {
-                    setUserInfo(response.data.data);
+                if (response.returnCode === 'SUCCESS') {
+                    setUserInfo(response.data as MemberDto);
                 } else {
                     setError('사용자 정보를 가져오는 데 실패했습니다.');
                 }

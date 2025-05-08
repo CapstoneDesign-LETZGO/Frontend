@@ -1,18 +1,26 @@
 import React from 'react';
+import {DetailPostDto} from "../../../common/interfaces/CommunityInterface.ts";
 
 interface PostCardProps {
+    post: DetailPostDto;
     openCommentModal: () => void;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ openCommentModal }) => {
+const PostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
     return (
         <div className="flex flex-col mb-1 w-full rounded-xl">
             <div className="w-full h-100 bg-gray-200 rounded-t-lg">
-                <img src="your-image-source.jpg" alt="Post" className="w-full h-full object-cover rounded-t-lg" />
+                <img
+                    src={post.imageUrls[0] || 'default-image.jpg'} // Show the first image or a default image if none exists
+                    alt="Post"
+                    className="w-full h-full object-cover rounded-t-lg"
+                />
             </div>
+            {/* Post Content */}
             <div className="p-4 bg-white">
-                <p>Your post content here</p>
+                <p>{post.content}</p>
             </div>
+            {/* Function Icons */}
             <div className="flex justify-around items-center py-2 bg-white rounded-b-lg">
                 <img src="/src/assets/icons/shape/heart_line.svg" alt="Like" className="w-5 h-5" />
                 <img

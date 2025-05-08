@@ -3,15 +3,25 @@ import ProfileHeader from "../components/ProfileHeader";
 import NavigationBar from "../../../../common/components/NavigationBar";
 import PostGrid from "../components/PostGrid";
 import EditProfileOverlay from "../components/EditProfileOvelay";
-import { useProfile } from "../hooks/useProfile";
+import { useMyPost } from "../hooks/useMyPost.ts";
 
 const ProfilePage: React.FC = () => {
     const [isEditing, setIsEditing] = useState(false);
-    const { fetchMemberInfo, updateName, memberInfo } = useProfile();
+    const { handleFetchMemberInfo, updateName, memberInfo, userLoading, userError } = useMyPost();
 
     useEffect(() => {
-        fetchMemberInfo();
-    }, []);
+        handleFetchMemberInfo(); // 회원 정보가 로드되면 호출
+    }, [handleFetchMemberInfo]);
+
+    // 로딩 상태 처리
+    if (userLoading) {
+        return <div>로딩 중...</div>;
+    }
+
+    // 에러 처리
+    if (userError) {
+        return <div>{userError}</div>;
+    }
 
     return (
         <div className="flex flex-col min-h-screen items-center bg-[#F5F5F5]">
