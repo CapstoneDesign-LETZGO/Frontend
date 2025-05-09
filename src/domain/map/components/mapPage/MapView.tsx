@@ -1,15 +1,15 @@
 import React, { useEffect, useRef } from "react";
-import { PlaceInfo } from "../../types/MapTypes";
 import { usePlaceInfo } from "../../hooks/usePlaceInfo";
 import markerImage from "../../../../assets/icons/map/marker_image.png"
 import mapStyle from "../../style/MapStyle.json"
+import { PlaceDto } from "../../../../common/interfaces/MapInterface.ts";
 
 interface MapViewProps {
-  onSelectPlace: (placeInfo: PlaceInfo) => void;
+  onSelectPlace: (placeDto: PlaceDto) => void;
   selectedCategory: string | null;
   center?: { lat: number; lng: number };
   isPoiClick?: boolean;
-  selectedPlace?: PlaceInfo | null;
+  selectedPlace?: PlaceDto | null;
 }
 
 const MapView: React.FC<MapViewProps> = ({ onSelectPlace, selectedCategory, center, isPoiClick, selectedPlace }) => {
@@ -48,23 +48,25 @@ const MapView: React.FC<MapViewProps> = ({ onSelectPlace, selectedCategory, cent
           styles: mapStyle
         });
 
+        mapInstance.current.addListener("click", (event: google.maps.MapMouseEvent) => {
+          const e = event as google.maps.MapMouseEvent & { placeId?: string };
 
-        mapInstance.current.addListener("click", (event: any) => {
-          if (event.placeId) {
+          if (e.placeId && e.latLng) {
             event.stop();
 
-            const placeInfo: PlaceInfo = {
+            const placeDto: PlaceDto = {
               name: "",
               address: "",
-              placeId: event.placeId,
+              placeId: e.placeId,
               placePhoto: "",
-              lat: event.latLng.lat(),
-              lng: event.latLng.lng(),
+              lat: e.latLng.lat(),
+              lng: e.latLng.lng(),
             };
 
-            onSelectPlace(placeInfo); // 이때 isPoiClick === true로 설정됨
+            onSelectPlace(placeDto);
           }
         });
+
       }
     };
 
@@ -93,7 +95,7 @@ const MapView: React.FC<MapViewProps> = ({ onSelectPlace, selectedCategory, cent
         });
 
         marker.addListener("click", () => {
-          const placeInfo: PlaceInfo = {
+          const placeDto: PlaceDto = {
             name: "",
             address: "",
             placeId: selectedPlace.placeId,
@@ -102,7 +104,7 @@ const MapView: React.FC<MapViewProps> = ({ onSelectPlace, selectedCategory, cent
             lng: center.lng,
           };
 
-          onSelectPlace(placeInfo);
+          onSelectPlace(placeDto);
         });
 
         selectedMarkerRef.current = marker;

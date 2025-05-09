@@ -1,37 +1,38 @@
 import { useState, useEffect } from 'react';
-import { getPosts } from '../services/CommunityService.ts';
+import { fetchPostApi } from '../services/CommunityService.ts';
 import { DetailPostDto } from '../../../common/interfaces/CommunityInterface.ts';
 import { useAuthFetch } from '../../../common/hooks/useAuthFetch';
+import {toast} from "react-toastify";
 
 export const useMainPost = () => {
     const [posts, setPosts] = useState<DetailPostDto[]>([]);
-    const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const { authFetch } = useAuthFetch();
 
-    const fetchPosts = async () => {
+    // 본인/팔로우한 유저 게시글 조회
+    const fetchPost = async () => {
         setLoading(true);
         try {
-            const response = await getPosts(authFetch);
-            if (response.returnCode === 'SUCCESS') {
-                setPosts(response.posts);
+            const { posts, success } = await fetchPostApi(authFetch);
+            if (success) {
+                setPosts(posts);
             } else {
-                setError('게시글을 가져오는데 실패했습니다.');
+                return null;
             }
         } catch (err) {
             console.error('게시글을 가져오는 중 오류 발생:', err);
-            setError('게시글을 가져오는데 오류가 발생했습니다.');
+            toast.error("게시글을 가져오는 중 오류가 발생했습니다.");
         }
         setLoading(false);
     };
 
     useEffect(() => {
-        fetchPosts();
+        fetchPost();
     }, []);
 
     const refetch = () => {
-        fetchPosts();
+        fetchPost();
     };
 
-    return { posts, loading, error, refetch };
+    return { posts, loading, refetch };
 };

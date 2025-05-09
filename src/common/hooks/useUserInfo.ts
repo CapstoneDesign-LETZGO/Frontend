@@ -1,30 +1,31 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuthFetch } from './useAuthFetch';
 import { MemberDto } from '../interfaces/MemberInterface';
+import {fetchUserInfoApi} from "../services/commonService.ts";
+import {toast} from "react-toastify";
 
 export const useUserInfo = () => {
     const [userInfo, setUserInfo] = useState<MemberDto | null>(null);
-    const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const { authFetch } = useAuthFetch();
 
-    useEffect(() => {
-        const fetchUserInfo = async () => {
-            setLoading(true);
-            try {
-                const response = await authFetch('/rest-api/v1/member', {}, 'GET');
-                if (response.returnCode === 'SUCCESS') {
-                    setUserInfo(response.data as MemberDto);
-                } else {
-                    setError('사용자 정보를 가져오는 데 실패했습니다.');
-                }
-            } catch (err) {
-                console.error('사용자 정보를 가져오는 중 오류 발생:', err);
-                setError('사용자 정보를 가져오는 데 오류가 발생했습니다.');
+    // 본인 정보 조회
+    const fetchUserInfo = async () => {
+        setLoading(true);
+        try {
+            const { user, success } = await fetchUserInfoApi(authFetch);
+            if (success) {
+                setUserInfo(user);
+            } else {
+                return null;
             }
+        } catch (err) {
+            console.error("사용자 정보를 가져오는 중 오류 발생:", err);
+            toast.error("사용자 정보를 가져오는 중 오류가 발생했습니다.");
+        } finally {
             setLoading(false);
-        };
-        fetchUserInfo();
-    }, []);
-    return { userInfo, loading, error };
+        }
+    };
+
+    return { fetchUserInfo, userInfo, loading };
 };
