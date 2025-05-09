@@ -1,0 +1,8 @@
+/* 스크롤바를 숨기는 CSS */
+* {
+    scrollbar-width: none; /* Firefox에서 스크롤바 숨기기 */
+}
+
+::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Edge에서 스크롤바 숨기기 */
+}

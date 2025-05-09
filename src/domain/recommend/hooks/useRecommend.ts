@@ -1,32 +1,29 @@
-// hooks/useRecommend.ts
-import { useEffect, useState } from "react";
+import {useCallback, useState} from "react";
 import { useAuthFetch } from "../../../common/hooks/useAuthFetch";
-import { PlaceInfo } from "../../map/types/MapTypes";
+import {PlaceDto} from "../../../common/interfaces/MapInterface.ts";
+import {fetchRecommendApi} from "../services/recommendService.ts";
+import {toast} from "react-toastify";
 
-export const useRecommend = (count: number) => {
+export const useRecommend = () => {
   const { authFetch } = useAuthFetch();
-  const [data, setData] = useState<PlaceInfo[]>([]);
+  const [recommendPlace, setRecommendPlace] = useState<PlaceDto[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchRecommend = async () => {
-      setLoading(true);
-      try {
-        const response = await authFetch(`/recommend/${count}`, {}, "GET");
-        if (response?.data?.returnCode === "SUCCESS") {
-          setData(response.data.data);
-        } else {
-          console.error("추천 장소 불러오기 실패:", response?.data?.returnMessage);
-        }
-      } catch (err) {
-        console.error("추천 장소 호출 오류:", err);
-      } finally {
-        setLoading(false);
+  // 추천 장소 조회
+  const fetchRecommend = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { places, success } = await fetchRecommendApi(authFetch);
+      if (success) {
+        setRecommendPlace(places);
       }
-    };
+    } catch (err) {
+      console.error("추천 장소 정보를 가져오는 중 오류 발생:", err);
+      toast.error("추천 장소 정보를 가져오는 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  }, [authFetch]);
 
-    fetchRecommend();
-  }, [count]);
-
-  return { data, loading };
+  return { recommendPlace, fetchRecommend, loading };
 };

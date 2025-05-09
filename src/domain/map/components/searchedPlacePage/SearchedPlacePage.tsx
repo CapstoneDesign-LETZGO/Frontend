@@ -1,10 +1,9 @@
-// ✅ SearchedPlacePage.tsx
 import React from "react";
-import { PlaceInfo } from "../../types/MapTypes";
+import { PlaceDto } from "../../../../common/interfaces/MapInterface.ts";
 
 interface Props {
-  places: PlaceInfo[];
-  onPlaceClick: (place: PlaceInfo) => void;
+  places: PlaceDto[];
+  onPlaceClick: (place: PlaceDto) => void;
 }
 
 const SearchedPlacePage: React.FC<Props> = ({ places, onPlaceClick }) => {

@@ -1,37 +1,37 @@
 import React, { useState } from "react";
-import { PlaceInfo, Review } from "../../types/MapTypes";
 import PlaceHeader from "./PlaceHeader";
 import ReviewList from "./ReviewList";
 import ReviewForm from "./ReviewForm";
 import { usePlaceInfo } from "../../hooks/usePlaceInfo";
+import { PlaceDto, Review } from "../../../../common/interfaces/MapInterface.ts";
 
 interface PlacePageProps {
-  placeInfo: PlaceInfo;
+  placeDto: PlaceDto;
   reviews: Review[];
   onClose: () => void;
 }
 
 const PlacePage: React.FC<PlacePageProps> = ({
-  placeInfo: initialPlaceInfo,
+  placeDto: initialPlaceDto,
   reviews: initialReviews,
   onClose,
 }) => {
   const [showForm, setShowForm] = useState(false);
-  const [placeInfo, setPlaceInfo] = useState<PlaceInfo>(initialPlaceInfo);
+  const [placeDto, setPlaceDto] = useState<PlaceDto>(initialPlaceDto);
   const [reviews, setReviews] = useState<Review[]>(initialReviews);
 
-  const { postReview, fetchPlaceInfo, deleteReview } = usePlaceInfo();
+  const { postReview, fetchPlaceDto, deleteReview } = usePlaceInfo();
 
   const refreshReviews = async () => {
-    const updated = await fetchPlaceInfo(placeInfo.placeId);
+    const updated = await fetchPlaceDto(placeDto.placeId);
     if (updated) {
-      setPlaceInfo(updated.placeInfo);
+      setPlaceDto(updated.placeDto);
       setReviews(updated.reviews);
     }
   };
 
   const handleReviewSubmit = async (formData: FormData) => {
-    const success = await postReview(placeInfo.placeId, formData);
+    const success = await postReview(placeDto.placeId, formData);
     if (success) {
       alert("리뷰가 성공적으로 등록되었습니다.");
       setShowForm(false);
@@ -68,7 +68,7 @@ const PlacePage: React.FC<PlacePageProps> = ({
 
       {/* 장소 정보 */}
       <div className="flex-shrink-0">
-        <PlaceHeader placeInfo={placeInfo} />
+        <PlaceHeader placeDto={placeDto} />
       </div>
 
       {/* 리뷰 작성 버튼 */}

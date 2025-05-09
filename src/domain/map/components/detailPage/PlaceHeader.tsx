@@ -1,13 +1,13 @@
 import React from "react";
-import { PlaceInfo } from "../../types/MapTypes";
+import {PlaceDto} from "../../../../common/interfaces/MapInterface.ts";
 
 interface Prop {
-  placeInfo: PlaceInfo | null;
+  placeDto: PlaceDto | null;
 }
 
-const PlaceHeader: React.FC<Prop> = ({ placeInfo }) => {
-  if (!placeInfo) return null;
-  const { name, address, placePhoto } = placeInfo;
+const PlaceHeader: React.FC<Prop> = ({ placeDto }) => {
+  if (!placeDto) return null;
+  const { name, address, placePhoto } = placeDto;
 
   console.log("placePhoto API호출됨:");
   return (

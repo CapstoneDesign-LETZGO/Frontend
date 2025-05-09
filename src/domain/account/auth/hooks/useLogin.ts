@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import { authService } from "../services/authService";
+import {toast} from "react-toastify";
 
 export const useLogin = (setIsLoggedIn?: (value: boolean) => void) => {
     const navigate = useNavigate();
@@ -30,9 +31,11 @@ export const useLogin = (setIsLoggedIn?: (value: boolean) => void) => {
                 window.location.href = redirectUrl;
             } else {
                 console.error(`${provider} 로그인 실패: redirect URL 없음`);
+                toast.error('소셜 로그인 실패: redirect URL이 없습니다.');
             }
         } catch (err) {
             console.error(`${provider} 로그인 중 에러 발생`, err);
+            toast.error('소셜 로그인 요청 중 오류가 발생했습니다.');
         }
     };
 
@@ -50,9 +53,9 @@ export const useLogin = (setIsLoggedIn?: (value: boolean) => void) => {
             navigate('/community');
         } catch (error: unknown) {
             if (error instanceof AxiosError && error.response?.status === 401) {
-                alert('로그인 실패: 이메일 또는 비밀번호를 확인해주세요.');
+                toast.error('로그인 실패: 이메일 또는 비밀번호를 확인해주세요.');
             } else {
-                alert('로그인 요청 중 오류가 발생했습니다.');
+                toast.error('로그인 요청 중 오류가 발생했습니다.');
             }
         }
     };

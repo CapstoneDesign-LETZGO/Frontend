@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import PostCard from '../components/PostCard';
+import React, {useState, useEffect, useRef} from 'react';
+import MainPostCard from '../components/MainPostCard.tsx';
 import CommentModal from '../components/CommentModal';
 import NavigationBar from '../../../common/components/NavigationBar.tsx';
 import CommunityHeader from "../components/CommunityHeader.tsx";
@@ -10,7 +10,8 @@ const Community: React.FC = () => {
     const [comments, setComments] = useState<string[]>([]);
     const [loadingComments, setLoadingComments] = useState(false);
     const [hasMoreOlderComments, setHasMoreOlderComments] = useState(true);
-    const { posts, loading: loadingPosts, error: postsError, refetch } = useMainPost();
+    const { posts, loading: loadingPosts, refetch } = useMainPost();
+    const postSectionRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         let startY = 0;
@@ -28,33 +29,38 @@ const Community: React.FC = () => {
 
         const onStart = (e: TouchEvent | MouseEvent) => {
             // 스크롤이 최상단일 때만 시작
-            canDrag = window.scrollY === 0;
+            canDrag = postSectionRef.current?.scrollTop === 0;
             if (!canDrag) return;
-
             startY = getY(e);
             isDragging = true;
             console.log('onStart:', { startY, canDrag });
         };
 
         const onMove = (e: TouchEvent | MouseEvent) => {
-            if (!isDragging || !canDrag) return;
-
+            if (!isDragging || !canDrag || !postSectionRef.current) return;
             const currentY = getY(e);
             const diffY = currentY - startY;
 
             if (diffY > 0) {  // 아래로 당기는 중
-                currentTranslateY = diffY;
+                const limitedDiffY = Math.min(diffY, 100);
+                currentTranslateY = limitedDiffY;
+                postSectionRef.current.style.transform = `translateY(${currentTranslateY}px)`;
+                postSectionRef.current.style.transition = 'none';
                 console.log('onMove: Dragging', { diffY });
             }
         };
 
         const onEnd = () => {
-            if (!isDragging) return;
+            if (!isDragging || !postSectionRef.current) return;
             isDragging = false;
             console.log('onEnd: Drag ended, currentTranslateY:', currentTranslateY);
 
+            // 원위치 애니메이션
+            postSectionRef.current.style.transition = 'transform 0.3s ease';
+            postSectionRef.current.style.transform = 'none';
+
             // 100px 이상 당겼을 때만 게시글 새로고침
-            if (canDrag && currentTranslateY > 100) {
+            if (canDrag && currentTranslateY >= 100) {
                 console.log('🔄 Refreshing posts');
                 refetch();
             }
@@ -63,20 +69,25 @@ const Community: React.FC = () => {
         };
 
         // 이벤트 등록
-        window.addEventListener('touchstart', onStart);
-        window.addEventListener('mousedown', onStart);
+        const sectionEl = postSectionRef.current;
+        if (sectionEl) {
+            sectionEl.addEventListener('touchstart', onStart);
+            sectionEl.addEventListener('mousedown', onStart);
+            sectionEl.addEventListener('touchmove', onMove);
+            sectionEl.addEventListener('mousemove', onMove);
+        }
 
-        window.addEventListener('touchmove', onMove);
-        window.addEventListener('mousemove', onMove);
-
+        // 드래그 종료는 화면 어디서든 감지
         window.addEventListener('touchend', onEnd);
         window.addEventListener('mouseup', onEnd);
 
         return () => {
-            window.removeEventListener('touchstart', onStart);
-            window.removeEventListener('mousedown', onStart);
-            window.removeEventListener('touchmove', onMove);
-            window.removeEventListener('mousemove', onMove);
+            if (sectionEl) {
+                sectionEl.removeEventListener('touchstart', onStart);
+                sectionEl.removeEventListener('mousedown', onStart);
+                sectionEl.removeEventListener('touchmove', onMove);
+                sectionEl.removeEventListener('mousemove', onMove);
+            }
             window.removeEventListener('touchend', onEnd);
             window.removeEventListener('mouseup', onEnd);
         };
@@ -118,22 +129,21 @@ const Community: React.FC = () => {
         return <div className="flex justify-center items-center min-h-screen">로딩 중...</div>;
     }
 
-    if (postsError) {
-        return <div className="flex justify-center items-center min-h-screen text-red-500">{postsError}</div>;
-    }
-
     return (
         <div className="flex flex-col min-h-screen items-center bg-[#F5F5F5]">
             <div className="flex flex-col w-full max-w-md min-h-screen relative bg-[#F5F5F5]">
                 {/* Header */}
                 <CommunityHeader />
 
-                {/* Post Cards */}
-                <section className="flex-grow overflow-y-auto mt-18 mb-15">
+                {/* Main Post Cards */}
+                <section
+                    ref={postSectionRef}
+                    className="flex-grow overflow-y-auto scrollbar-hide mt-18 mb-15"
+                >
                     {/* posts가 배열일 때만 map을 사용 */}
                     {Array.isArray(posts) && posts.length > 0 ? (
                         posts.map((post) => (
-                            <PostCard key={post.id} openCommentModal={openCommentModal} post={post} />
+                            <MainPostCard key={post.id} openCommentModal={openCommentModal} post={post} />
                         ))
                     ) : (
                         <div className="text-center">게시글이 없습니다.</div>

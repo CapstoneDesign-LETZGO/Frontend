@@ -6,14 +6,15 @@ interface PostCardProps {
     openCommentModal: () => void;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
+const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
     return (
         <div className="flex flex-col mb-1 w-full rounded-xl">
             <div className="w-full h-100 bg-gray-200 rounded-t-lg">
                 <img
-                    src={post.imageUrls[0] || 'default-image.jpg'} // Show the first image or a default image if none exists
+                    src={post.imageUrls[0] || 'default-image.jpg'}
                     alt="Post"
                     className="w-full h-full object-cover rounded-t-lg"
+                    draggable={false}
                 />
             </div>
             {/* Post Content */}
@@ -37,4 +38,4 @@ const PostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
     );
 };
 
-export default PostCard;
+export default MainPostCard;
