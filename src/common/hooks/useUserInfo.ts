@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import { useAuthFetch } from './useAuthFetch';
 import { MemberDto } from '../interfaces/MemberInterface';
 import {fetchUserInfoApi} from "../services/commonService.ts";
@@ -27,5 +27,13 @@ export const useUserInfo = () => {
         }
     };
 
-    return { fetchUserInfo, userInfo, loading };
+    useEffect(() => {
+        fetchUserInfo();
+    }, []);
+
+    const refetch = () => {
+        fetchUserInfo();
+    };
+
+    return { refetch, userInfo, loading };
 };
