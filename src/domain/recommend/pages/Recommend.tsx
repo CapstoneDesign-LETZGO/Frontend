@@ -18,9 +18,12 @@ const Recommend: React.FC = () => {
   const [selectedPlaceDto, setSelectedPlaceDto] = useState<PlaceDto | null>(null);
   const [ratedPlaces, setRatedPlaces] = useState<RatedPlace[]>([]);
   const [selectedReviews, setSelectedReviews] = useState<Review[]>([]);
-
-  const { data: allPlacesData, loading } = useRecommend(visibleCount + ignoredIds.length);
+  const { recommendPlace: allPlacesData, fetchRecommend, loading } = useRecommend();
   const { fetchPlaceDto } = usePlaceInfo();
+
+  useEffect(() => {
+    fetchRecommend();
+  }, [fetchRecommend]);
 
   useEffect(() => {
     const fetchRatings = async () => {
