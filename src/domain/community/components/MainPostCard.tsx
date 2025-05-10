@@ -1,5 +1,10 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { DetailPostDto } from "../../../common/interfaces/CommunityInterface.ts";
+import {useUtils} from "../hooks/useUtils.ts";
+import {Swiper, SwiperSlide} from "swiper/react";
+import { Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
 
 interface PostCardProps {
     post: DetailPostDto;
@@ -7,13 +12,46 @@ interface PostCardProps {
 }
 
 const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
-    const [liked, setLiked] = useState(false);
-    const [bookmarked, setBookmarked] = useState(false);
+    const { fetchLike, cancelLike, fetchSave, cancelSave } = useUtils();
+    const [liked, setLiked] = useState(post.liked || false);
+    const [likeCount, setLikeCount] = useState(post.likeCount);
+    const [saved, setSaved] = useState(post.saved || false);
     const [isExpanded, setIsExpanded] = useState(false);
-
-    const handleLikeClick = () => setLiked(prev => !prev);
-    const handleBookmarkClick = () => setBookmarked(prev => !prev);
     const handleToggleExpand = () => setIsExpanded(prev => !prev);
+
+    useEffect(() => {
+        setLiked(post.liked || false);
+        setSaved(post.saved || false);
+        setLikeCount(post.likeCount);
+    }, [post]);
+
+    const handleLikeClick = async () => {
+        const newLiked = !liked;
+        setLiked(newLiked);
+
+        // 좋아요 숫자만 +1 또는 -1 (서버에서 실제 좋아요 상태를 처리한다고 가정)
+        const newLikeCount = newLiked ? likeCount + 1 : likeCount - 1;
+        setLikeCount(newLikeCount);
+
+        // 서버로 실제 좋아요 상태를 반영하는 API 호출 (예시)
+        if (newLiked) {
+            await fetchLike(post.id); // 좋아요 추가
+        } else {
+            await cancelLike(post.id); // 좋아요 취소
+        }
+    };
+
+    const handleBookmarkClick = async () => {
+        const newSaved = !saved;
+        setSaved(newSaved);
+
+        // 서버로 실제 저장 상태를 반영하는 API 호출
+        if (newSaved) {
+            await fetchSave(post.id); // 저장 API 호출
+        } else {
+            await cancelSave(post.id); // 저장 취소 API 호출
+        }
+    };
 
     const formatNumber = (num: number) => {
         if (num >= 1_000_000) {
@@ -26,22 +64,49 @@ const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
     };
 
     // 텍스트 자르기 (한글 기준 약 50자는 2줄 분량)
-    const maxChars = 72;
-    const shouldTruncate = post.content.length > maxChars;
+    const maxChars = 84; // 기본 최대 문자 수
+    const nicknameLength = post.nickname.length;
+    const availableChars = maxChars - nicknameLength - 3; // 닉네임 길이와 "..." 을 고려하여 표시할 텍스트 길이 계산
+    const shouldTruncate = post.content.length > availableChars;
     const displayedText = isExpanded || !shouldTruncate
-        ? post.content+ ' '
-        : post.content.slice(0, maxChars) + '... ';
+        ? post.content + ' '
+        : post.content.slice(0, availableChars) + '... ';
 
     return (
         <div className="flex flex-col mb-1 w-full rounded-xl">
-            <div className="w-full h-100 bg-gray-200 rounded-t-lg">
-                <img
-                    src={post.imageUrls[0] || 'default-image.jpg'}
-                    alt="Post"
-                    className="w-full h-full object-cover rounded-t-lg"
-                    draggable={false}
-                />
+            {/* Image Slider */}
+            <div className="w-full aspect-[9/16] max-h-[500px] bg-gray-200 rounded-t-lg overflow-hidden">
+                <Swiper
+                    modules={[Pagination]}
+                    loop={true}
+                    className="h-full"
+                    direction="horizontal"
+                    pagination={{
+                        clickable: true,
+                        dynamicBullets: true,
+                        type: 'bullets',
+                    }}
+                    touchStartPreventDefault={false}
+                    touchMoveStopPropagation={false}
+                    onTouchStart={(_, event)=> {
+                        event.stopPropagation();  // stopPropagation 무력화
+                    }}
+                >
+                    {post.imageUrls.map((url, index) => (
+                        <SwiperSlide key={index}>
+                            <img
+                                src={url || 'default-image.jpg'}
+                                alt={`Post ${index}`}
+                                className="w-full h-full object-cover"
+                                draggable={false}
+                                onDragStart={(e) => e.preventDefault()}
+                                style={{ pointerEvents: 'auto' }}
+                            />
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
             </div>
+
             {/* Post Content */}
             <div className="p-4 bg-white">
                 <div className="overflow-hidden">
@@ -74,7 +139,8 @@ const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
                     </p>
                 </div>
             </div>
-            {/* Function Icons */}
+
+            {/* Util Icons */}
             <div className="flex justify-around items-center -mt-4 py-2 bg-white rounded-b-lg">
                 {/* Like Icon */}
                 <div className="flex items-center">
@@ -84,8 +150,9 @@ const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
                         className="w-5 h-5 cursor-pointer"
                         onClick={handleLikeClick}
                     />
-                    <span className="ml-1.5 text-xs">{formatNumber(post.likeCount)}</span> {/* Like Count 표시 */}
+                    <span className="ml-1.5 text-xs">{formatNumber(likeCount)}</span> {/* Like Count 표시 */}
                 </div>
+                {/* Comment Icon */}
                 <div className="flex items-center">
                     <img
                         src="/src/assets/icons/contact/message_1_line.svg"
@@ -103,7 +170,7 @@ const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
                 />
                 {/* Save Icon */}
                 <img
-                    src={bookmarked ? "/src/assets/icons/education/bookmark_fill.svg" : "/src/assets/icons/education/bookmark_line.svg"}
+                    src={saved ? "/src/assets/icons/education/bookmark_fill.svg" : "/src/assets/icons/education/bookmark_line.svg"}
                     alt="Save"
                     className="w-5 h-5 cursor-pointer"
                     onClick={handleBookmarkClick}

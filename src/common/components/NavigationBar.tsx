@@ -3,13 +3,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const NavigationBar: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-
     const isActive = (path: string) => location.pathname === path;
 
     return (
         <nav
-            className="flex justify-between items-center p-4 bg-white fixed bottom-0 left-1/2 transform -translate-x-1/2 max-w-md w-full"
-            style={{ borderTop: '0.1px solid #D1D5DB' }} // gray-300 컬러
+            className="flex justify-between items-center p-2 bg-white fixed bottom-0 left-1/2 transform -translate-x-1/2 max-w-md w-full"
+            style={{ borderTop: '0.1px solid #D1D5DB', zIndex: 1 }} // gray-300 컬러
         >
             <div onClick={() => navigate('/community')} className="ml-4">
                 <img

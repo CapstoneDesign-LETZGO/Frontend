@@ -15,7 +15,7 @@ export const useMainPost = () => {
         try {
             const { posts, success } = await fetchPostApi(authFetch);
             if (success) {
-                setPosts(posts);
+                setPosts(posts.map(post => ({ ...post })));
             } else {
                 return null;
             }
