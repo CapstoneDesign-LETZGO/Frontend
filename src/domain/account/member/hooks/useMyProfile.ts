@@ -7,7 +7,7 @@ import {toast} from "react-toastify";
 
 export const useMyProfile = () => {
   const [memberInfo, setMemberInfo] = useState<MemberDto | null>(null);
-  const { userInfo, loading: userLoading } = useUserInfo(); // useUserInfo 호출
+  const { fetchUserInfo, userInfo, loading: userLoading } = useUserInfo(); // useUserInfo 호출
   const { authFetch } = useAuthFetch();
   const [loading, setLoading] = useState(false);
 
@@ -47,11 +47,11 @@ export const useMyProfile = () => {
   );
 
   useEffect(() => {
-    fetchMemberInfo();
+    fetchUserInfo();
   }, []);
 
   const refetch = () => {
-    fetchMemberInfo();
+    fetchUserInfo();
   };
 
   return {

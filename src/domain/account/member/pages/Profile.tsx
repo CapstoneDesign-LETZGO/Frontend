@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import ProfileHeader from "../components/ProfileHeader";
-import NavigationBar from "../../../../common/components/NavigationBar";
 import PostGrid from "../components/PostGrid";
 import EditProfileOverlay from "../components/EditProfileOvelay";
 import { useMyProfile } from "../hooks/useMyProfile.ts";
@@ -82,7 +81,6 @@ const ProfilePage: React.FC = () => {
         };
     }, [refetch]);
 
-
     if (loadingProfile){
         return <div className="flex justify-center items-center min-h-screen">로딩 중...</div>;
     }
@@ -94,13 +92,9 @@ const ProfilePage: React.FC = () => {
                     <ProfileHeader onEditClick={() => setIsEditing(true)} member={memberInfo} />
                 )}
 
-                <section
-                    className="flex-grow overflow-y-auto scrollbar-hide mb-15"
-                >
+                {/* 스크롤 영역을 PostGrid만 적용 */}
+                <section className="flex-grow overflow-y-auto scrollbar-hide mb-15">
                     <PostGrid />
-                    <div className="absolute bottom-0 left-0 right-0 z-40">
-                        <NavigationBar />
-                    </div>
                 </section>
 
                 {isEditing && (
