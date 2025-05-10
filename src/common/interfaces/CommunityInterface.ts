@@ -15,5 +15,7 @@ export interface DetailPostDto {
     mapY: number;
     content: string;
     imageUrls: string[];
+    liked: boolean;
+    saved: boolean;
     createdAt: string;
 }

@@ -1,5 +1,5 @@
 import {JSX, useState} from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import {BrowserRouter as Router, Routes, Route, Navigate, useLocation} from 'react-router-dom';
 import Login from './domain/account/auth/pages/Login';
 import Signup from './domain/account/auth/pages/Signup';
 import Profile from './domain/account/member/pages/Profile';
@@ -14,6 +14,7 @@ import FindPassword from "./domain/account/auth/pages/FindPassword.tsx";
 import NavigationBar from './common/components/NavigationBar.tsx';
 import './common/styles/global.css';
 import { LetzgoToastContainer } from './common/components/LetzgoToastContainer.tsx';
+import CommunityHeader from './domain/community/components/CommunityHeader.tsx';
 
 const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('isLoggedIn') === 'true');
@@ -22,9 +23,13 @@ const App = () => {
         return isLoggedIn ? children : <Navigate to="/login" replace />;
     };
 
-    const LayoutWithNav = ({ children }: { children: JSX.Element }) => {
+    const LayoutWithHeaderAndNav = ({ children }: { children: JSX.Element }) => {
+        const location = useLocation();
+        const showCommunityHeader = location.pathname === '/community';
+
         return (
             <>
+                {showCommunityHeader && <CommunityHeader />}
                 {children}
                 <NavigationBar />
             </>
@@ -43,28 +48,28 @@ const App = () => {
                     {/* 네비게이션 바 포함된 페이지 */}
                     <Route path="/community" element={
                         <RequireAuth>
-                            <LayoutWithNav>
+                            <LayoutWithHeaderAndNav>
                                 <Community />
-                            </LayoutWithNav>
+                            </LayoutWithHeaderAndNav>
                         </RequireAuth>
                     } />
                     <Route path="/map" element={
-                        <LayoutWithNav>
+                        <LayoutWithHeaderAndNav>
                             <Map />
-                        </LayoutWithNav>
+                        </LayoutWithHeaderAndNav>
                     } />
                     <Route path="/schedule" element={
                         <RequireAuth>
-                            <LayoutWithNav>
+                            <LayoutWithHeaderAndNav>
                                 <Schedule />
-                            </LayoutWithNav>
+                            </LayoutWithHeaderAndNav>
                         </RequireAuth>
                     } />
                     <Route path="/profile" element={
                         <RequireAuth>
-                            <LayoutWithNav>
+                            <LayoutWithHeaderAndNav>
                                 <Profile />
-                            </LayoutWithNav>
+                            </LayoutWithHeaderAndNav>
                         </RequireAuth>
                     } />
 
