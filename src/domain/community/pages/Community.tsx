@@ -130,7 +130,7 @@ const Community: React.FC = () => {
     };
 
     if (loadingPosts) {
-        return <div className="flex justify-center items-center min-h-screen">로딩 중...</div>;
+        return;
     }
 
     return (

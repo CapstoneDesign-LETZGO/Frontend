@@ -141,7 +141,7 @@ const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
             </div>
 
             {/* Util Icons */}
-            <div className="flex justify-around items-center -mt-4 py-2 bg-white rounded-b-lg">
+            <div className="flex justify-between items-center -mt-4 py-2 bg-white rounded-b-lg px-6">
                 {/* Like Icon */}
                 <div className="flex items-center">
                     <img
@@ -150,23 +150,23 @@ const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
                         className="w-5 h-5 cursor-pointer"
                         onClick={handleLikeClick}
                     />
-                    <span className="ml-1.5 text-xs">{formatNumber(likeCount)}</span> {/* Like Count 표시 */}
+                    <span className="ml-1.5 text-xs min-w-[28px] text-center">{formatNumber(likeCount)}</span> {/* Like Count 표시 */}
                 </div>
                 {/* Comment Icon */}
-                <div className="flex items-center">
+                <div className="flex items-center -ml-10">
                     <img
                         src="/src/assets/icons/contact/message_1_line.svg"
                         alt="Message"
                         className="w-5 h-5 cursor-pointer"
                         onClick={openCommentModal}
                     />
-                    <span className="ml-1.5 text-xs">{formatNumber(post.commentCount)}</span> {/* Comment Count 표시 */}
+                    <span className="ml-1.5 text-xs min-w-[28px] text-center">{formatNumber(post.commentCount)}</span> {/* Comment Count 표시 */}
                 </div>
                 {/* Share Icon */}
                 <img
                     src="/src/assets/icons/file/external_link_line.svg"
                     alt="Share"
-                    className="w-5 h-5"
+                    className="w-5 h-5 -ml-6"
                 />
                 {/* Save Icon */}
                 <img

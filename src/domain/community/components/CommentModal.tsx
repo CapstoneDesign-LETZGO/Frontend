@@ -193,9 +193,9 @@ const CommentModal: React.FC<CommentModalProps> = ({
                 <div className="flex items-center p-2 border-t border-gray-300"
                      style={{ borderTop: '0.1px solid #D1D5DB' }}>
                     <img
-                        src="src/assets/icons/user/user_2_line.svg"
+                        src="src/assets/icons/user/user_4_line.svg"
                         alt="User Profile"
-                        className="w-8 h-8 rounded-full ml-4"
+                        className="w-8 h-8 rounded-full ml-2"
                     />
                     <input
                         type="text"
@@ -208,7 +208,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
                         <img
                             src="src/assets/icons/arrow/arrow_up_line.svg"
                             alt="Send Comment"
-                            className="w-6 h-6 mr-4 cursor-pointer"
+                            className="w-6 h-6 mr-2 cursor-pointer"
                         />
                     )}
                 </div>
