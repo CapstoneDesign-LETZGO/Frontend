@@ -174,13 +174,13 @@ const CommentModal: React.FC<CommentModalProps> = ({
                         alt="Minimize"
                         className="w-16 h-5 rounded-full mb-1"
                     />
-                    <h2 className="mb-2 text-sm font-semibold">댓글</h2>
+                    <h2 className="mb-2 text-xs font-semibold">댓글</h2>
                 </div>
 
                 {/* Comments List */}
                 <div ref={commentsRef} className="flex-1 overflow-y-auto px-4 py-2">
                     {comments.map((comment, index) => (
-                        <div key={index} className="p-2 border-b text-sm border-gray-300">
+                        <div key={index} className="p-2 border-b text-xs border-gray-300">
                             <p>{comment}</p>
                         </div>
                     ))}
@@ -202,7 +202,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
                         placeholder="댓글을 입력하세요..."
                         value={comment}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-2 text-sm focus:outline-none"
+                        className="w-full px-4 py-2 text-xs focus:outline-none"
                     />
                     {comment && (
                         <img
