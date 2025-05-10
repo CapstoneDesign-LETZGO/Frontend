@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import {cancelLikeApi, cancelSaveApi, fetchLikeApi, fetchSaveApi} from '../services/CommunityService';
+import {cancelLikePostApi, cancelSavePostApi, likePostApi, savePostApi} from '../services/PostService';
 import { useAuthFetch } from '../../../common/hooks/useAuthFetch';
 import { toast } from 'react-toastify';
 
@@ -8,10 +8,10 @@ export const useUtils = () => {
     const { authFetch } = useAuthFetch();
 
     // 게시글 좋아요
-    const fetchLike = async (postId: number) => {
+    const likePost = async (postId: number) => {
         setLoading(true);
         try {
-            const { success } = await fetchLikeApi(authFetch, postId);
+            const { success } = await likePostApi(authFetch, postId);
             if (!success) {
                 toast.error('좋아요 처리에 실패했습니다.');
             }
@@ -23,10 +23,10 @@ export const useUtils = () => {
     };
 
     // 게시글 좋아요 취소
-    const cancelLike = async (postId: number) => {
+    const cancelLikePost = async (postId: number) => {
         setLoading(true);
         try {
-            const { success } = await cancelLikeApi(authFetch, postId);
+            const { success } = await cancelLikePostApi(authFetch, postId);
             if (!success) {
                 toast.error('좋아요 취소에 실패했습니다.');
             }
@@ -38,10 +38,10 @@ export const useUtils = () => {
     };
 
     // 게시글 저장
-    const fetchSave = async (postId: number) => {
+    const savePost = async (postId: number) => {
         setLoading(true);
         try {
-            const { success } = await fetchSaveApi(authFetch, postId);
+            const { success } = await savePostApi(authFetch, postId);
             if (!success) {
                 toast.error('게시글 저장에 실패했습니다.');
             }
@@ -53,10 +53,10 @@ export const useUtils = () => {
     };
 
     // 게시글 저장 취소
-    const cancelSave = async (postId: number) => {
+    const cancelSavePost = async (postId: number) => {
         setLoading(true);
         try {
-            const { success } = await cancelSaveApi(authFetch, postId);
+            const { success } = await cancelSavePostApi(authFetch, postId);
             if (!success) {
                 toast.error('게시글 저장 취소에 실패했습니다.');
             }
@@ -67,5 +67,5 @@ export const useUtils = () => {
         setLoading(false);
     };
 
-    return { fetchLike, cancelLike, fetchSave, cancelSave, loading };
+    return { likePost, cancelLikePost, savePost, cancelSavePost, loading };
 };

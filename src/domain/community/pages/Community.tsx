@@ -1,9 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react';
 import MainPostCard from '../components/MainPostCard.tsx';
 import CommentModal from '../components/CommentModal';
-import NavigationBar from '../../../common/components/NavigationBar.tsx';
 import CommunityHeader from "../components/CommunityHeader.tsx";
-import { useMainPost } from '../hooks/useMainPost.ts';
+import { usePost } from '../hooks/usePost.ts';
 
 const Community: React.FC = () => {
     const [isCommentOpen, setIsCommentOpen] = useState(false);
@@ -16,7 +15,7 @@ const Community: React.FC = () => {
     const isDraggingRef = useRef(false);
     const showSpinnerRef = useRef(false); // 리렌더 없는 스피너 표시용
     const [, setRerender] = useState(false); // 강제 리렌더용 (아래 참고)
-    const { posts, loading: loadingPosts, refetch } = useMainPost();
+    const { posts, loading: loadingPosts, refetch } = usePost();
     const postSectionRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -174,9 +173,6 @@ const Community: React.FC = () => {
                     loading={loadingComments}
                     hasMoreOlderComments={hasMoreOlderComments}
                 />
-
-                {/* NavigationBar */}
-                <NavigationBar />
             </div>
         </div>
     );

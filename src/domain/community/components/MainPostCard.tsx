@@ -12,7 +12,7 @@ interface PostCardProps {
 }
 
 const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
-    const { fetchLike, cancelLike, fetchSave, cancelSave } = useUtils();
+    const { likePost, cancelLikePost, savePost, cancelSavePost } = useUtils();
     const [liked, setLiked] = useState(post.liked || false);
     const [likeCount, setLikeCount] = useState(post.likeCount);
     const [saved, setSaved] = useState(post.saved || false);
@@ -35,9 +35,9 @@ const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
 
         // 서버로 실제 좋아요 상태를 반영하는 API 호출 (예시)
         if (newLiked) {
-            await fetchLike(post.id); // 좋아요 추가
+            await likePost(post.id); // 좋아요 추가
         } else {
-            await cancelLike(post.id); // 좋아요 취소
+            await cancelLikePost(post.id); // 좋아요 취소
         }
     };
 
@@ -47,9 +47,9 @@ const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
 
         // 서버로 실제 저장 상태를 반영하는 API 호출
         if (newSaved) {
-            await fetchSave(post.id); // 저장 API 호출
+            await savePost(post.id); // 저장 API 호출
         } else {
-            await cancelSave(post.id); // 저장 취소 API 호출
+            await cancelSavePost(post.id); // 저장 취소 API 호출
         }
     };
 

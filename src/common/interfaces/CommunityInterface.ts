@@ -19,3 +19,19 @@ export interface DetailPostDto {
     saved: boolean;
     createdAt: string;
 }
+
+export interface CommentForm {
+    content: string;
+    superCommentId: number | string;
+}
+
+export interface CommentDto {
+    id: number;
+    memberId: number;
+    nickname: string;
+    profileImageUrl: string;
+    likeCount: number;
+    content: string;
+    superCommentId: number | null;
+    createdAt: string;
+}
