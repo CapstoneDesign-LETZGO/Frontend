@@ -16,7 +16,6 @@ import './common/styles/global.css';
 import { LetzgoToastContainer } from './common/components/LetzgoToastContainer.tsx';
 import CommunityHeader from './domain/community/components/CommunityHeader.tsx';
 import { useLocation } from 'react-router-dom';
-import FindPassword from './domain/account/auth/pages/FindPassword.tsx';
 
 import SelectRegion from './domain/schedule/pages/SelectRegion';
 import RegisterSchedule from './domain/schedule/pages/RegisterSchedule';
