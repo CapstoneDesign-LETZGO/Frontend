@@ -16,6 +16,14 @@ import './common/styles/global.css';
 import { LetzgoToastContainer } from './common/components/LetzgoToastContainer.tsx';
 import CommunityHeader from './domain/community/components/CommunityHeader.tsx';
 import { useLocation } from 'react-router-dom';
+import FindPassword from './domain/account/auth/pages/FindPassword.tsx';
+
+import SelectRegion from './domain/schedule/pages/SelectRegion';
+import RegisterSchedule from './domain/schedule/pages/RegisterSchedule';
+import ScheduleList from './domain/schedule/pages/ScheduleList';
+import { ScheduleProvider } from './domain/schedule/contexts/ScheduleContext';
+
+
 
 const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('isLoggedIn') === 'true');
@@ -94,6 +102,29 @@ const App = () => {
                         <RequireAuth>
                             <Recommend />
                         </RequireAuth>
+                    } />
+
+                    {/* 일정 등록 플로우: ScheduleProvider 적용 */}
+                    <Route path="/schedule/region" element={
+                    <RequireAuth>
+                      <ScheduleProvider>
+                        <SelectRegion />
+                      </ScheduleProvider>
+                    </RequireAuth>
+                    } />
+                    <Route path="/schedule/register" element={
+                    <RequireAuth>
+                      <ScheduleProvider>
+                        <RegisterSchedule />
+                      </ScheduleProvider>
+                    </RequireAuth>
+                    } />
+                    <Route path="/schedule/list" element={
+                    <RequireAuth>
+                      <ScheduleProvider>
+                        <ScheduleList />
+                      </ScheduleProvider>
+                    </RequireAuth>
                     } />
 
                     {/* 기본 경로 */}
