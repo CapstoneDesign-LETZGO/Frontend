@@ -51,7 +51,7 @@ export const postReviewApi = async (
         },
         'POST'
     );
-    return response?.data?.returnCode === 'SUCCESS';
+    return response?.returnCode === 'SUCCESS';
   } catch (err) {
     console.error('리뷰 등록 중 오류:', err);
     return false;
@@ -73,7 +73,7 @@ export const deleteReviewApi = async (
         undefined, // DELETE에서는 body 필요 없음
         'DELETE'
     );
-    return response?.data?.returnCode === 'SUCCESS';
+    return response?.returnCode === 'SUCCESS';
   } catch (err) {
     console.error('리뷰 삭제 중 오류:', err);
     return false;

@@ -73,6 +73,7 @@ const MapView: React.FC<MapViewProps> = ({ onSelectPlace, selectedCategory, cent
     loadMapScript().then(initMap).catch(console.error);
   }, []);
 
+
   useEffect(() => {
     if (mapInstance.current && center) {
       mapInstance.current.setCenter(center);

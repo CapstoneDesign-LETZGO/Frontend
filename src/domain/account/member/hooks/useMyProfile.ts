@@ -46,6 +46,8 @@ export const useMyProfile = () => {
       [authFetch, fetchMemberInfo]
   );
 
+  
+
   useEffect(() => {
     fetchUserInfo();
   }, []);

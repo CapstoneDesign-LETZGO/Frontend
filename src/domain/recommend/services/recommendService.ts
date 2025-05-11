@@ -11,7 +11,7 @@ export const fetchRecommendApi = async (
 ): Promise<{ places: PlaceDto[]; success: boolean }> => {
     try {
         const response = await authFetch<ApiResponse<{ data: PlaceDto[] }>>(
-            `/recommend`,
+            `/rest-api/v1/recommend`,
             {},
             'GET'
         );
