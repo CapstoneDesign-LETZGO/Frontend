@@ -15,6 +15,7 @@ import NavigationBar from './common/components/NavigationBar.tsx';
 import './common/styles/global.css';
 import { LetzgoToastContainer } from './common/components/LetzgoToastContainer.tsx';
 import CommunityHeader from './domain/community/components/CommunityHeader.tsx';
+import { useLocation } from 'react-router-dom';
 
 const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('isLoggedIn') === 'true');
