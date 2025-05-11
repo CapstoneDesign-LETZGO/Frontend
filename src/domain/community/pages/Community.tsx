@@ -5,10 +5,8 @@ import CommunityHeader from "../components/CommunityHeader.tsx";
 import { usePost } from '../hooks/usePost.ts';
 
 const Community: React.FC = () => {
+    const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
     const [isCommentOpen, setIsCommentOpen] = useState(false);
-    const [comments, setComments] = useState<string[]>([]);
-    const [loadingComments, setLoadingComments] = useState(false);
-    const [hasMoreOlderComments, setHasMoreOlderComments] = useState(true);
     const startYRef = useRef(0);
     const canDragRef = useRef(false);
     const currentTranslateYRef = useRef(0);
@@ -96,36 +94,14 @@ const Community: React.FC = () => {
         };
     }, [refetchPost]);
 
-    const loadComments = (isOlder: boolean) => {
-        if (loadingComments) return;
-        setLoadingComments(true);
-
-        setTimeout(() => {
-            const newComments = isOlder
-                ? ['이전 댓글 1', '이전 댓글 2']
-                : ['최신 댓글 1', '최신 댓글 2'];
-
-            if (isOlder) {
-                if (comments.length > 6) {
-                    setHasMoreOlderComments(false);
-                }
-                setComments([...newComments, ...comments]);
-            } else {
-                setComments([...comments, ...newComments]);
-            }
-            setLoadingComments(false);
-        }, 1000);
-    };
-
-    const openCommentModal = () => {
+    const openCommentModal = (postId: number) => {
+        setSelectedPostId(postId);
         setIsCommentOpen(true);
-        setComments([]);
-        setHasMoreOlderComments(true);
-        loadComments(false);
     };
 
     const closeCommentModal = () => {
         setIsCommentOpen(false);
+        setSelectedPostId(null);
     };
 
     if (loadingPosts) {
@@ -155,7 +131,7 @@ const Community: React.FC = () => {
                         posts.map((post) => (
                             <MainPostCard
                                 key={`${post.id}-${post.likeCount}`}
-                                openCommentModal={openCommentModal}
+                                openCommentModal={() => openCommentModal(post.id)}
                                 post={post}
                             />
                         ))
@@ -168,10 +144,7 @@ const Community: React.FC = () => {
                 <CommentModal
                     isOpen={isCommentOpen}
                     closeModal={closeCommentModal}
-                    comments={comments}
-                    loadComments={loadComments}
-                    loading={loadingComments}
-                    hasMoreOlderComments={hasMoreOlderComments}
+                    postId={selectedPostId}
                 />
             </div>
         </div>

@@ -1,26 +1,22 @@
 import React, { useRef, useEffect, useState } from 'react';
+import {useComment} from "../hooks/useComment.ts";
+import CommentList from './CommentList.tsx';
 
 interface CommentModalProps {
     isOpen: boolean;
     closeModal: () => void;
-    comments: string[];
-    loadComments: (isOlder: boolean) => void;
-    loading: boolean;
-    hasMoreOlderComments: boolean;
+    postId: number | null;
 }
 
-const CommentModal: React.FC<CommentModalProps> = ({
-                                                       isOpen,
-                                                       closeModal,
-                                                       comments,
-                                                       loading,
-                                                   }) => {
+const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId}) => {
     const commentsRef = useRef<HTMLDivElement>(null);
     const modalRef = useRef<HTMLDivElement>(null);
     const headerRef = useRef<HTMLDivElement>(null);
     const [translateY, setTranslateY] = useState('100%');
     const [isVisible, setIsVisible] = useState(false);
     const [comment, setComment] = useState('');
+    const [superCommentId, setSuperCommentId] = useState<number | null>(null); // 댓글 or 답글 구분
+    const { comments, addComment, updateComment, deleteComment, likeComment, cancelLikeComment, loading, refetchComment } = useComment(postId || 0);
 
     useEffect(() => {
         if (isOpen) {
@@ -151,6 +147,10 @@ const CommentModal: React.FC<CommentModalProps> = ({
 
     if (!isVisible) return null;
 
+    if (loading) {
+        return;
+    }
+
     return (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-end z-50">
             <div
@@ -179,14 +179,18 @@ const CommentModal: React.FC<CommentModalProps> = ({
 
                 {/* Comments List */}
                 <div ref={commentsRef} className="flex-1 overflow-y-auto px-4 py-2">
-                    {comments.map((comment, index) => (
-                        <div key={index} className="p-2 border-b text-xs border-gray-300">
-                            <p>{comment}</p>
-                        </div>
-                    ))}
-                    {loading && (
-                        <div className="text-center py-2 text-gray-500">로딩 중...</div>
-                    )}
+                    <CommentList
+                        comments={comments}
+                        onReplyClick={(id) => setSuperCommentId(id)}
+                        onLikeClick={(id) => likeComment(id)}
+                        onCancelLikeClick={(id) => cancelLikeComment(id)}
+                        onUpdateClick={(id, content) => updateComment(id, content)}
+                        onDeleteClick={(id) => {
+                            if (window.confirm('댓글을 삭제하시겠습니까?')) {
+                                deleteComment(id);
+                            }
+                        }}
+                    />
                 </div>
 
                 {/* Comment Input */}
@@ -209,6 +213,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
                             src="src/assets/icons/arrow/arrow_up_line.svg"
                             alt="Send Comment"
                             className="w-6 h-6 mr-2 cursor-pointer"
+                            onClick={() => addComment(postId ?? 0, comment, superCommentId)}
                         />
                     )}
                 </div>

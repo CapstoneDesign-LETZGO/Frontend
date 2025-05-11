@@ -120,9 +120,9 @@ export const useComment = (postId: number) => {
         fetchComment(postId);
     }, []);
 
-    const refetch = () => {
+    const refetchComment = () => {
         fetchComment(postId);
     };
 
-    return { comments, addComment, updateComment, deleteComment, likeComment, cancelLikeComment, loading, refetch };
+    return { comments, addComment, updateComment, deleteComment, likeComment, cancelLikeComment, loading, refetchComment };
 };
