@@ -7,7 +7,7 @@ import PlacePage from "../components/detailPage/PlacePage";
 import SearchedPlacePage from "../components/searchedPlacePage/SearchedPlacePage";
 import { usePlaceInfo } from "../hooks/usePlaceInfo";
 import { motion, AnimatePresence } from "framer-motion";
-import {PlaceDto, Review} from "../../../common/interfaces/MapInterface.ts";
+import { PlaceDto, Review } from "../../../common/interfaces/MapInterface.ts";
 
 const Map: React.FC = () => {
   const [placeDto, setPlaceDto] = useState<PlaceDto | null>(null);
@@ -17,7 +17,7 @@ const Map: React.FC = () => {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [isPoiClick, setIsPoiClick] = useState(false);
-  const {fetchPlaceDto, fetchPlaceSearch, searchResults, loading: loadingMap} = usePlaceInfo();
+  const { fetchPlaceDto, fetchPlaceSearch, searchResults, loading: loadingMap } = usePlaceInfo();
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -86,9 +86,9 @@ const Map: React.FC = () => {
     setIsSearching(false);
   };
 
-  if (loadingMap) {
-    return <div className="flex justify-center items-center min-h-screen">로딩 중...</div>;
-  }
+  // if (loadingMap) {
+  //   return <div className="flex justify-center items-center min-h-screen">로딩 중...</div>;
+  // } //검색결과 마커안보임 문제
 
   return (
     <div className="flex flex-col min-h-screen items-center bg-[#F5F5F5]">
@@ -125,7 +125,7 @@ const Map: React.FC = () => {
             </div>
             <SearchedPlacePage
               places={searchResults}
-              onPlaceClick={(place) =>  handleSelectPlace(place, false)}
+              onPlaceClick={(place) => handleSelectPlace(place, false)}
             />
           </div>
         )}

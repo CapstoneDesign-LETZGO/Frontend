@@ -1,5 +1,5 @@
-import {JSX, useState} from 'react';
-import {BrowserRouter as Router, Routes, Route, Navigate, useLocation} from 'react-router-dom';
+import { JSX, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './domain/account/auth/pages/Login';
 import Signup from './domain/account/auth/pages/Signup';
 import Profile from './domain/account/member/pages/Profile';
@@ -15,6 +15,7 @@ import NavigationBar from './common/components/NavigationBar.tsx';
 import './common/styles/global.css';
 import { LetzgoToastContainer } from './common/components/LetzgoToastContainer.tsx';
 import CommunityHeader from './domain/community/components/CommunityHeader.tsx';
+import { useLocation } from 'react-router-dom';
 
 const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('isLoggedIn') === 'true');

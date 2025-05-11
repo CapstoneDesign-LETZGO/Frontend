@@ -6,7 +6,7 @@ import PlacePage from "../../map/components/detailPage/PlacePage";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRecommend } from "../hooks/useRecommend";
 import { usePlaceInfo } from "../../map/hooks/usePlaceInfo";
-import {PlaceDto, Review} from "../../../common/interfaces/MapInterface.ts";
+import { PlaceDto, Review } from "../../../common/interfaces/MapInterface.ts";
 
 interface RatedPlace extends PlaceDto {
   averageRating: number;
@@ -23,7 +23,7 @@ const Recommend: React.FC = () => {
 
   useEffect(() => {
     fetchRecommend();
-  }, [fetchRecommend]);
+  }, []);
 
   useEffect(() => {
     const fetchRatings = async () => {

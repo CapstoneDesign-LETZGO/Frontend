@@ -44,6 +44,8 @@ export const useMyProfile = () => {
     }
   }
 
+  
+
   useEffect(() => {
     refetch();
   }, []);
