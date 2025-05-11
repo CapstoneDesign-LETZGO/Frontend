@@ -1,0 +1,31 @@
+/* 스크롤바를 숨기는 CSS */
+* {
+    scrollbar-width: none; /* Firefox에서 스크롤바 숨기기 */
+}
+
+::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Edge에서 스크롤바 숨기기 */
+}
+
+/* swiper-pagination에 필요한 스타일 추가 */
+.swiper-pagination {
+    position: absolute;
+    bottom: 10px; /* 페이지네이션 위치 조정 */
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.swiper-pagination-bullet {
+    width: 5px; /* 점의 크기 */
+    height: 5px; /* 점의 크기 */
+    margin: 0 5px; /* 점 사이 간격 */
+    background-color: rgba(0, 0, 0, 0.4); /* 기본 점 색 */
+    border-radius: 50%;
+    opacity: 1; /* 불투명도 */
+}
+
+.swiper-pagination-bullet-active {
+    background-color: lightgray; /* 활성화된 점 색상 */
+}

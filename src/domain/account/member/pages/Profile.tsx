@@ -1,17 +1,87 @@
 import React, { useEffect, useState } from "react";
 import ProfileHeader from "../components/ProfileHeader";
-import NavigationBar from "../../../../common/components/NavigationBar";
 import PostGrid from "../components/PostGrid";
 import EditProfileOverlay from "../components/EditProfileOvelay";
-import { useProfile } from "../hooks/useProfile";
+import PostDetailOverlay from "../components/PostDetailOverlay";
+import { useMyProfile } from "../hooks/useMyProfile";
+import { usePost } from "../../../community/hooks/usePost";
+import {DetailPostDto} from "../../../../common/interfaces/CommunityInterface";
 
 const ProfilePage: React.FC = () => {
     const [isEditing, setIsEditing] = useState(false);
-    const { fetchMemberInfo, updateName, memberInfo } = useProfile();
+    const [selectedPost, setSelectedPost] = useState<DetailPostDto | null>(null);
+
+    const { updateName, memberInfo, loading: loadingProfile, refetch } = useMyProfile();
+    const { posts, loading: loadingPosts, refetchPost } = usePost('member', memberInfo?.id);
 
     useEffect(() => {
-        fetchMemberInfo();
-    }, []);
+        let startY = 0;
+        let isDragging = false;
+        let canDrag = false;
+        let currentTranslateY = 0;
+
+        const getY = (e: TouchEvent | MouseEvent) =>
+            "touches" in e ? e.touches[0]?.clientY ?? 0 : e.clientY;
+
+        const onStart = (e: TouchEvent | MouseEvent) => {
+            canDrag = window.scrollY === 0 || document.documentElement.scrollTop === 0;
+            if (!canDrag) return;
+            startY = getY(e);
+            isDragging = true;
+        };
+
+        const onMove = (e: TouchEvent | MouseEvent) => {
+            if (!isDragging || !canDrag) return;
+            const currentY = getY(e);
+            const diffY = currentY - startY;
+
+            if (diffY > 0) {
+                currentTranslateY = Math.min(diffY, 100);
+                document.body.style.transform = `translateY(${currentTranslateY}px)`;
+                document.body.style.transition = "none";
+            }
+        };
+
+        const onEnd = () => {
+            if (!isDragging) return;
+            isDragging = false;
+            document.body.style.transition = "transform 0.3s ease";
+            document.body.style.transform = "none";
+
+            if (canDrag && currentTranslateY >= 100) {
+                refetch();
+                if (memberInfo) {
+                    refetchPost();
+                }
+            }
+            currentTranslateY = 0;
+            canDrag = false;
+        };
+
+        window.addEventListener("touchstart", onStart);
+        window.addEventListener("mousedown", onStart);
+        window.addEventListener("touchmove", onMove);
+        window.addEventListener("mousemove", onMove);
+        window.addEventListener("touchend", onEnd);
+        window.addEventListener("mouseup", onEnd);
+
+        return () => {
+            window.removeEventListener("touchstart", onStart);
+            window.removeEventListener("mousedown", onStart);
+            window.removeEventListener("touchmove", onMove);
+            window.removeEventListener("mousemove", onMove);
+            window.removeEventListener("touchend", onEnd);
+            window.removeEventListener("mouseup", onEnd);
+        };
+    }, [refetch, refetchPost]);
+
+    if (loadingProfile) {
+        return;
+    }
+
+    if (loadingPosts) {
+        return;
+    }
 
     return (
         <div className="flex flex-col min-h-screen items-center bg-[#F5F5F5]">
@@ -20,18 +90,31 @@ const ProfilePage: React.FC = () => {
                     <ProfileHeader onEditClick={() => setIsEditing(true)} member={memberInfo} />
                 )}
 
-                <PostGrid />
-                <div className="absolute bottom-0 left-0 right-0 z-40">
-                    <NavigationBar />
-                </div>
+                <section className="flex-grow overflow-y-auto scrollbar-hide mb-15">
+                    <PostGrid posts={posts} onPostClick={(post) => setSelectedPost(post)} />
+                </section>
 
                 {isEditing && (
                     <EditProfileOverlay
                         onClose={() => setIsEditing(false)}
                         onSubmit={async (name) => {
                             const success = await updateName(name);
-                            if (success) setIsEditing(false);
+                            if (success) {
+                                setIsEditing(false);
+                                refetch();
+                                if (memberInfo) {
+                                    refetchPost();
+                                }
+                            }
                         }}
+                    />
+                )}
+
+                {selectedPost && (
+                    <PostDetailOverlay
+                        post={selectedPost}
+                        allPosts={posts}
+                        onClose={() => setSelectedPost(null)}
                     />
                 )}
             </div>

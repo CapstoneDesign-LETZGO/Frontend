@@ -3,24 +3,27 @@ import PlaceCard from "../components/PlaceCard";
 import MoreButton from "../components/MoreButton";
 import NavigationBar from "../../../common/components/NavigationBar";
 import PlacePage from "../../map/components/detailPage/PlacePage";
-import { PlaceInfo, Review } from "../../map/types/MapTypes";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRecommend } from "../hooks/useRecommend";
 import { usePlaceInfo } from "../../map/hooks/usePlaceInfo";
+import { PlaceDto, Review } from "../../../common/interfaces/MapInterface.ts";
 
-interface RatedPlace extends PlaceInfo {
+interface RatedPlace extends PlaceDto {
   averageRating: number;
 }
 
 const Recommend: React.FC = () => {
   const [visibleCount, setVisibleCount] = useState(5);
   const [ignoredIds, setIgnoredIds] = useState<string[]>([]);
-  const [selectedPlaceInfo, setSelectedPlaceInfo] = useState<PlaceInfo | null>(null);
+  const [selectedPlaceDto, setSelectedPlaceDto] = useState<PlaceDto | null>(null);
   const [ratedPlaces, setRatedPlaces] = useState<RatedPlace[]>([]);
   const [selectedReviews, setSelectedReviews] = useState<Review[]>([]);
+  const { recommendPlace: allPlacesData, fetchRecommend, loading } = useRecommend();
+  const { fetchPlaceDto } = usePlaceInfo();
 
-  const { data: allPlacesData, loading } = useRecommend(visibleCount + ignoredIds.length);
-  const { fetchPlaceInfo } = usePlaceInfo();
+  useEffect(() => {
+    fetchRecommend();
+  }, []);
 
   useEffect(() => {
     const fetchRatings = async () => {
@@ -29,7 +32,7 @@ const Recommend: React.FC = () => {
 
       const results = await Promise.all(
         sliced.map(async (place) => {
-          const data = await fetchPlaceInfo(place.placeId);
+          const data = await fetchPlaceDto(place.placeId);
           const reviews = data?.reviews ?? [];
           const avg =
             reviews.length === 0 ? 0 : Number((reviews.reduce((acc, cur) => acc + cur.rating, 0) / reviews.length).toFixed(1));
@@ -48,10 +51,10 @@ const Recommend: React.FC = () => {
 
   const handleMoreClick = () => setVisibleCount((prev) => prev + 2);
   const handleIgnore = (id: string) => setIgnoredIds((prev) => [...prev, id]);
-  const handlePlaceClick = async (place: PlaceInfo) => {
-    const result = await fetchPlaceInfo(place.placeId);
+  const handlePlaceClick = async (place: PlaceDto) => {
+    const result = await fetchPlaceDto(place.placeId);
     if (result) {
-      setSelectedPlaceInfo(result.placeInfo); // 장소
+      setSelectedPlaceDto(result.placeDto); // 장소
       setSelectedReviews(result.reviews);     // 리뷰
     }
   };
@@ -89,7 +92,7 @@ const Recommend: React.FC = () => {
         </div>
 
         <AnimatePresence>
-          {selectedPlaceInfo && (
+          {selectedPlaceDto && (
             <div className="absolute inset-0 flex items-center justify-center z-50 bg-black/40 backdrop-blur-sm px-4">
               <motion.div
                 className="w-full max-w-md"
@@ -99,9 +102,9 @@ const Recommend: React.FC = () => {
                 transition={{ duration: 0.3 }}
               >
                 <PlacePage
-                  placeInfo={selectedPlaceInfo}
+                  placeDto={selectedPlaceDto}
                   reviews={selectedReviews}
-                  onClose={() => setSelectedPlaceInfo(null)}
+                  onClose={() => setSelectedPlaceDto(null)}
                 />
               </motion.div>
             </div>

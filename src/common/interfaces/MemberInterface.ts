@@ -1,4 +1,4 @@
-export interface UserInfo {
+export interface MemberDto {
     id: number;
     name: string;
     nickName: string;

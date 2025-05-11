@@ -1,4 +1,4 @@
-export interface PlaceInfo {
+export interface PlaceDto {
   name: string;
   address: string;
   placeId: string;
@@ -14,13 +14,4 @@ export interface Review {
   rating: number;
   content: string;
   photoDir: string;
-}
-
-export interface ApiResponse {
-  returnCode: string;
-  returnMessage: string;
-  data: {
-    placeinfo: PlaceInfo;
-    reviews: Review[];
-  };
 }
