@@ -7,7 +7,7 @@ import {toast} from "react-toastify";
 
 export const useMyProfile = () => {
   const [memberInfo, setMemberInfo] = useState<MemberDto | null>(null);
-  const { fetchUserInfo, userInfo, loading: userLoading } = useUserInfo(); // useUserInfo 호출
+  const { refetch, userInfo, loading: userLoading } = useUserInfo(); // useUserInfo 호출
   const { authFetch } = useAuthFetch();
   const [loading, setLoading] = useState(false);
 
@@ -26,41 +26,29 @@ export const useMyProfile = () => {
   }, [userInfo, userLoading, fetchMemberInfo]);
 
   // 이름 수정
-  const updateName = useCallback(
-      async (newName: string): Promise<boolean> => {
-        setLoading(true);
-        try {
-          const success = await updateNameApi(authFetch, newName);
-          if (success) {
-            await fetchMemberInfo(); // 이름 변경 후 정보 다시 로드
-          }
-          return success;
-        } catch (err) {
-          console.error("이름 변경 중 오류 발생:", err);
-          toast.error("이름 변경 중 오류가 발생했습니다.");
-          return false;
-        } finally {
-          setLoading(false);
-        }
-      },
-      [authFetch, fetchMemberInfo]
-  );
+  const updateName = async (newName: string) => {
+    setLoading(true);
+    try {
+      const { success } = await updateNameApi(authFetch, newName);
+      if (!success) {
+        toast.error('이름 수정에 실패했습니다.');
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error("이름 변경 중 오류 발생:", err);
+      toast.error("이름 변경 중 오류가 발생했습니다.");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }
 
   
 
   useEffect(() => {
-    fetchUserInfo();
+    refetch();
   }, []);
 
-  const refetch = () => {
-    fetchUserInfo();
-  };
-
-  return {
-    updateName: updateName,
-    memberInfo,
-    loading,
-    userLoading,
-    refetch
-  };
+  return {updateName: updateName, memberInfo, loading, userLoading, refetch};
 };

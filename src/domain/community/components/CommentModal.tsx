@@ -174,13 +174,13 @@ const CommentModal: React.FC<CommentModalProps> = ({
                         alt="Minimize"
                         className="w-16 h-5 rounded-full mb-1"
                     />
-                    <h2 className="mb-2 text-sm font-semibold">댓글</h2>
+                    <h2 className="mb-2 text-xs font-semibold">댓글</h2>
                 </div>
 
                 {/* Comments List */}
                 <div ref={commentsRef} className="flex-1 overflow-y-auto px-4 py-2">
                     {comments.map((comment, index) => (
-                        <div key={index} className="p-2 border-b text-sm border-gray-300">
+                        <div key={index} className="p-2 border-b text-xs border-gray-300">
                             <p>{comment}</p>
                         </div>
                     ))}
@@ -193,22 +193,22 @@ const CommentModal: React.FC<CommentModalProps> = ({
                 <div className="flex items-center p-2 border-t border-gray-300"
                      style={{ borderTop: '0.1px solid #D1D5DB' }}>
                     <img
-                        src="src/assets/icons/user/user_2_line.svg"
+                        src="src/assets/icons/user/user_4_line.svg"
                         alt="User Profile"
-                        className="w-8 h-8 rounded-full ml-4"
+                        className="w-8 h-8 rounded-full ml-2"
                     />
                     <input
                         type="text"
                         placeholder="댓글을 입력하세요..."
                         value={comment}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-2 text-sm focus:outline-none"
+                        className="w-full px-4 py-2 text-xs focus:outline-none"
                     />
                     {comment && (
                         <img
                             src="src/assets/icons/arrow/arrow_up_line.svg"
                             alt="Send Comment"
-                            className="w-6 h-6 mr-4 cursor-pointer"
+                            className="w-6 h-6 mr-2 cursor-pointer"
                         />
                     )}
                 </div>

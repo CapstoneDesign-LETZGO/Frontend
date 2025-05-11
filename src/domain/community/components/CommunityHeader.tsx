@@ -32,22 +32,22 @@ const CommunityHeader: React.FC = () => {
 
     return (
         <header
-            className={`flex justify-between items-center p-4 bg-white fixed top-0 left-1/2 transform -translate-x-1/2 w-full max-w-md mx-auto z-50 transition-transform duration-300 ${
+            className={`flex justify-between items-center p-2 bg-white fixed top-0 left-1/2 transform -translate-x-1/2 w-full max-w-md mx-auto z-50 transition-transform duration-300 ${
                 isVisible ? 'translate-y-0' : '-translate-y-full'
             }`}
             style={{ borderBottom: '0.1px solid #D1D5DB' }} // gray-300 컬러
         >
-            <img src="/src/assets/icons/logo/logo-simple.png" alt="App Logo" className="h-10" />
+            <img src="/src/assets/icons/logo/logo-simple.png" alt="App Logo" className="h-10 ml-2" />
 
             {/* 알람 아이콘과 send 아이콘을 한 줄에 배치 */}
             <div className="flex items-center space-x-7">
                 <div onClick={() => navigate('/notification')} className="cursor-pointer">
-                    <img src="/src/assets/icons/media/notification_line.svg" alt="Notification" className="h-8" />
+                    <img src="/src/assets/icons/media/notification_line.svg" alt="Notification" className="h-6" />
                 </div>
                 <img
                     src="/src/assets/icons/contact/send_line.svg"
                     alt="Send Logo"
-                    className="h-8 cursor-pointer"
+                    className="h-6 cursor-pointer mr-1"
                     onClick={() => navigate('/chat-room')}
                 />
             </div>
