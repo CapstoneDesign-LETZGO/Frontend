@@ -24,6 +24,29 @@ export const fetchPostApi = async (
     }
 };
 
+// 해당 사용자가 작성한 게시글 조회
+export const fetchMemberPostApi = async (
+    authFetch: AuthFetch,
+    memberId: number
+): Promise<{ posts: DetailPostDto[]; success: boolean }> => {
+    try {
+        const response = await authFetch<ApiResponse<DetailPostDto>>(
+            `/rest-api/v1/post/member/${memberId}`, {}, 'GET'
+        );
+        console.log('Response Data (My Posts):', response);
+        if (isSuccess(response)) {
+            const posts = response?.letzgoPage?.contents as unknown as DetailPostDto[] ?? [];
+            return { posts, success: true };
+        } else {
+            console.error("내 게시글 목록 조회 실패:", response?.returnMessage);
+            return { posts: [], success: false };
+        }
+    } catch (err) {
+        console.error("내 게시글 목록 조회 중 오류:", err);
+        return { posts: [], success: false };
+    }
+};
+
 // 게시글 생성
 export const addPostApi = async (
     authFetch: AuthFetch,

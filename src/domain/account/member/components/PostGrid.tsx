@@ -1,10 +1,10 @@
 import React from "react";
 import { ImageIcon } from "lucide-react";
-import { PostDto } from "../../../../common/interfaces/PostInterface";
+import {DetailPostDto} from "../../../../common/interfaces/CommunityInterface.ts";
 
 interface Props {
-  posts: PostDto[];
-  onPostClick: (post: PostDto) => void;
+  posts: DetailPostDto[];
+  onPostClick: (post: DetailPostDto) => void;
 }
 
 const PostGrid: React.FC<Props> = ({ posts, onPostClick }) => {

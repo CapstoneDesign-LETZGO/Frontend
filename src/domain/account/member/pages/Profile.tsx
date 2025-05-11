@@ -4,15 +4,15 @@ import PostGrid from "../components/PostGrid";
 import EditProfileOverlay from "../components/EditProfileOvelay";
 import PostDetailOverlay from "../components/PostDetailOverlay";
 import { useMyProfile } from "../hooks/useMyProfile";
-import { useMyPosts } from "../hooks/useMyPost";
-import { PostDto } from "../../../../common/interfaces/PostInterface";
+import { usePost } from "../../../community/hooks/usePost";
+import {DetailPostDto} from "../../../../common/interfaces/CommunityInterface";
 
 const ProfilePage: React.FC = () => {
     const [isEditing, setIsEditing] = useState(false);
-    const [selectedPost, setSelectedPost] = useState<PostDto | null>(null);
+    const [selectedPost, setSelectedPost] = useState<DetailPostDto | null>(null);
 
     const { updateName, memberInfo, loading: loadingProfile, refetch } = useMyProfile();
-    const { posts, loading: loadingPosts } = useMyPosts();
+    const { posts, loading: loadingPosts, refetchPost } = usePost('member', memberInfo?.id);
 
     useEffect(() => {
         let startY = 0;
@@ -50,6 +50,9 @@ const ProfilePage: React.FC = () => {
 
             if (canDrag && currentTranslateY >= 100) {
                 refetch();
+                if (memberInfo) {
+                    refetchPost();
+                }
             }
             currentTranslateY = 0;
             canDrag = false;
@@ -70,10 +73,14 @@ const ProfilePage: React.FC = () => {
             window.removeEventListener("touchend", onEnd);
             window.removeEventListener("mouseup", onEnd);
         };
-    }, [refetch]);
+    }, [refetch, refetchPost]);
 
     if (loadingProfile) {
-        return <div className="flex justify-center items-center min-h-screen">로딩 중...</div>;
+        return;
+    }
+
+    if (loadingPosts) {
+        return;
     }
 
     return (
@@ -92,7 +99,13 @@ const ProfilePage: React.FC = () => {
                         onClose={() => setIsEditing(false)}
                         onSubmit={async (name) => {
                             const success = await updateName(name);
-                            if (success) setIsEditing(false);
+                            if (success) {
+                                setIsEditing(false);
+                                refetch();
+                                if (memberInfo) {
+                                    refetchPost();
+                                }
+                            }
                         }}
                     />
                 )}

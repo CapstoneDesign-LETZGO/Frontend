@@ -15,7 +15,7 @@ const Community: React.FC = () => {
     const isDraggingRef = useRef(false);
     const showSpinnerRef = useRef(false); // 리렌더 없는 스피너 표시용
     const [, setRerender] = useState(false); // 강제 리렌더용 (아래 참고)
-    const { posts, loading: loadingPosts, refetch } = usePost();
+    const { posts, loading: loadingPosts, refetchPost } = usePost();
     const postSectionRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -51,7 +51,7 @@ const Community: React.FC = () => {
             postSectionRef.current.style.transform = 'none';
 
             if (canDragRef.current && currentTranslateYRef.current >= 100) {
-                refetch();
+                refetchPost();
             }
 
             showSpinnerRef.current = false;
@@ -94,7 +94,7 @@ const Community: React.FC = () => {
             window.removeEventListener('touchcancel', onEnd);
             window.removeEventListener('mouseleave', onEnd);
         };
-    }, [refetch]);
+    }, [refetchPost]);
 
     const loadComments = (isOlder: boolean) => {
         if (loadingComments) return;
