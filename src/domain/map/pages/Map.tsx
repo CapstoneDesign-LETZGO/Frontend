@@ -86,9 +86,9 @@ const Map: React.FC = () => {
     setIsSearching(false);
   };
 
-  // if (loadingMap) {
-  //   return <div className="flex justify-center items-center min-h-screen">로딩 중...</div>;
-  // } //검색결과 마커안보임 문제
+  if (loadingMap) {
+    return;
+  }
 
   return (
     <div className="flex flex-col min-h-screen items-center bg-[#F5F5F5]">

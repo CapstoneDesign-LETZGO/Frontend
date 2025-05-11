@@ -1,12 +1,12 @@
 import React from "react";
-import { PostDto } from "../../../../common/interfaces/PostInterface";
 import { ArrowLeft } from "lucide-react";
 import PostDetailCard from "../components/PostDetailCard";
+import { DetailPostDto } from "../../../../common/interfaces/CommunityInterface";
 
 interface Props {
-    post: PostDto;
+    post: DetailPostDto;
     onClose: () => void;
-    allPosts: PostDto[];
+    allPosts: DetailPostDto[];
 }
 
 const PostDetailOverlay: React.FC<Props> = ({ post, onClose, allPosts }) => {

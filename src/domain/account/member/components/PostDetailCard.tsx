@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { PostDto } from "../../../../common/interfaces/PostInterface";
 import ImageSlider from "./ImageSlider";
 import CommentModal from "./CommentModal";
+import {DetailPostDto} from "../../../../common/interfaces/CommunityInterface";
 
 interface Props {
-    post: PostDto;
+    post: DetailPostDto;
 }
 
 const PostDetailCard: React.FC<Props> = ({ post }) => {
