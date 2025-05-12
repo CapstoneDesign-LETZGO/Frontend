@@ -51,24 +51,20 @@ export const fetchMemberPostApi = async (
 export const addPostApi = async (
     authFetch: AuthFetch,
     form: PostForm,
-    imageFile: File
+    imageFiles: File[]
 ): Promise<boolean> => {
     try {
         const formData = new FormData();
         formData.append('postForm', new Blob([JSON.stringify(form)], { type: 'application/json' }));
-        formData.append('imageFile', imageFile);
+        imageFiles.forEach((file) => {
+            formData.append('imageFile', file);  // key를 동일하게 하면 백엔드 List<MultipartFile>로 매핑됨
+        });
 
         const response = await authFetch<ApiResponse<string>>(
             '/rest-api/v1/post',
-            {
-                data: formData,
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            },
+            formData,
             'POST'
         );
-
         return isSuccess(response);
     } catch (err) {
         console.error('게시글 등록 중 오류 발생:', err);
