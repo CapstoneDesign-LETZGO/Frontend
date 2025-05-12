@@ -54,13 +54,11 @@ export const updateMemberApi = async (
             ...form,
             birthday: form.birthday === "" ? null : form.birthday,
         };
-
-        // JSON 데이터를 Blob으로 변환하여 FormData에 첨부
-        const memberFormBlob = new Blob([JSON.stringify(cleanForm)], { type: 'application/json' });
-        formData.append('memberForm', memberFormBlob);
+        formData.append('memberForm', new Blob([JSON.stringify(cleanForm)], { type: 'application/json' }));
         if (imageFile) {
             formData.append('imageFile', imageFile);
         }
+
         const response = await authFetch<ApiResponse<string>>(
             '/rest-api/v1/member',
             formData,

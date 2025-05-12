@@ -46,10 +46,10 @@ export const usePost = (mode: Mode = 'all', memberId?: number) => {
     };
 
     // 게시글 생성
-    const addPost = async (form: PostForm, imageFile: File) => {
+    const addPost = async (form: PostForm, imageFiles: File[]) => {
         setLoading(true);
         try {
-            const success = await addPostApi(authFetch, form, imageFile);
+            const success = await addPostApi(authFetch, form, imageFiles);
             if (!success) {
                 toast.error('게시글 등록에 실패했습니다.');
             }

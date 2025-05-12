@@ -36,7 +36,6 @@ const CommentList: React.FC<CommentListProps> = ({
                                                      onReplyClick,
                                                      onLikeClick,
                                                      onCancelLikeClick,
-                                                     onUpdateClick,
                                                      onDeleteClick,
                                                  }) => {
     const [localComments, setLocalComments] = useState<CommentDto[]>(comments);
@@ -165,15 +164,6 @@ const CommentList: React.FC<CommentListProps> = ({
                                     className="text-xs w-full text-left p-1 hover:bg-gray-100"
                                     onClick={() => {
                                         setMenuOpenId(null);
-                                        onUpdateClick(parent.id, parent.content);
-                                    }}
-                                >
-                                    수정
-                                </button>
-                                <button
-                                    className="text-xs w-full text-left p-1 hover:bg-gray-100"
-                                    onClick={() => {
-                                        setMenuOpenId(null);
                                         onDeleteClick(parent.id);
                                     }}
                                 >
@@ -235,15 +225,6 @@ const CommentList: React.FC<CommentListProps> = ({
 
                                                     {isMenuOpen && (
                                                         <div className="absolute right-4 top-5 bg-white border rounded shadow p-1 space-y-1 z-50">
-                                                            <button
-                                                                className="text-xs w-full text-left p-1 hover:bg-gray-100"
-                                                                onClick={() => {
-                                                                    setMenuOpenId(null);
-                                                                    onUpdateClick(reply.id, reply.content);
-                                                                }}
-                                                            >
-                                                                수정
-                                                            </button>
                                                             <button
                                                                 className="text-xs w-full text-left p-1 hover:bg-gray-100"
                                                                 onClick={() => {
