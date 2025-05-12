@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuthFetch } from "../../../common/hooks/useAuthFetch";
 import { UserCircle, MoreVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import {ScheduleDto} from "../../../common/interfaces/ScheduleInterface.ts";
 
 const cityList = [
   { name: "가평·양평", imageUrl: "/images/gapyeong.jpg" },
@@ -24,13 +25,13 @@ const getThumbnailUrlFromTitle = (title: string) => {
 };
 
 const ScheduleList = () => {
-  const [schedules, setSchedules] = useState([]);
+  const [schedules, setSchedules] = useState<ScheduleDto[]>([]);
   const { authFetch } = useAuthFetch();
   const navigate = useNavigate();
 
   const fetchSchedules = async () => {
     const res = await authFetch("/api/schedules", {}, "GET");
-    setSchedules(res.data);
+    setSchedules(res.data as ScheduleDto[]);
   };
 
   const deleteSchedule = async (schedulePk: number) => {
@@ -77,7 +78,7 @@ const ScheduleList = () => {
 
         {/* 일정 리스트 */}
         <div className="flex-1 overflow-y-auto px-4 pb-24">
-          {schedules.map((schedule: any) => (
+          {schedules.map((schedule: ScheduleDto) => (
             <div
               key={schedule.schedulePk}
               className="flex items-center justify-between py-3 border-b border-gray-100"

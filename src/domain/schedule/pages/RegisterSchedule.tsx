@@ -1,24 +1,21 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSchedule } from "../contexts/ScheduleContext";
-import { useUserInfo } from "../../../common/hooks/useUserInfo";
 import { useAuthFetch } from "../../../common/hooks/useAuthFetch";
-import { DayPicker } from "react-day-picker";
+import {DateRange, DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { ko } from "date-fns/locale";
-import { format, isToday, isWeekend } from "date-fns";
+import { format } from "date-fns";
 import { X } from "lucide-react";
+import {useMemberActions} from "../../account/member/hooks/useMemberActions.ts";
 
 const RegisterSchedule = () => {
   const { scheduleData } = useSchedule();
-  const { userInfo } = useUserInfo();
+  const { memberInfo } = useMemberActions();
   const { authFetch } = useAuthFetch();
   const navigate = useNavigate();
 
-  const [range, setRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
-    from: undefined,
-    to: undefined,
-  });
+  const [range, setRange] = useState<DateRange | undefined>(undefined);
 
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -42,7 +39,7 @@ const RegisterSchedule = () => {
   ];
 
   const handleSubmit = async () => {
-    if (!userInfo || !range.from || !range.to) {
+    if (!memberInfo || !range || !range.from || !range.to) {
       alert("모든 정보를 입력해주세요.");
       return;
     }
@@ -54,7 +51,7 @@ const RegisterSchedule = () => {
         "/api/schedules",
         {
           data: {
-            hostAccountPk: userInfo.id,
+            hostAccountPk: memberInfo.id,
             region: scheduleData.region,
             title,
             startDate: format(range.from, "yyyy-MM-dd"),
@@ -119,7 +116,7 @@ const RegisterSchedule = () => {
               <DayPicker
                 mode="range"
                 selected={range}
-                onSelect={setRange}
+                onSelect={(range) => setRange(range)}
                 numberOfMonths={isMobile ? 1 : 3}
                 pagedNavigation={false}
                 locale={ko}
@@ -132,22 +129,26 @@ const RegisterSchedule = () => {
                     paddingBottom: "16px",
                   },
                   head_cell: { color: "#999", fontSize: "13px" },
-                  day: (date) => ({
+                  day: {
                     height: 40,
                     width: 40,
                     margin: 2,
-                    color: isWeekend(date) ? "#D14343" : "#1F2937",
-                    fontWeight: isToday(date) ? "bold" : undefined,
-                    backgroundColor: isToday(date) ? "#F3F4F6" : undefined,
-                  }),
-                  day_selected: {
+                  },
+                }}
+                modifiersStyles={{
+                  weekend: { color: "#D14343" },
+                  selected: {
                     backgroundColor: "#2563eb",
                     color: "white",
                     borderRadius: "50%",
                   },
-                  day_range_middle: {
+                  range_middle: {
                     backgroundColor: "#DBEAFE",
                     color: "#1E40AF",
+                  },
+                  today: {
+                    fontWeight: "bold",
+                    backgroundColor: "#F3F4F6",
                   },
                 }}
               />
@@ -159,7 +160,7 @@ const RegisterSchedule = () => {
         <div className="px-4 py-3 sticky bottom-0 bg-white">
           <button
             onClick={handleSubmit}
-            disabled={!range.from || !range.to}
+            disabled={!range ||!range.from || !range.to}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg text-sm font-semibold disabled:opacity-40"
           >
             등록 완료

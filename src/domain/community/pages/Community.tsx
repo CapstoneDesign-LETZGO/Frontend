@@ -1,112 +1,28 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState} from 'react';
 import MainPostCard from '../components/MainPostCard.tsx';
 import CommentModal from '../components/CommentModal';
 import CommunityHeader from "../components/CommunityHeader.tsx";
-import { usePost } from '../hooks/usePost.ts';
+import { usePost } from '../hooks/data/usePost.ts';
+import {usePullToRefresh} from "../hooks/render/usePullToRefresh.ts";
 
 const Community: React.FC = () => {
     const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
+    const [selectedPostMemberId, setSelectedPostMemberId] = useState<number | null>(null);
     const [isCommentOpen, setIsCommentOpen] = useState(false);
-    const startYRef = useRef(0);
-    const canDragRef = useRef(false);
-    const currentTranslateYRef = useRef(0);
-    const isDraggingRef = useRef(false);
-    const showSpinnerRef = useRef(false); // 리렌더 없는 스피너 표시용
-    const [, setRerender] = useState(false); // 강제 리렌더용 (아래 참고)
-    const { posts, loading: loadingPosts, refetchPost } = usePost();
-    const postSectionRef = useRef<HTMLDivElement>(null);
+    const { posts, refetchPost } = usePost();
+    const { postSectionRef, showSpinner } = usePullToRefresh(refetchPost);
 
-    useEffect(() => {
-        const getY = (e: TouchEvent | MouseEvent) => {
-            return 'touches' in e ? e.touches[0]?.clientY ?? 0 : e.clientY;
-        };
-
-        const onMove = (e: TouchEvent | MouseEvent) => {
-            if (!isDraggingRef.current || !canDragRef.current || !postSectionRef.current) return;
-            const currentY = getY(e);
-            const diffY = currentY - startYRef.current;
-
-            if (diffY > 0) {
-                e.preventDefault();
-                const limitedDiffY = Math.min(diffY, 100);
-                currentTranslateYRef.current = limitedDiffY;
-                postSectionRef.current.style.transform = `translateY(${limitedDiffY}px)`;
-                postSectionRef.current.style.transition = 'none';
-
-                const shouldShow = limitedDiffY >= 30;
-                if (showSpinnerRef.current !== shouldShow) {
-                    showSpinnerRef.current = shouldShow;
-                    setRerender((prev) => !prev);
-                }
-            }
-        };
-
-        const onEnd = () => {
-            if (!isDraggingRef.current || !postSectionRef.current) return;
-            isDraggingRef.current = false;
-
-            postSectionRef.current.style.transition = 'transform 0.3s ease';
-            postSectionRef.current.style.transform = 'none';
-
-            if (canDragRef.current && currentTranslateYRef.current >= 100) {
-                refetchPost();
-            }
-
-            showSpinnerRef.current = false;
-            setRerender((prev) => !prev);
-
-            currentTranslateYRef.current = 0;
-            canDragRef.current = false;
-        };
-
-        const onStart = (e: TouchEvent | MouseEvent) => {
-            canDragRef.current = postSectionRef.current?.scrollTop === 0;
-            if (!canDragRef.current) return;
-            startYRef.current = getY(e);
-            isDraggingRef.current = true;
-        };
-
-        const sectionEl = postSectionRef.current;
-        if (sectionEl) {
-            sectionEl.addEventListener('touchstart', onStart);
-            sectionEl.addEventListener('mousedown', onStart);
-        }
-
-        // 절대 끊기지 않게 window에 강제 바인딩
-        window.addEventListener('touchmove', onMove, { passive: false });
-        window.addEventListener('mousemove', onMove);
-        window.addEventListener('touchend', onEnd);
-        window.addEventListener('mouseup', onEnd);
-        window.addEventListener('touchcancel', onEnd);
-        window.addEventListener('mouseleave', onEnd);
-
-        return () => {
-            if (sectionEl) {
-                sectionEl.removeEventListener('touchstart', onStart);
-                sectionEl.removeEventListener('mousedown', onStart);
-            }
-            window.removeEventListener('touchmove', onMove);
-            window.removeEventListener('mousemove', onMove);
-            window.removeEventListener('touchend', onEnd);
-            window.removeEventListener('mouseup', onEnd);
-            window.removeEventListener('touchcancel', onEnd);
-            window.removeEventListener('mouseleave', onEnd);
-        };
-    }, [refetchPost]);
-
-    const openCommentModal = (postId: number) => {
+    const openCommentModal = (postId: number, postMemberId: number) => {
         setSelectedPostId(postId);
+        setSelectedPostMemberId(postMemberId);
         setIsCommentOpen(true);
     };
 
     const closeCommentModal = () => {
         setIsCommentOpen(false);
         setSelectedPostId(null);
+        setSelectedPostMemberId(null);
     };
-
-    if (loadingPosts) {
-        return;
-    }
 
     return (
         <div className="flex flex-col min-h-screen items-center bg-[#F5F5F5]">
@@ -120,7 +36,7 @@ const Community: React.FC = () => {
                     className="flex-grow overflow-y-auto scrollbar-hide mt-14 mb-11"
                 >
                     {/* Pull-to-Refresh Spinner */}
-                    {showSpinnerRef.current && (
+                    {showSpinner && (
                         <div className="flex justify-center items-center h-12 mt-[-12px] mb-10">
                             <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-black" />
                         </div>
@@ -131,7 +47,7 @@ const Community: React.FC = () => {
                         posts.map((post) => (
                             <MainPostCard
                                 key={`${post.id}-${post.likeCount}`}
-                                openCommentModal={() => openCommentModal(post.id)}
+                                openCommentModal={() => openCommentModal(post.id, post.memberId)}
                                 post={post}
                             />
                         ))
@@ -145,6 +61,7 @@ const Community: React.FC = () => {
                     isOpen={isCommentOpen}
                     closeModal={closeCommentModal}
                     postId={selectedPostId}
+                    postMemberId={selectedPostMemberId}
                 />
             </div>
         </div>

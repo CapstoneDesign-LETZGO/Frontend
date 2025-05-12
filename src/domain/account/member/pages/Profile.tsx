@@ -3,16 +3,16 @@ import ProfileHeader from "../components/ProfileHeader";
 import PostGrid from "../components/PostGrid";
 import EditProfileOverlay from "../components/EditProfileOvelay";
 import PostDetailOverlay from "../components/PostDetailOverlay";
-import { useMyProfile } from "../hooks/useMyProfile";
-import { usePost } from "../../../community/hooks/usePost";
 import {DetailPostDto} from "../../../../common/interfaces/CommunityInterface";
+import {usePost} from "../../../community/hooks/data/usePost.ts";
+import {useMemberActions} from "../hooks/useMemberActions.ts";
 
 const ProfilePage: React.FC = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [selectedPost, setSelectedPost] = useState<DetailPostDto | null>(null);
 
-    const { updateName, memberInfo, loading: loadingProfile, refetch } = useMyProfile();
-    const { posts, loading: loadingPosts, refetchPost } = usePost('member', memberInfo?.id);
+    const { memberInfo, refetch } = useMemberActions();
+    const { posts, refetchPost } = usePost('member', memberInfo?.id);
 
     useEffect(() => {
         let startY = 0;
@@ -75,14 +75,6 @@ const ProfilePage: React.FC = () => {
         };
     }, [refetch, refetchPost]);
 
-    if (loadingProfile) {
-        return;
-    }
-
-    if (loadingPosts) {
-        return;
-    }
-
     return (
         <div className="flex flex-col min-h-screen items-center bg-[#F5F5F5]">
             <div className="flex flex-col w-full max-w-md min-h-screen relative bg-white">
@@ -97,16 +89,16 @@ const ProfilePage: React.FC = () => {
                 {isEditing && (
                     <EditProfileOverlay
                         onClose={() => setIsEditing(false)}
-                        onSubmit={async (name) => {
-                            const success = await updateName(name);
-                            if (success) {
-                                setIsEditing(false);
-                                refetch();
-                                if (memberInfo) {
-                                    refetchPost();
-                                }
-                            }
-                        }}
+                        // onSubmit={async (name) => {
+                        //     const success = await updateName(name);
+                        //     if (success) {
+                        //         setIsEditing(false);
+                        //         refetch();
+                        //         if (memberInfo) {
+                        //             refetchPost();
+                        //         }
+                        //     }
+                        // }}
                     />
                 )}
 
