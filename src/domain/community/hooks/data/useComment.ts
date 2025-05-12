@@ -42,15 +42,13 @@ export const useComment = (postId: number) => {
                 content,
                 superCommentId,  // 기본은 0 (일반 댓글), 대댓글이면 부모 댓글 ID 넣기
             };
-            const { success } = await addCommentApi(authFetch, postId, commentForm);
-            if (!success) {
-                toast.error('댓글 추가에 실패했습니다.');
-            }
+            await addCommentApi(authFetch, postId, commentForm);
         } catch (err) {
             console.error('댓글 추가 중 오류 발생:', err);
             toast.error('댓글 추가 중 오류가 발생했습니다.');
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     // 댓글 수정
@@ -61,60 +59,52 @@ export const useComment = (postId: number) => {
                 content,
                 superCommentId: "",
             };
-            const { success } = await updateCommentApi(authFetch, commentId, commentForm);
-            if (!success) {
-                toast.error('댓글 수정에 실패했습니다.');
-            }
+            await updateCommentApi(authFetch, commentId, commentForm);
         } catch (err) {
             console.error('댓글 수정 중 오류 발생:', err);
             toast.error('댓글 수정 중 오류가 발생했습니다.');
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     // 댓글 삭제
     const deleteComment = async (commentId: number) => {
         setLoading(true);
         try {
-            const { success } = await deleteCommentApi(authFetch, commentId);
-            if (!success) {
-                toast.error('댓글 삭제에 실패했습니다.');
-            }
+            await deleteCommentApi(authFetch, commentId);
         } catch (err) {
             console.error('댓글 삭제 중 오류 발생:', err);
             toast.error('댓글 삭제 중 오류가 발생했습니다.');
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     // 댓글 좋아요
     const likeComment = async (commentId: number) => {
         setLoading(true);
         try {
-            const { success } = await likeCommentApi(authFetch, commentId);
-            if (!success) {
-                toast.error('댓글 좋아요에 실패했습니다.');
-            }
+            await likeCommentApi(authFetch, commentId);
         } catch (err) {
             console.error('댓글 좋아요 중 오류 발생:', err);
             toast.error('댓글 좋아요 중 오류가 발생했습니다.');
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     // 댓글 좋아요 취소
     const cancelLikeComment = async (commentId: number) => {
         setLoading(true);
         try {
-            const { success } = await cancelLikeCommentApi(authFetch, commentId);
-            if (!success) {
-                toast.error('댓글 좋아요 취소에 실패했습니다.');
-            }
+            await cancelLikeCommentApi(authFetch, commentId);
         } catch (err) {
             console.error('댓글 좋아요 취소 중 오류 발생:', err);
             toast.error('댓글 좋아요 취소 중 오류가 발생했습니다.');
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     return { comments, addComment, updateComment, deleteComment, likeComment, cancelLikeComment, loading, refetchComment: refetch };

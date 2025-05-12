@@ -57,9 +57,8 @@ export const addPostApi = async (
         const formData = new FormData();
         formData.append('postForm', new Blob([JSON.stringify(form)], { type: 'application/json' }));
         imageFiles.forEach((file) => {
-            formData.append('imageFile', file);  // key를 동일하게 하면 백엔드 List<MultipartFile>로 매핑됨
+            formData.append('imageFile', file);
         });
-
         const response = await authFetch<ApiResponse<string>>(
             '/rest-api/v1/post',
             formData,

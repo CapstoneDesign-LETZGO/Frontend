@@ -22,8 +22,9 @@ export const useRecommend = () => {
     } catch (err) {
       console.error("추천 장소 정보를 가져오는 중 오류 발생:", err);
       toast.error("추천 장소 정보를 가져오는 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [authFetch]);
 
   return { recommendPlace, fetchRecommend, loading };

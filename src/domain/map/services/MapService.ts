@@ -6,7 +6,7 @@ import { AuthFetch, isSuccess } from '../../../common/utils/fetchUtils';
 export const fetchPlaceDtoApi = async (
     authFetch: AuthFetch,
     placeId: string
-): Promise<{ placedata: PlaceDto | null; reviews: Review[]; returnCode: string }> => {
+): Promise<{ placedata: PlaceDto | null; reviews: Review[]; success: boolean }> => {
   try {
     const response = await authFetch<{ placeinfo: PlaceDto; reviews: Review[] }>(
         `/map-api/place/${placeId}`,
@@ -14,20 +14,20 @@ export const fetchPlaceDtoApi = async (
         'GET'
     );
     console.log('장소 조회 Response:', response);
-    const returnCode = response?.returnCode ?? '';
-    if (isSuccess(response)) {
+    const success = isSuccess(response);
+    if (success) {
       return {
         placedata: response?.data?.placeinfo ?? null,
         reviews: response?.data?.reviews ?? [],
-        returnCode
+        success: true
       };
     } else {
       console.error('장소 조회 실패:', response?.returnMessage);
-      return { placedata: null, reviews: [], returnCode };
+      return { placedata: null, reviews: [], success: false };
     }
   } catch (err) {
     console.error('장소 조회 중 오류:', err);
-    throw new Error('장소 조회 중 오류 발생');
+    return { placedata: null, reviews: [], success: false };
   }
 };
 
@@ -86,8 +86,8 @@ export const fetchPlaceSearchApi = async (
     console.log('Response Data:', response);
     const success = isSuccess(response);
     return success
-        ? { places: response?.letzgoPage?.contents as unknown as PlaceDto[] ?? [], success }
-        : { places: [], success };
+        ? { places: response?.letzgoPage?.contents as unknown as PlaceDto[] ?? [], success: true }
+        : { places: [], success: false };
   } catch (err) {
     console.error('장소 검색 중 오류:', err);
     return { places: [], success: false };

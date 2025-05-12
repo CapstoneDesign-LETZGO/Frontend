@@ -11,7 +11,6 @@ export const fetchRecommendApi = async (
             "/rest-api/v1/recommend", {}, "GET"
         );
         console.log('Response Data:', response);
-
         if (isSuccess(response)) {
             const places = response?.letzgoPage?.contents as unknown as PlaceDto[] ?? [];
             return { places, success: true };
