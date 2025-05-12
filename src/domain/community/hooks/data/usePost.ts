@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
-import {addPostApi, fetchMemberPostApi, fetchPostApi} from '../services/PostService.ts';
-import {DetailPostDto, PostForm} from '../../../common/interfaces/CommunityInterface.ts';
-import { useAuthFetch } from '../../../common/hooks/useAuthFetch';
+import {addPostApi, fetchMemberPostApi, fetchPostApi} from '../../services/PostService.ts';
+import {DetailPostDto, PostForm} from '../../../../common/interfaces/CommunityInterface.ts';
+import { useAuthFetch } from '../../../../common/hooks/useAuthFetch';
 import {toast} from "react-toastify";
 
 type Mode = 'all' | 'member' | 'none';
@@ -77,5 +77,5 @@ export const usePost = (mode: Mode = 'all', memberId?: number) => {
         }
     };
 
-    return { addPost: addPost, posts, loading, refetchPost };
+    return { addPost, posts, loading, refetchPost };
 };

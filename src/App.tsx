@@ -21,8 +21,9 @@ import SelectRegion from './domain/schedule/pages/SelectRegion';
 import RegisterSchedule from './domain/schedule/pages/RegisterSchedule';
 import ScheduleList from './domain/schedule/pages/ScheduleList';
 import { ScheduleProvider } from './domain/schedule/contexts/ScheduleContext';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-
+const queryClient = new QueryClient();
 
 const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('isLoggedIn') === 'true');
@@ -45,95 +46,97 @@ const App = () => {
     };
 
     return (
-        <Router>
-            <div className="min-h-screen flex flex-col bg-white lg:bg-gray-100">
-                <Routes>
-                    {/* 로그인 관련 페이지 */}
-                    <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
-                    <Route path="/signup" element={<Signup />} />
-                    <Route path="/find-password" element={<FindPassword />} />
+        <QueryClientProvider client={queryClient}>
+            <Router>
+                <div className="min-h-screen flex flex-col bg-white lg:bg-gray-100">
+                    <Routes>
+                        {/* 로그인 관련 페이지 */}
+                        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+                        <Route path="/signup" element={<Signup />} />
+                        <Route path="/find-password" element={<FindPassword />} />
 
-                    {/* 네비게이션 바 포함된 페이지 */}
-                    <Route path="/community" element={
-                        <RequireAuth>
+                        {/* 네비게이션 바 포함된 페이지 */}
+                        <Route path="/community" element={
+                            <RequireAuth>
+                                <LayoutWithHeaderAndNav>
+                                    <Community />
+                                </LayoutWithHeaderAndNav>
+                            </RequireAuth>
+                        } />
+                        <Route path="/map" element={
                             <LayoutWithHeaderAndNav>
-                                <Community />
+                                <Map />
                             </LayoutWithHeaderAndNav>
-                        </RequireAuth>
-                    } />
-                    <Route path="/map" element={
-                        <LayoutWithHeaderAndNav>
-                            <Map />
-                        </LayoutWithHeaderAndNav>
-                    } />
-                    <Route path="/schedule" element={
-                        <RequireAuth>
-                            <LayoutWithHeaderAndNav>
-                                <Schedule />
-                            </LayoutWithHeaderAndNav>
-                        </RequireAuth>
-                    } />
-                    <Route path="/profile" element={
-                        <RequireAuth>
-                            <LayoutWithHeaderAndNav>
-                                <Profile />
-                            </LayoutWithHeaderAndNav>
-                        </RequireAuth>
-                    } />
+                        } />
+                        <Route path="/schedule" element={
+                            <RequireAuth>
+                                <LayoutWithHeaderAndNav>
+                                    <Schedule />
+                                </LayoutWithHeaderAndNav>
+                            </RequireAuth>
+                        } />
+                        <Route path="/profile" element={
+                            <RequireAuth>
+                                <LayoutWithHeaderAndNav>
+                                    <Profile />
+                                </LayoutWithHeaderAndNav>
+                            </RequireAuth>
+                        } />
 
-                    {/* 네비게이션 바 없이 로그인 필요 */}
-                    <Route path="/chat-message" element={
-                        <RequireAuth>
-                            <ChatMessage />
-                        </RequireAuth>
-                    } />
-                    <Route path="/chat-room" element={
-                        <RequireAuth>
-                            <ChatRoom />
-                        </RequireAuth>
-                    } />
-                    <Route path="/notification" element={
-                        <RequireAuth>
-                            <Notificate />
-                        </RequireAuth>
-                    } />
-                    <Route path="/recommend" element={
-                        <RequireAuth>
-                            <Recommend />
-                        </RequireAuth>
-                    } />
+                        {/* 네비게이션 바 없이 로그인 필요 */}
+                        <Route path="/chat-message" element={
+                            <RequireAuth>
+                                <ChatMessage />
+                            </RequireAuth>
+                        } />
+                        <Route path="/chat-room" element={
+                            <RequireAuth>
+                                <ChatRoom />
+                            </RequireAuth>
+                        } />
+                        <Route path="/notification" element={
+                            <RequireAuth>
+                                <Notificate />
+                            </RequireAuth>
+                        } />
+                        <Route path="/recommend" element={
+                            <RequireAuth>
+                                <Recommend />
+                            </RequireAuth>
+                        } />
 
-                    {/* 일정 등록 플로우: ScheduleProvider 적용 */}
-                    <Route path="/schedule/region" element={
-                    <RequireAuth>
-                      <ScheduleProvider>
-                        <SelectRegion />
-                      </ScheduleProvider>
-                    </RequireAuth>
-                    } />
-                    <Route path="/schedule/register" element={
-                    <RequireAuth>
-                      <ScheduleProvider>
-                        <RegisterSchedule />
-                      </ScheduleProvider>
-                    </RequireAuth>
-                    } />
-                    <Route path="/schedule/list" element={
-                    <RequireAuth>
-                      <ScheduleProvider>
-                        <ScheduleList />
-                      </ScheduleProvider>
-                    </RequireAuth>
-                    } />
+                        {/* 일정 등록 플로우: ScheduleProvider 적용 */}
+                        <Route path="/schedule/region" element={
+                            <RequireAuth>
+                                <ScheduleProvider>
+                                    <SelectRegion />
+                                </ScheduleProvider>
+                            </RequireAuth>
+                        } />
+                        <Route path="/schedule/register" element={
+                            <RequireAuth>
+                                <ScheduleProvider>
+                                    <RegisterSchedule />
+                                </ScheduleProvider>
+                            </RequireAuth>
+                        } />
+                        <Route path="/schedule/list" element={
+                            <RequireAuth>
+                                <ScheduleProvider>
+                                    <ScheduleList />
+                                </ScheduleProvider>
+                            </RequireAuth>
+                        } />
 
-                    {/* 기본 경로 */}
-                    <Route path="/*" element={<Navigate to={isLoggedIn ? "/community" : "/login"} replace />} />
-                </Routes>
+                        {/* 기본 경로 */}
+                        <Route path="/*" element={<Navigate to={isLoggedIn ? "/community" : "/login"} replace />} />
+                    </Routes>
 
-                {/* Letzgo 토스트 컨테이너 추가 */}
-                <LetzgoToastContainer />
-            </div>
-        </Router>
+                    {/* Letzgo 토스트 컨테이너 추가 */}
+                    <LetzgoToastContainer />
+                </div>
+            </Router>
+        </QueryClientProvider>
     );
 };
 

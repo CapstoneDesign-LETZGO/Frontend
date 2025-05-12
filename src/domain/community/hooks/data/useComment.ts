@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import { toast } from 'react-toastify';
 import {
     addCommentApi,
@@ -7,31 +7,32 @@ import {
     fetchCommentApi,
     likeCommentApi,
     updateCommentApi
-} from '../services/CommentService.ts';
-import {useAuthFetch} from "../../../common/hooks/useAuthFetch.ts";
-import {CommentDto, CommentForm} from "../../../common/interfaces/CommunityInterface.ts";
+} from '../../services/CommentService.ts';
+import {useAuthFetch} from "../../../../common/hooks/useAuthFetch.ts";
+import {CommentForm} from "../../../../common/interfaces/CommunityInterface.ts";
+import {useQuery} from "@tanstack/react-query";
+import {AuthFetch} from "../../../../common/utils/fetchUtils.ts";
+
+// 해당 게시글에 작성된 모든 댓글 조회
+const fetchComments = async (authFetch: AuthFetch, postId: number) => {
+    const { comments, success } = await fetchCommentApi(authFetch, postId);
+    if (success) {
+        return comments;
+    } else {
+        throw new Error('댓글을 가져오는 중 오류 발생');
+    }
+};
 
 export const useComment = (postId: number) => {
-    const [comments, setComments] = useState<CommentDto[]>([]);
     const [loading, setLoading] = useState(false);
     const { authFetch } = useAuthFetch();
 
-    // 해당 게시글에 작성된 모든 댓글 조회
-    const fetchComment = async (postId: number) => {
-        setLoading(true);
-        try {
-            const { comments, success } = await fetchCommentApi(authFetch, postId);
-            if (success) {
-                setComments(comments.map(comment => ({ ...comment })));
-            } else {
-                return null;
-            }
-        } catch (err) {
-            console.error('댓글을 가져오는 중 오류 발생:', err);
-            toast.error("댓글을 가져오는 중 오류가 발생했습니다.");
-        }
-        setLoading(false);
-    };
+    // 댓글 목록을 useQuery로 가져오기
+    const { data: comments = [], refetch } = useQuery({
+        queryKey: ['comments', postId],
+        queryFn: () => fetchComments(authFetch, postId),
+        enabled: postId > 0,
+    });
 
     // 댓글 추가
     const addComment = async (postId: number, content: string, superCommentId: number = 0) => {
@@ -116,13 +117,5 @@ export const useComment = (postId: number) => {
         setLoading(false);
     };
 
-    useEffect(() => {
-        fetchComment(postId);
-    }, []);
-
-    const refetch = () => {
-        fetchComment(postId);
-    };
-
-    return { comments, addComment, updateComment, deleteComment, likeComment, cancelLikeComment, loading, refetch };
+    return { comments, addComment, updateComment, deleteComment, likeComment, cancelLikeComment, loading, refetchComment: refetch };
 };

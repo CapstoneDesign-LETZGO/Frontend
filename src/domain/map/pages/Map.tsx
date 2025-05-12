@@ -17,7 +17,7 @@ const Map: React.FC = () => {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [isPoiClick, setIsPoiClick] = useState(false);
-  const { fetchPlaceDto, fetchPlaceSearch, searchResults, loading: loadingMap } = usePlaceInfo();
+  const { fetchPlaceDto, fetchPlaceSearch, searchResults } = usePlaceInfo();
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -85,10 +85,6 @@ const Map: React.FC = () => {
   const handleCloseSearch = () => {
     setIsSearching(false);
   };
-
-  if (loadingMap) {
-    return;
-  }
 
   return (
     <div className="flex flex-col min-h-screen items-center bg-[#F5F5F5]">
