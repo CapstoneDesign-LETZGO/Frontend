@@ -133,7 +133,7 @@ const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
                                 onClick={handleToggleExpand}
                                 className="text-gray-500"
                             >
-                                접기
+                                간단히
                             </button>
                         )}
                     </p>

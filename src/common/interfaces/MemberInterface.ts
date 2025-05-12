@@ -11,7 +11,7 @@ export interface MemberForm {
 export interface MemberDto {
     id: number;
     name: string;
-    nickName: string;
+    nickname: string;
     profileImageUrl: string | null;
     followMemberCount: number;
     followedMemberCount: number;
@@ -20,7 +20,7 @@ export interface MemberDto {
 export interface DetailMemberDto {
     id: number;
     name: string;
-    nickName: string;
+    nickname: string;
     phone: string | null;
     email: string;
     password: string;

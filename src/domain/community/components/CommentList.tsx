@@ -41,6 +41,7 @@ const CommentList: React.FC<CommentListProps> = ({
                                                  }) => {
     const [localComments, setLocalComments] = useState<CommentDto[]>(comments);
     const [menuOpenId, setMenuOpenId] = useState<number | null>(null);
+    const [repliesShownCount, setRepliesShownCount] = useState<{ [parentId: number]: number }>({});
     const { memberInfo } = useMemberActions();
     const memberId = memberInfo?.id;
 
@@ -73,6 +74,37 @@ const CommentList: React.FC<CommentListProps> = ({
 
     const canEditOrDelete = (comment: CommentDto) => {
         return memberId === postMemberId || memberId === comment.memberId;
+    };
+
+    useEffect(() => {
+        setLocalComments(comments);
+        const initialCounts: { [parentId: number]: number } = {};
+        comments.forEach((comment) => {
+            if (!comment.superCommentId || comment.superCommentId === 0) {
+                initialCounts[comment.id] = 0; // 부모 댓글의 초기 답글 개수는 10개
+            }
+        });
+        setRepliesShownCount(initialCounts);
+    }, [comments]);
+
+    // 답글 더보기 클릭
+    const handleShowMoreReplies = (parentId: number, totalReplies: number) => {
+        setRepliesShownCount((prev) => {
+            const currentShown = prev[parentId] || 0;
+            const nextShown = currentShown + 10;
+            return {
+                ...prev,
+                [parentId]: nextShown > totalReplies ? totalReplies : nextShown,
+            };
+        });
+    };
+
+    // 답글 간단히 클릭
+    const handleCollapseReplies = (parentId: number) => {
+        setRepliesShownCount((prev) => ({
+            ...prev,
+            [parentId]: 0,
+        }));
     };
 
     return (
@@ -152,75 +184,106 @@ const CommentList: React.FC<CommentListProps> = ({
 
                         {/* 답글 */}
                         <div className="ml-8 mt-2 space-y-2">
-                            {localComments
-                                .filter((reply) => reply.superCommentId === parent.id)
-                                .map((reply) => {
-                                    return (
-                                        <div key={reply.id} className="relative"> {/* 여기 relative 추가 */}
-                                            <div className="flex items-center mb-1 justify-between">
-                                                <div className="flex items-center">
-                                                    <img
-                                                        src={reply.profileImageUrl || '/src/assets/icons/user/user_4_line.svg'}
-                                                        alt="Profile"
-                                                        className="w-5 h-5 rounded-full mr-2"
-                                                    />
-                                                    <span className="font-semibold mr-2">{reply.nickname}</span>
-                                                    <span className="text-gray-400 text-[10px]">{formatDate(reply.createdAt)}</span>
-                                                </div>
+                            {(() => {
+                                const replies = localComments.filter((reply) => reply.superCommentId === parent.id);
+                                const shownCount = repliesShownCount[parent.id] || 0;
+                                const shownReplies = replies.slice(0, shownCount);
 
-                                                {/* 토글 버튼 */}
-                                                {canEditOrDelete(reply) && (
-                                                    <img
-                                                        src="/src/assets/icons/system/more_2_line.svg"
-                                                        alt="More"
-                                                        className="w-4 h-4 ml-auto mb-1 cursor-pointer"
-                                                        onClick={() =>
-                                                            setMenuOpenId((prev) => (prev === reply.id ? null : reply.id))
-                                                        }
-                                                    />
+                                return (
+                                    <>
+                                        {shownReplies.map((reply) => {
+                                            const isMenuOpen = menuOpenId === reply.id;
+                                            return (
+                                                <div key={reply.id} className="relative">
+                                                    <div className="flex items-center mb-1 justify-between">
+                                                        <div className="flex items-center">
+                                                            <img
+                                                                src={reply.profileImageUrl || '/src/assets/icons/user/user_4_line.svg'}
+                                                                alt="Profile"
+                                                                className="w-5 h-5 rounded-full mr-2"
+                                                            />
+                                                            <span className="font-semibold mr-2">{reply.nickname}</span>
+                                                            <span className="text-gray-400 text-[10px]">{formatDate(reply.createdAt)}</span>
+                                                        </div>
+
+                                                        {canEditOrDelete(reply) && (
+                                                            <img
+                                                                src="/src/assets/icons/system/more_2_line.svg"
+                                                                alt="More"
+                                                                className="w-4 h-4 ml-auto mb-1 cursor-pointer"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setMenuOpenId((prev) => (prev === reply.id ? null : reply.id));
+                                                                }}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                    <p className="text-xs mb-1">{reply.content}</p>
+                                                    <div className="flex items-center space-x-4 mt-1">
+                                                        <img
+                                                            src={
+                                                                reply.liked
+                                                                    ? 'src/assets/icons/shape/heart_fill.svg'
+                                                                    : 'src/assets/icons/shape/heart_line.svg'
+                                                            }
+                                                            alt="Like"
+                                                            className="w-4 h-4 cursor-pointer"
+                                                            onClick={() => handleLikeToggle(reply)}
+                                                        />
+                                                        <span className="text-gray-500 text-xs">{reply.likeCount}</span>
+                                                    </div>
+
+                                                    {isMenuOpen && (
+                                                        <div className="absolute right-4 top-5 bg-white border rounded shadow p-1 space-y-1 z-50">
+                                                            <button
+                                                                className="text-xs w-full text-left p-1 hover:bg-gray-100"
+                                                                onClick={() => {
+                                                                    setMenuOpenId(null);
+                                                                    onUpdateClick(reply.id, reply.content);
+                                                                }}
+                                                            >
+                                                                수정
+                                                            </button>
+                                                            <button
+                                                                className="text-xs w-full text-left p-1 hover:bg-gray-100"
+                                                                onClick={() => {
+                                                                    setMenuOpenId(null);
+                                                                    onDeleteClick(reply.id);
+                                                                }}
+                                                            >
+                                                                삭제
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+
+                                        {replies.length > 0 && (
+                                            <button
+                                                className="text-gray-500 text-xs mt-1"
+                                                onClick={() =>
+                                                    shownCount >= replies.length
+                                                        ? handleCollapseReplies(parent.id)
+                                                        : handleShowMoreReplies(parent.id, replies.length)
+                                                }
+                                            >
+                                                {shownCount >= replies.length ? (
+                                                    <div className="flex items-center text-xs text-gray-500 justify-start">
+                                                        <div className="border-t border-gray-300 w-[30px] mr-2"></div> {/* 왼쪽에 30px 길이의 가로선 */}
+                                                        <span>간단히</span>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex items-center text-xs text-gray-500 justify-start">
+                                                        <div className="border-t border-gray-300 w-[30px] mr-2"></div> {/* 왼쪽에 30px 길이의 가로선 */}
+                                                        <span>더보기</span>
+                                                    </div>
                                                 )}
-                                            </div>
-                                            <p className="text-xs mb-1">{reply.content}</p>
-                                            <div className="flex items-center space-x-4 mt-1">
-                                                <img
-                                                    src={
-                                                        reply.liked
-                                                            ? 'src/assets/icons/shape/heart_fill.svg'
-                                                            : 'src/assets/icons/shape/heart_line.svg'
-                                                    }
-                                                    alt="Like"
-                                                    className="w-4 h-4 cursor-pointer"
-                                                    onClick={() => handleLikeToggle(reply)}
-                                                />
-                                                <span className="text-gray-500 text-xs">{reply.likeCount}</span>
-                                            </div>
-
-                                            {/* 답글 토글 메뉴 */}
-                                            {menuOpenId === reply.id && (
-                                                <div className="absolute right-4 top-5 bg-white border rounded shadow p-1 space-y-1 z-10">
-                                                    <button
-                                                        className="text-xs w-full text-left p-1 hover:bg-gray-100"
-                                                        onClick={() => {
-                                                            setMenuOpenId(null);
-                                                            onUpdateClick(reply.id, reply.content);
-                                                        }}
-                                                    >
-                                                        수정
-                                                    </button>
-                                                    <button
-                                                        className="text-xs w-full text-left p-1 hover:bg-gray-100"
-                                                        onClick={() => {
-                                                            setMenuOpenId(null);
-                                                            onDeleteClick(reply.id);
-                                                        }}
-                                                    >
-                                                        삭제
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
-                                    );
-                                })}
+                                            </button>
+                                        )}
+                                    </>
+                                );
+                            })()}
                         </div>
                     </div>
                 ))}

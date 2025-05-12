@@ -49,7 +49,7 @@ export const useMemberActions = (mode: Mode = 'member') => {
     };
 
     // 회원정보 수정 함수
-    const updateMember = async (form: MemberForm, imageFile: File | null = null) => {
+    const updateMember = async (form: Partial<MemberForm>, imageFile: File | null = null) => {
         setLoading(true);
         try {
             const success = await updateMemberApi(authFetch, form, imageFile);
