@@ -12,17 +12,14 @@ export const usePlaceInfo = () => {
   const { authFetch } = useAuthFetch();
 
   // 해당 장소 조회
-  const fetchPlaceDto = async (placeId: string): Promise<{ placeDto: PlaceDto; reviews: Review[] } | null> => {
+  const fetchPlaceDto = async (placeId: string) => {
     setLoading(true);
     try {
-      const response = await fetchPlaceDtoApi(authFetch, placeId);
-      if (response.returnCode === 'SUCCESS' && response.placedata) {
-        setPlaceDto(response.placedata);
-        setReviews(response.reviews);
-        return {
-          placeDto: response.placedata,
-          reviews: response.reviews,
-        };
+      const { placedata, reviews, success } = await fetchPlaceDtoApi(authFetch, placeId);
+      if (success) {
+        setPlaceDto(placedata);
+        setReviews(reviews);
+        return { placeDto: placedata, reviews };
       } else {
         return null;
       }

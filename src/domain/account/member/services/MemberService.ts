@@ -64,6 +64,7 @@ export const updateMemberApi = async (
             formData,
             'PUT'
         );
+        console.log('Update Member Response:', response);
         return isSuccess(response);
     } catch (err) {
         console.error('회원정보 수정 중 오류 발생:', err);

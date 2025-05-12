@@ -1,11 +1,12 @@
-const ChatRoom = () => {
+import React from 'react';
+import ChatRoomHeader from '../components/ChatRoomHeader';
+
+const ChatRoom: React.FC = () => {
     return (
         <div>
-            <h1>Chat Room Page</h1>
+            <ChatRoomHeader />
         </div>
     );
 };
-
-
 
 export default ChatRoom;

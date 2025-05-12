@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import MainPostCard from '../components/MainPostCard.tsx';
-import CommentModal from '../components/CommentModal';
+import CommentModal from '../components/comment/CommentModal';
 import CommunityHeader from "../components/CommunityHeader.tsx";
 import { usePost } from '../hooks/data/usePost.ts';
 import {usePullToRefresh} from "../hooks/render/usePullToRefresh.ts";

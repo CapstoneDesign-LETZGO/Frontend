@@ -45,12 +45,12 @@ const ChatRoomHeader: React.FC = () => {
 
             {/* 사용자 닉네임 */}
             <div className="ml-4 font-semibold">
-            {memberInfo?.nickname || 'Unknown User'}
+                {memberInfo?.nickname || 'Unknown User'}
             </div>
 
             {/* 그룹 아이콘 */}
             <div onClick={() => navigate('/group-chat')} className="cursor-pointer ml-auto mr-2">
-                <img src="/src/assets/icons/user/group_line.svg" alt="Group" className="h-6" />
+                <img src="/src/assets/icons/editor/menu_line.svg.svg" alt="Group" className="h-6" />
             </div>
         </header>
     );
