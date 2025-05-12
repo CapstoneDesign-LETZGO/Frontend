@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import {cancelLikePostApi, cancelSavePostApi, likePostApi, savePostApi} from '../services/PostService';
-import { useAuthFetch } from '../../../common/hooks/useAuthFetch';
+import {cancelLikePostApi, cancelSavePostApi, likePostApi, savePostApi} from '../../services/PostService';
+import { useAuthFetch } from '../../../../common/hooks/useAuthFetch';
 import { toast } from 'react-toastify';
 
 export const useUtils = () => {

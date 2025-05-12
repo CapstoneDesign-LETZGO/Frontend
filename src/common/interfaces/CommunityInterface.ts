@@ -47,5 +47,6 @@ export interface CommentDto {
     likeCount: number;
     content: string;
     superCommentId: number | null;
+    liked: boolean;
     createdAt: string;
 }

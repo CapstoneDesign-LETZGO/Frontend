@@ -1,16 +1,12 @@
-import NavigationBar from "../../../common/components/NavigationBar.tsx";
+import { ArrowLeft, Search } from "lucide-react";
 
 const Schedule = () => {
-    return (
-        <div className="flex flex-col min-h-screen items-center bg-[#F5F5F5]">
-            <div className="flex flex-col w-full max-w-md min-h-screen relative">
 
+  return (
+    <div className="min-h-screen bg-white flex flex-col items-center">
 
-                {/* NavigationBar */}
-                <NavigationBar />
-            </div>
-        </div>
-    );
+    </div>
+  );
 };
 
 export default Schedule;

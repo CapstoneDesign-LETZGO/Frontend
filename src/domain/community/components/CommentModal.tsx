@@ -1,37 +1,48 @@
 import React, { useRef, useEffect, useState } from 'react';
+import CommentList from './CommentList.tsx';
+import {useDraggableModal} from "../hooks/render/useDraggableModal.ts";
+import {useComment} from "../hooks/data/useComment.ts";
+import { CommentDto } from '../../../common/interfaces/CommunityInterface.ts';
 
 interface CommentModalProps {
     isOpen: boolean;
     closeModal: () => void;
-    comments: string[];
-    loadComments: (isOlder: boolean) => void;
-    loading: boolean;
-    hasMoreOlderComments: boolean;
+    postId: number | null;
+    postMemberId: number | null;
 }
 
-const CommentModal: React.FC<CommentModalProps> = ({
-                                                       isOpen,
-                                                       closeModal,
-                                                       comments,
-                                                       loading,
-                                                   }) => {
+const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, postMemberId}) => {
     const commentsRef = useRef<HTMLDivElement>(null);
     const modalRef = useRef<HTMLDivElement>(null);
     const headerRef = useRef<HTMLDivElement>(null);
     const [translateY, setTranslateY] = useState('100%');
     const [isVisible, setIsVisible] = useState(false);
-    const [comment, setComment] = useState('');
+    const [comment, setComment] = useState<CommentDto[]>([]);
+    const [commentInput, setCommentInput] = useState<string>('');
+    const [superCommentId, setSuperCommentId] = useState<number | null>(null); // 댓글 or 답글 구분
+    const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+    const { comments, addComment, updateComment, deleteComment, likeComment, cancelLikeComment, refetchComment } = useComment(postId || 0);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    const fetchAndSetComments = async () => {
+        const { data } = await refetchComment();  // 최신 데이터 바로 가져옴
+        if (data) {
+            setComment(data);  // 바로 최신 데이터로 갱신
+        }
+    };
 
     useEffect(() => {
         if (isOpen) {
             setIsVisible(true);
+            refetchComment();
+            fetchAndSetComments();
         } else {
             setTranslateY('100%');
             setTimeout(() => {
                 setIsVisible(false);
             }, 300);
         }
-    }, [isOpen]);
+    }, [isOpen, comments]);
 
     useEffect(() => {
         if (isVisible) {
@@ -41,98 +52,14 @@ const CommentModal: React.FC<CommentModalProps> = ({
         }
     }, [isVisible]);
 
-    useEffect(() => {
-        if (!isVisible || !modalRef.current) return;
-
-        const modal = modalRef.current;
-        const header = headerRef.current;
-        let startY = 0;
-        let isDragging = false;
-        let canDrag = false;
-        let currentTranslateY = 0;
-
-        const getY = (e: TouchEvent | MouseEvent) => {
-            if ('touches' in e) {
-                return e.touches[0]?.clientY ?? 0;
-            } else {
-                return e.clientY;
-            }
-        };
-
-        const onStart = (e: TouchEvent | MouseEvent, isHeader: boolean = false) => {
-            startY = getY(e);
-            if (isHeader) {
-                canDrag = true; // 헤더는 항상 드래그 가능
-                console.log('Dragging started on header');
-
-            } else if (commentsRef.current) {
-                canDrag = commentsRef.current.scrollTop === 0;
-                console.log('Dragging started on body, canDrag:', canDrag);
-            }
-            isDragging = true;
-            console.log('onStart:', { startY, isHeader, canDrag });
-        };
-
-        const onMove = (e: TouchEvent | MouseEvent) => {
-            if (!isDragging || !canDrag) return;
-            const currentY = getY(e);
-            const diffY = currentY - startY;
-            if (diffY > 0) {
-                setTranslateY(`${diffY}px`);
-                currentTranslateY = diffY;
-                console.log('onMove: Dragging', { diffY, currentTranslateY });
-            }
-        };
-
-        const onEnd = () => {
-            if (!isDragging) return;
-            isDragging = false;
-            console.log('onEnd: Drag ended, currentTranslateY:', currentTranslateY);
-            if (canDrag && currentTranslateY > 100) {
-                setTranslateY('100%');
-                console.log('Closing modal');
-                setTimeout(() => {
-                    closeModal();
-                }, 300);
-            } else {
-                setTranslateY('0%');
-            }
-            currentTranslateY = 0;
-            canDrag = false;
-        };
-
-        // Modal Header에 대한 드래그 이벤트
-        header?.addEventListener('touchstart', (e) => onStart(e, true));
-        header?.addEventListener('mousedown', (e) => onStart(e, true));
-
-        // Comments List 영역에 대한 드래그 이벤트
-        modal.addEventListener('touchstart', (e) => {
-            if (e.target !== header) {
-                onStart(e, false);
-            }
-        });
-        modal.addEventListener('mousedown', (e) => {
-            if (e.target !== header) {
-                onStart(e, false);
-            }
-        });
-
-        window.addEventListener('touchmove', onMove);
-        window.addEventListener('mousemove', onMove);
-        window.addEventListener('touchend', onEnd);
-        window.addEventListener('mouseup', onEnd);
-
-        return () => {
-            header?.removeEventListener('touchstart', (e) => onStart(e, true));
-            header?.removeEventListener('mousedown', (e) => onStart(e, true));
-            modal.removeEventListener('touchstart', (e) => onStart(e));
-            modal.removeEventListener('mousedown', (e) => onStart(e));
-            window.removeEventListener('touchmove', onMove);
-            window.removeEventListener('mousemove', onMove);
-            window.removeEventListener('touchend', onEnd);
-            window.removeEventListener('mouseup', onEnd);
-        };
-    }, [isVisible, closeModal]);
+    useDraggableModal({
+        isVisible,
+        modalRef,
+        headerRef,
+        commentsRef,
+        closeModal,
+        setTranslateY,
+    });
 
     useEffect(() => {
         if (isVisible) {
@@ -146,7 +73,26 @@ const CommentModal: React.FC<CommentModalProps> = ({
     }, [isVisible]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setComment(e.target.value);
+        setCommentInput(e.target.value);
+    };
+
+    const handleSubmit = async () => {
+        if (editingCommentId !== null) {
+            // 댓글 수정
+            await updateComment(editingCommentId, commentInput);
+            setEditingCommentId(null); // 수정 모드 해제
+            await fetchAndSetComments();
+        } else if (superCommentId !== null && superCommentId !== 0) {
+            // 답글 작성 (superCommentId가 1 이상일 때만 답글로 취급)
+            await addComment(postId ?? 0, commentInput, superCommentId);
+            await fetchAndSetComments();
+        } else {
+            // 일반 댓글 작성
+            await addComment(postId ?? 0, commentInput, 0);
+            await fetchAndSetComments();
+        }
+        setCommentInput(''); // 입력창 비우기
+        setSuperCommentId(null); // 답글 모드 해제
     };
 
     if (!isVisible) return null;
@@ -179,14 +125,24 @@ const CommentModal: React.FC<CommentModalProps> = ({
 
                 {/* Comments List */}
                 <div ref={commentsRef} className="flex-1 overflow-y-auto px-4 py-2">
-                    {comments.map((comment, index) => (
-                        <div key={index} className="p-2 border-b text-xs border-gray-300">
-                            <p>{comment}</p>
-                        </div>
-                    ))}
-                    {loading && (
-                        <div className="text-center py-2 text-gray-500">로딩 중...</div>
-                    )}
+                    <CommentList
+                        comments={comments}
+                        postMemberId={postMemberId!}
+                        onReplyClick={(id) => setSuperCommentId(id)}
+                        onLikeClick={(id) => likeComment(id)}
+                        onCancelLikeClick={(id) => cancelLikeComment(id)}
+                        onUpdateClick={(id, content) => {
+                            setEditingCommentId(id);  // 수정할 댓글 ID 저장
+                            setCommentInput(content);      // 입력창에 기존 댓글 내용 채우기
+                            inputRef.current?.focus(); // 입력창 포커스
+                        }}
+                        onDeleteClick={async (id) => {
+                            if (window.confirm('댓글을 삭제하시겠습니까?')) {
+                                await deleteComment(id);
+                                await fetchAndSetComments();
+                            }
+                        }}
+                    />
                 </div>
 
                 {/* Comment Input */}
@@ -198,9 +154,10 @@ const CommentModal: React.FC<CommentModalProps> = ({
                         className="w-8 h-8 rounded-full ml-2"
                     />
                     <input
+                        ref={inputRef}
                         type="text"
                         placeholder="댓글을 입력하세요..."
-                        value={comment}
+                        value={commentInput}
                         onChange={handleInputChange}
                         className="w-full px-4 py-2 text-xs focus:outline-none"
                     />
@@ -209,6 +166,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
                             src="src/assets/icons/arrow/arrow_up_line.svg"
                             alt="Send Comment"
                             className="w-6 h-6 mr-2 cursor-pointer"
+                            onClick={handleSubmit}
                         />
                     )}
                 </div>

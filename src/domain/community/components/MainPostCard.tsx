@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import { DetailPostDto } from "../../../common/interfaces/CommunityInterface.ts";
-import {useUtils} from "../hooks/useUtils.ts";
 import {Swiper, SwiperSlide} from "swiper/react";
 import { Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import {useUtils} from "../hooks/data/useUtils.ts";
 
 interface PostCardProps {
     post: DetailPostDto;
