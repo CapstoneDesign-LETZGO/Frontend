@@ -45,27 +45,27 @@ export const fetchDetailMemberApi = async (
 // 회원정보 수정
 export const updateMemberApi = async (
     authFetch: AuthFetch,
-    form: MemberForm,
+    form: Partial<MemberForm>,
     imageFile: File | null
 ): Promise<boolean> => {
     try {
         const formData = new FormData();
-        formData.append('memberForm', new Blob([JSON.stringify(form)], { type: 'application/json' }));
+        const cleanForm = {
+            ...form,
+            birthday: form.birthday === "" ? null : form.birthday,
+        };
+
+        // JSON 데이터를 Blob으로 변환하여 FormData에 첨부
+        const memberFormBlob = new Blob([JSON.stringify(cleanForm)], { type: 'application/json' });
+        formData.append('memberForm', memberFormBlob);
         if (imageFile) {
             formData.append('imageFile', imageFile);
         }
-
         const response = await authFetch<ApiResponse<string>>(
             '/rest-api/v1/member',
-            {
-                data: formData,
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            },
+            formData,
             'PUT'
         );
-
         return isSuccess(response);
     } catch (err) {
         console.error('회원정보 수정 중 오류 발생:', err);

@@ -95,6 +95,11 @@ const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, 
         setSuperCommentId(null); // 답글 모드 해제
     };
 
+    const handleReplyClick = (id: number) => {
+        setSuperCommentId(id);  // 해당 댓글의 superCommentId 설정
+        inputRef.current?.focus(); // 입력창 포커스 이동
+    };
+
     if (!isVisible) return null;
 
     return (
@@ -128,7 +133,7 @@ const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, 
                     <CommentList
                         comments={comments}
                         postMemberId={postMemberId!}
-                        onReplyClick={(id) => setSuperCommentId(id)}
+                        onReplyClick={handleReplyClick}
                         onLikeClick={(id) => likeComment(id)}
                         onCancelLikeClick={(id) => cancelLikeComment(id)}
                         onUpdateClick={(id, content) => {
