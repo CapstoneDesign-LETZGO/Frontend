@@ -1,6 +1,6 @@
 import { PlaceDto } from "../../../common/interfaces/MapInterface.ts";
 import { ApiResponse } from "../../../common/interfaces/response/ApiResponse";
-import {AuthFetch, isSuccess} from "../../../common/utils/fetchUtils.ts";
+import {AuthFetch, isSuccess} from "../../../common/utils/fetch.ts";
 
 // 추천 장소 조회
 export const fetchRecommendApi = async (

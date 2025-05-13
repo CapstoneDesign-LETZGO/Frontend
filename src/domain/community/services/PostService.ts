@@ -1,6 +1,6 @@
 import { ApiResponse } from "../../../common/interfaces/response/ApiResponse.ts";
 import {DetailPostDto, PostForm} from "../../../common/interfaces/CommunityInterface.ts";
-import { AuthFetch, isSuccess } from "../../../common/utils/fetchUtils.ts";
+import { AuthFetch, isSuccess } from "../../../common/utils/fetch.ts";
 
 // 본인/팔로우한 유저 게시글 조회
 export const fetchPostApi = async (

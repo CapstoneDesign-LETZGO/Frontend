@@ -1,5 +1,5 @@
 import { ChatMessageDto } from "../../../common/interfaces/ChatInterface";
-import { AuthFetch, isSuccess } from "../../../common/utils/fetchUtils";
+import { AuthFetch, isSuccess } from "../../../common/utils/fetch.ts";
 import { ApiResponse } from "../../../common/interfaces/response/ApiResponse.ts";
 
 // 채팅방 이전 메시지 조회

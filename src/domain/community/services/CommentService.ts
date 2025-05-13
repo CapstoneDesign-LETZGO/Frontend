@@ -1,6 +1,6 @@
 import { ApiResponse } from "../../../common/interfaces/response/ApiResponse.ts";
 import { CommentDto, CommentForm } from "../../../common/interfaces/CommunityInterface.ts";
-import { AuthFetch, isSuccess } from "../../../common/utils/fetchUtils.ts";
+import { AuthFetch, isSuccess } from "../../../common/utils/fetch.ts";
 
 // 해당 게시글에 작성된 모든 댓글 조회
 export const fetchCommentApi = async (

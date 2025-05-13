@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatRoomDto, ChatRoomForm } from '../../../common/interfaces/ChatInterface.ts';
 import { MemberDto } from "../../../common/interfaces/MemberInterface.ts";
+import {formatDate} from "../../../common/utils/formatDate.ts";
 
 interface ChatRoomCardProps {
     chatRooms: ChatRoomDto[];
@@ -11,29 +12,9 @@ interface ChatRoomCardProps {
     member: MemberDto;
 }
 
-const formatDate = (date: string) => {
-    const d = new Date(date);
-    const now = new Date();
-    const diffMs = now.getTime() - d.getTime();
-
-    const diffSec = Math.floor(diffMs / 1000);
-    const diffMin = Math.floor(diffSec / 60);
-    const diffHour = Math.floor(diffMin / 60);
-    const diffDay = Math.floor(diffHour / 24);
-    const diffWeek = Math.floor(diffDay / 7);
-
-    if (diffSec < 10) return '방금';
-    if (diffSec < 60) return `${diffSec}초`;
-    if (diffMin < 60) return `${diffMin}분`;
-    if (diffHour < 24) return `${diffHour}시간`;
-    if (diffDay < 7) return `${diffDay}일`;
-    return `${diffWeek}주 전`;
-};
-
 const ChatRoomCard: React.FC<ChatRoomCardProps> = ({
                                                        chatRooms,
                                                        refetchChatRoom,
-                                                       createChatRoom,
                                                        updateChatRoomTitle,
                                                        leaveChatRoom,
                                                        member

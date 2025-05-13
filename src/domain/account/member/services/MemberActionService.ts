@@ -1,5 +1,5 @@
 import {DetailMemberDto, MemberDto, MemberForm} from "../../../../common/interfaces/MemberInterface";
-import {AuthFetch, isSuccess} from "../../../../common/utils/fetchUtils";
+import {AuthFetch, isSuccess} from "../../../../common/utils/fetch.ts";
 import {ApiResponse} from "../../../../common/interfaces/response/ApiResponse.ts";
 
 // 회원가입

@@ -11,7 +11,7 @@ import {
 import {useAuthFetch} from "../../../../common/hooks/useAuthFetch.ts";
 import {CommentForm} from "../../../../common/interfaces/CommunityInterface.ts";
 import {useQuery} from "@tanstack/react-query";
-import {AuthFetch} from "../../../../common/utils/fetchUtils.ts";
+import {AuthFetch} from "../../../../common/utils/fetch.ts";
 
 // 해당 게시글에 작성된 모든 댓글 조회
 const fetchComments = async (authFetch: AuthFetch, postId: number) => {
