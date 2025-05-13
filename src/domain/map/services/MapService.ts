@@ -33,16 +33,17 @@ export const fetchPlaceDtoApi = async (
 
 // 리뷰 생성
 export const postReviewApi = async (
-    authFetch: AuthFetch,
-    placeId: string,
-    formData: FormData
+  authFetch: AuthFetch,
+  placeId: string,
+  formData: FormData
 ): Promise<boolean> => {
   try {
     const response = await authFetch<ApiResponse<string>>(
-        `/map-api/review/${placeId}`,
-        { data: formData, headers: { 'Content-Type': 'multipart/form-data' } },
-        'POST'
+      `/map-api/review/${placeId}`,
+      formData,
+      'POST'
     );
+    console.log('Post Review Response:', response);
     return isSuccess(response);
   } catch (err) {
     console.error('리뷰 등록 중 오류:', err);

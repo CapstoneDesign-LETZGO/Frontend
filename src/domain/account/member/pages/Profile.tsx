@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import ProfileHeader from "../components/ProfileHeader";
 import PostGrid from "../components/PostGrid";
-import EditProfileOverlay from "../components/EditProfileOvelay";
 import PostDetailOverlay from "../components/PostDetailOverlay";
-import {DetailPostDto} from "../../../../common/interfaces/CommunityInterface";
-import {usePost} from "../../../community/hooks/data/usePost.ts";
-import {useMemberActions} from "../hooks/useMemberActions.ts";
-import {MemberForm} from "../../../../common/interfaces/MemberInterface.ts";
+import { DetailPostDto } from "../../../../common/interfaces/CommunityInterface";
+import { usePost } from "../../../community/hooks/data/usePost.ts";
+import { useMemberActions } from "../hooks/useMemberActions.ts";
+import { MemberForm } from "../../../../common/interfaces/MemberInterface.ts";
 
 const ProfilePage: React.FC = () => {
     const [isEditing, setIsEditing] = useState(false);
@@ -89,20 +88,12 @@ const ProfilePage: React.FC = () => {
         <div className="flex flex-col min-h-screen items-center bg-[#F5F5F5]">
             <div className="flex flex-col w-full max-w-md min-h-screen relative bg-white">
                 {detailMemberInfo && (
-                    <ProfileHeader onEditClick={() => setIsEditing(true)} member={detailMemberInfo} />
+                    <ProfileHeader member={detailMemberInfo} />
                 )}
 
                 <section className="flex-grow overflow-y-auto scrollbar-hide mb-15">
                     <PostGrid posts={posts} onPostClick={(post) => setSelectedPost(post)} />
                 </section>
-
-                {isEditing && detailMemberInfo && (
-                    <EditProfileOverlay
-                        onClose={() => setIsEditing(false)}
-                        onSubmit={handleEditSubmit}
-                        member={detailMemberInfo}
-                    />
-                )}
 
                 {selectedPost && (
                     <PostDetailOverlay
