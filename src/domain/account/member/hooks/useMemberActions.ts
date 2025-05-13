@@ -49,7 +49,7 @@ export const useMemberActions = (mode: Mode = 'member') => {
     };
 
     // 회원정보 수정 함수
-    const updateMember = async (form: MemberForm, imageFile: File | null = null) => {
+    const updateMember = async (form: Partial<MemberForm>, imageFile: File | null = null) => {
         setLoading(true);
         try {
             const success = await updateMemberApi(authFetch, form, imageFile);
@@ -57,7 +57,7 @@ export const useMemberActions = (mode: Mode = 'member') => {
                 toast.success('회원정보가 성공적으로 수정되었습니다.');
                 refetch(); // 수정 후 최신 정보 다시 가져오기
             } else {
-                toast.error('회원정보 수정에 실패했습니다.');
+                return null;
             }
         } catch (err) {
             console.error('회원정보 수정 중 오류 발생:', err);

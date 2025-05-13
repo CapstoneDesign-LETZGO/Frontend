@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './domain/account/auth/pages/Login';
 import Signup from './domain/account/auth/pages/Signup';
 import Profile from './domain/account/member/pages/Profile';
+import EditProfile from './domain/account/member/pages/EditProfile.tsx';
 import ChatMessage from './domain/chat/pages/ChatMessage';
 import ChatRoom from './domain/chat/pages/ChatRoom';
 import Community from './domain/community/pages/Community';
@@ -82,7 +83,13 @@ const App = () => {
                                 </LayoutWithHeaderAndNav>
                             </RequireAuth>
                         } />
-
+                        <Route path="/edit-profile" element={
+                            <RequireAuth>
+                                <LayoutWithHeaderAndNav>
+                                    <EditProfile />
+                                </LayoutWithHeaderAndNav>
+                            </RequireAuth>
+                        } />
                         {/* 네비게이션 바 없이 로그인 필요 */}
                         <Route path="/chat-message" element={
                             <RequireAuth>

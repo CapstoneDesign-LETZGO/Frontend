@@ -2,7 +2,7 @@ import { ApiResponse } from '../../common/interfaces/response/ApiResponse.ts';
 
 export type AuthFetch = <T>(
     url: string,
-    data?: Record<string, unknown>,
+    data?: Record<string, unknown> | FormData,
     method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
 ) => Promise<ApiResponse<T>>;
 

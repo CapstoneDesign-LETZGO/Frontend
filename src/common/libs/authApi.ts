@@ -5,9 +5,6 @@ import { tryRefreshToken } from "../services/authFetchService.ts";
 const authApi = axios.create({
     baseURL: import.meta.env.VITE_CORE_API_BASE_URL,
     withCredentials: true,
-    headers: {
-        'Content-Type': 'application/json',
-    },
 });
 
 // 요청 보내기 전에 토큰 자동으로 붙이기

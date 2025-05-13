@@ -1,8 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react';
 import CommentList from './CommentList.tsx';
-import {useDraggableModal} from "../hooks/render/useDraggableModal.ts";
-import {useComment} from "../hooks/data/useComment.ts";
-import { CommentDto } from '../../../common/interfaces/CommunityInterface.ts';
+import {useDraggableModal} from "../../hooks/render/useDraggableModal.ts";
+import {useComment} from "../../hooks/data/useComment.ts";
+import { CommentDto } from '../../../../common/interfaces/CommunityInterface.ts';
+import {useMemberActions} from "../../../account/member/hooks/useMemberActions.ts";
 
 interface CommentModalProps {
     isOpen: boolean;
@@ -22,6 +23,7 @@ const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, 
     const [superCommentId, setSuperCommentId] = useState<number | null>(null); // 댓글 or 답글 구분
     const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
     const { comments, addComment, updateComment, deleteComment, likeComment, cancelLikeComment, refetchComment } = useComment(postId || 0);
+    const { memberInfo } = useMemberActions();
     const inputRef = useRef<HTMLInputElement>(null);
 
     const fetchAndSetComments = async () => {
@@ -34,7 +36,6 @@ const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, 
     useEffect(() => {
         if (isOpen) {
             setIsVisible(true);
-            refetchComment();
             fetchAndSetComments();
         } else {
             setTranslateY('100%');
@@ -42,7 +43,7 @@ const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, 
                 setIsVisible(false);
             }, 300);
         }
-    }, [isOpen, comments]);
+    }, [isOpen]);
 
     useEffect(() => {
         if (isVisible) {
@@ -95,6 +96,11 @@ const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, 
         setSuperCommentId(null); // 답글 모드 해제
     };
 
+    const handleReplyClick = (id: number) => {
+        setSuperCommentId(id);  // 해당 댓글의 superCommentId 설정
+        inputRef.current?.focus(); // 입력창 포커스 이동
+    };
+
     if (!isVisible) return null;
 
     return (
@@ -128,7 +134,7 @@ const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, 
                     <CommentList
                         comments={comments}
                         postMemberId={postMemberId!}
-                        onReplyClick={(id) => setSuperCommentId(id)}
+                        onReplyClick={handleReplyClick}
                         onLikeClick={(id) => likeComment(id)}
                         onCancelLikeClick={(id) => cancelLikeComment(id)}
                         onUpdateClick={(id, content) => {
@@ -142,6 +148,7 @@ const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, 
                                 await fetchAndSetComments();
                             }
                         }}
+                        memberId={memberInfo?.id ?? 0}
                     />
                 </div>
 

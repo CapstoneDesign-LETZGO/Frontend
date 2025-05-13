@@ -3,10 +3,15 @@ import authApi from "../libs/authApi.ts";
 import publicApi from "../libs/publicApi.ts";
 import { ApiResponse } from '../interfaces/response/ApiResponse.ts';
 
+// FormData 판별 함수
+function isFormData(body: unknown): body is FormData {
+    return typeof FormData !== 'undefined' && body instanceof FormData;
+}
+
 // 인증 API 요청 함수 (자동 토큰 갱신 포함)
 export const authFetch = async <T>(
     url: string,
-    data: Record<string, unknown> = {},
+    data: Record<string, unknown> | FormData = {},
     method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET'
 ): Promise<ApiResponse<T>> => {
     const userToken = JSON.parse(localStorage.getItem('userToken') || '{}');
@@ -16,14 +21,27 @@ export const authFetch = async <T>(
         url,
         headers: {
             'Authorization': `Bearer ${userToken.accessToken}`,
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json', // 기본적으로 application/json
         },
     };
 
+    const isForm = isFormData(data);
+
     if (method === 'GET') {
+        if (isForm) {
+            throw new Error('GET method does not support FormData payload');
+        }
         config.params = data;
     } else {
         config.data = data;
+    }
+
+    // FormData인 경우 Content-Type 삭제 → Axios가 multipart/form-data 자동 설정
+    if (isForm) {
+        console.log('[authFetch] Detected FormData payload');
+        config.headers = {
+            'Authorization': `Bearer ${userToken.accessToken}`,
+        };
     }
 
     try {
