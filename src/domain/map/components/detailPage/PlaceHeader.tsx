@@ -1,5 +1,5 @@
 import React from "react";
-import {PlaceDto} from "../../../../common/interfaces/MapInterface.ts";
+import { PlaceDto } from "../../../../common/interfaces/MapInterface.ts";
 
 interface Prop {
   placeDto: PlaceDto | null;
@@ -9,7 +9,7 @@ const PlaceHeader: React.FC<Prop> = ({ placeDto }) => {
   if (!placeDto) return null;
   const { name, address, placePhoto } = placeDto;
 
-  console.log("placePhoto API호출됨:");
+  //console.log("placePhoto API호출됨:");
   return (
     <div className="p-4 bg-white border-b border-gray-200">
       {placePhoto ? (

@@ -3,15 +3,15 @@ import ProfileHeader from "../components/ProfileHeader";
 import PostGrid from "../components/PostGrid";
 import EditProfileOverlay from "../components/EditProfileOvelay";
 import PostDetailOverlay from "../components/PostDetailOverlay";
-import {DetailPostDto} from "../../../../common/interfaces/CommunityInterface";
-import {usePost} from "../../../community/hooks/data/usePost.ts";
-import {useMemberActions} from "../hooks/useMemberActions.ts";
+import { DetailPostDto } from "../../../../common/interfaces/CommunityInterface";
+import { usePost } from "../../../community/hooks/data/usePost.ts";
+import { useMemberActions } from "../hooks/useMemberActions.ts";
 
 const ProfilePage: React.FC = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [selectedPost, setSelectedPost] = useState<DetailPostDto | null>(null);
 
-    const { memberInfo, refetch } = useMemberActions();
+    const { memberInfo, updateMember, refetch } = useMemberActions();
     const { posts, refetchPost } = usePost('member', memberInfo?.id);
 
     useEffect(() => {
@@ -89,16 +89,16 @@ const ProfilePage: React.FC = () => {
                 {isEditing && (
                     <EditProfileOverlay
                         onClose={() => setIsEditing(false)}
-                        // onSubmit={async (name) => {
-                        //     const success = await updateName(name);
-                        //     if (success) {
-                        //         setIsEditing(false);
-                        //         refetch();
-                        //         if (memberInfo) {
-                        //             refetchPost();
-                        //         }
-                        //     }
-                        // }}
+                    // onSubmit={async (name) => {
+                    //     const success = await updateMember(name);
+                    //     if (success) {
+                    //         setIsEditing(false);
+                    //         refetch();
+                    //         if (memberInfo) {
+                    //             refetchPost();
+                    //         }
+                    //     }
+                    // }}
                     />
                 )}
 

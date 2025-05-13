@@ -37,7 +37,7 @@ export const usePlaceInfo = () => {
 
   // 리뷰 생성
   const postReview = async (placeId: string, formData: FormData) => {
-    setLoading(true);
+    console.log(placeId, formData);
     try {
       const success = await postReviewApi(authFetch, placeId, formData);
       if (success) {
