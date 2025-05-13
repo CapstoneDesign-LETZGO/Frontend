@@ -12,7 +12,7 @@ import {
 import { ChatRoomDto, ChatRoomForm } from '../../../common/interfaces/ChatInterface';
 import { useAuthFetch } from '../../../common/hooks/useAuthFetch';
 
-export const useChatRoomActions = () => {
+export const useChatRoom = () => {
     const [chatRooms, setChatRooms] = useState<ChatRoomDto[] | null>(null);
     const [chatRoom, setChatRoom] = useState<ChatRoomDto | null>(null);
     const [loading, setLoading] = useState(false);
@@ -124,12 +124,12 @@ export const useChatRoomActions = () => {
         fetchChatRoom();
     }, []);
 
-    const refetch = () => {
+    const refetchChatRoom = () => {
         fetchChatRoom();
     };
 
     return {
-        refetch,
+        refetchChatRoom,
         chatRoom,
         chatRooms,
         loading,

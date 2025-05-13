@@ -12,8 +12,8 @@ const ProfilePage: React.FC = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [selectedPost, setSelectedPost] = useState<DetailPostDto | null>(null);
 
-    const { detailMemberInfo, updateMember, refetch } = useMemberActions("detailMember");
-    const { posts, refetchPost } = usePost('member', detailMemberInfo?.id);
+    const { detailMember, updateMember, refetchMember } = useMemberActions({mode: "detailMember"});
+    const { posts, refetchPost } = usePost('member', detailMember?.id);
 
     useEffect(() => {
         let startY = 0;
@@ -50,8 +50,8 @@ const ProfilePage: React.FC = () => {
             document.body.style.transform = "none";
 
             if (canDrag && currentTranslateY >= 100) {
-                refetch();
-                if (detailMemberInfo) {
+                refetchMember();
+                if (detailMember) {
                     refetchPost();
                 }
             }
@@ -74,13 +74,13 @@ const ProfilePage: React.FC = () => {
             window.removeEventListener("touchend", onEnd);
             window.removeEventListener("mouseup", onEnd);
         };
-    }, [refetch, refetchPost]);
+    }, [refetchMember, refetchPost]);
 
     const handleEditSubmit = async (form: Partial<MemberForm>, imageFile: File | null) => {
         await updateMember(form, imageFile);
         setIsEditing(false);
-        refetch();
-        if (detailMemberInfo) {
+        refetchMember();
+        if (detailMember) {
             refetchPost();
         }
     };
@@ -88,19 +88,19 @@ const ProfilePage: React.FC = () => {
     return (
         <div className="flex flex-col min-h-screen items-center bg-[#F5F5F5]">
             <div className="flex flex-col w-full max-w-md min-h-screen relative bg-white">
-                {detailMemberInfo && (
-                    <ProfileHeader onEditClick={() => setIsEditing(true)} member={detailMemberInfo} />
+                {detailMember && (
+                    <ProfileHeader onEditClick={() => setIsEditing(true)} member={detailMember} />
                 )}
 
                 <section className="flex-grow overflow-y-auto scrollbar-hide mb-15">
                     <PostGrid posts={posts} onPostClick={(post) => setSelectedPost(post)} />
                 </section>
 
-                {isEditing && detailMemberInfo && (
+                {isEditing && detailMember && (
                     <EditProfileOverlay
                         onClose={() => setIsEditing(false)}
                         onSubmit={handleEditSubmit}
-                        member={detailMemberInfo}
+                        member={detailMember}
                     />
                 )}
 

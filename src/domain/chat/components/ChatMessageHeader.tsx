@@ -6,7 +6,7 @@ const ChatRoomHeader: React.FC = () => {
     const navigate = useNavigate();
     const [isVisible, setIsVisible] = useState(true);
     const [lastScrollTop, setLastScrollTop] = useState(0);
-    const { memberInfo } = useMemberActions(); // 사용자 정보 가져오기
+    const { member } = useMemberActions(); // 사용자 정보 가져오기
 
     const handleScroll = () => {
         const currentScrollTop = window.pageYOffset;
@@ -45,7 +45,7 @@ const ChatRoomHeader: React.FC = () => {
 
             {/* 사용자 닉네임 */}
             <div className="ml-4 font-semibold">
-                {memberInfo?.nickname || 'Unknown User'}
+                {member?.nickname || 'Unknown User'}
             </div>
 
             {/* 그룹 아이콘 */}

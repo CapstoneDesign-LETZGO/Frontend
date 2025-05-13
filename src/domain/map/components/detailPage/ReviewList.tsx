@@ -8,10 +8,10 @@ interface ReviewListProps {
 }
 
 const ReviewList: React.FC<ReviewListProps> = ({ reviews, onDelete }) => {
-  const { memberInfo, refetch } = useMemberActions();
+  const { member, refetchMember } = useMemberActions();
 
   useEffect(() => {
-    refetch();
+    refetchMember();
   }, []);
 
   return (
@@ -21,7 +21,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews, onDelete }) => {
         <p className="text-sm text-gray-500">아직 작성된 리뷰가 없습니다.</p>
       ) : (
         reviews.map((review) => {
-          const isAuthor = memberInfo?.name === review.account;
+          const isAuthor = member?.name === review.account;
 
           return (
             <div
