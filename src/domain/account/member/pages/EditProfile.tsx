@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { DetailMemberDto, MemberForm } from "../../../../common/interfaces/MemberInterface";
+import { MemberForm } from "../../../../common/interfaces/MemberInterface";
 import { useMemberActions } from "../hooks/useMemberActions";
 
 const EditProfile: React.FC = () => {
     const navigate = useNavigate();
-    const { detailMemberInfo, updateMember, refetch } = useMemberActions("detailMember");
+    const { detailMember, updateMember, refetchMember } = useMemberActions({mode:"detailMember"});
 
     const [form, setForm] = useState<MemberForm>({
         name: "",
@@ -19,18 +19,18 @@ const EditProfile: React.FC = () => {
     const [imageFile, setImageFile] = useState<File | null>(null);
 
     useEffect(() => {
-        if (detailMemberInfo) {
+        if (detailMember) {
             setForm({
-                name: detailMemberInfo.name,
-                nickname: detailMemberInfo.nickname,
-                phone: detailMemberInfo.phone ?? "",
-                email: detailMemberInfo.email,
+                name: detailMember.name,
+                nickname: detailMember.nickname,
+                phone: detailMember.phone ?? "",
+                email: detailMember.email,
                 password: "",
-                gender: detailMemberInfo.gender,
-                birthday: detailMemberInfo.birthday,
+                gender: detailMember.gender,
+                birthday: detailMember.birthday,
             });
         }
-    }, [detailMemberInfo]);
+    }, [detailMember]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -44,7 +44,7 @@ const EditProfile: React.FC = () => {
 
     const handleSubmit = async () => {
         await updateMember(form, imageFile);
-        await refetch();
+        await refetchMember();
         navigate("/profile");
     };
 
@@ -67,7 +67,7 @@ const EditProfile: React.FC = () => {
                                     <img src={URL.createObjectURL(imageFile)} alt="preview" className="w-full h-full object-cover" />
                                 ) : (
                                     <img
-                                        src={detailMemberInfo?.profileImageUrl ?? "/src/assets/icons/user/user_4_line.svg"}
+                                        src={detailMember?.profileImageUrl ?? "/src/assets/icons/user/user_4_line.svg"}
                                         alt="profile"
                                         className="w-full h-full object-cover"
                                     />
