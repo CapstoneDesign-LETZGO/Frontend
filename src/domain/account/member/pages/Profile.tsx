@@ -5,14 +5,12 @@ import PostDetailOverlay from "../components/PostDetailOverlay";
 import { DetailPostDto } from "../../../../common/interfaces/CommunityInterface";
 import { usePost } from "../../../community/hooks/data/usePost.ts";
 import { useMemberActions } from "../hooks/useMemberActions.ts";
-import { MemberForm } from "../../../../common/interfaces/MemberInterface.ts";
 
 const ProfilePage: React.FC = () => {
-    const [isEditing, setIsEditing] = useState(false);
     const [selectedPost, setSelectedPost] = useState<DetailPostDto | null>(null);
 
-    const { detailMemberInfo, updateMember, refetch } = useMemberActions("detailMember");
-    const { posts, refetchPost } = usePost('member', detailMemberInfo?.id);
+    const { detailMember, refetchMember } = useMemberActions({mode: "detailMember"});
+    const { posts, refetchPost } = usePost('member', detailMember?.id);
 
     useEffect(() => {
         let startY = 0;
@@ -49,8 +47,8 @@ const ProfilePage: React.FC = () => {
             document.body.style.transform = "none";
 
             if (canDrag && currentTranslateY >= 100) {
-                refetch();
-                if (detailMemberInfo) {
+                refetchMember();
+                if (detailMember) {
                     refetchPost();
                 }
             }
@@ -73,22 +71,13 @@ const ProfilePage: React.FC = () => {
             window.removeEventListener("touchend", onEnd);
             window.removeEventListener("mouseup", onEnd);
         };
-    }, [refetch, refetchPost]);
-
-    const handleEditSubmit = async (form: Partial<MemberForm>, imageFile: File | null) => {
-        await updateMember(form, imageFile);
-        setIsEditing(false);
-        refetch();
-        if (detailMemberInfo) {
-            refetchPost();
-        }
-    };
+    }, [refetchMember, refetchPost]);
 
     return (
         <div className="flex flex-col min-h-screen items-center bg-[#F5F5F5]">
             <div className="flex flex-col w-full max-w-md min-h-screen relative bg-white">
-                {detailMemberInfo && (
-                    <ProfileHeader member={detailMemberInfo} />
+                {detailMember && (
+                    <ProfileHeader member={detailMember} />
                 )}
 
                 <section className="flex-grow overflow-y-auto scrollbar-hide mb-15">

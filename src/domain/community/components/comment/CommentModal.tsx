@@ -23,7 +23,7 @@ const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, 
     const [superCommentId, setSuperCommentId] = useState<number | null>(null); // 댓글 or 답글 구분
     const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
     const { comments, addComment, updateComment, deleteComment, likeComment, cancelLikeComment, refetchComment } = useComment(postId || 0);
-    const { memberInfo } = useMemberActions();
+    const { member } = useMemberActions();
     const inputRef = useRef<HTMLInputElement>(null);
 
     const fetchAndSetComments = async () => {
@@ -148,7 +148,7 @@ const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, 
                                 await fetchAndSetComments();
                             }
                         }}
-                        memberId={memberInfo?.id ?? 0}
+                        memberId={member?.id ?? 0}
                     />
                 </div>
 

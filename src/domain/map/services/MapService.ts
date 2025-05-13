@@ -1,6 +1,6 @@
 import { PlaceDto, Review } from '../../../common/interfaces/MapInterface.ts';
 import { ApiResponse } from '../../../common/interfaces/response/ApiResponse';
-import { AuthFetch, isSuccess } from '../../../common/utils/fetchUtils';
+import { AuthFetch, isSuccess } from '../../../common/utils/fetch.ts';
 
 // 해당 장소 조회
 export const fetchPlaceDtoApi = async (

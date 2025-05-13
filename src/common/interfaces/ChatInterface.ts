@@ -18,6 +18,7 @@ export interface ChatRoomDto {
     chatRoomMembers: SimpleMember[];
     unreadCount: number;
     lastMessage: string;
+    lastMessageCreatedAt: string;
     memberCount: number;
 }
 

@@ -26,7 +26,7 @@ const Community: React.FC = () => {
 
     return (
         <div className="flex flex-col min-h-screen items-center bg-[#F5F5F5]">
-            <div className="flex flex-col w-full max-w-md min-h-screen relative bg-[#F5F5F5]">
+            <div className="flex flex-col w-full max-w-md min-h-screen relative bg-white">
                 {/* Header */}
                 <CommunityHeader />
 
@@ -43,17 +43,15 @@ const Community: React.FC = () => {
                     )}
 
                     {/* posts가 배열일 때만 map을 사용 */}
-                    {Array.isArray(posts) && posts.length > 0 ? (
+                    {Array.isArray(posts) && posts.length > 0 && (
                         posts.map((post) => (
                             <MainPostCard
                                 key={`${post.id}-${post.likeCount}`}
                                 openCommentModal={() => openCommentModal(post.id, post.memberId)}
                                 post={post}
                             />
-                        ))
-                    ) : (
-                        <div className="text-center">게시글이 없습니다.</div>
-                    )}
+                        )))
+                    }
                 </section>
 
                 {/* Comment Modal */}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CommentDto } from '../../../../common/interfaces/CommunityInterface';
+import {formatDate} from "../../../../common/utils/formatDate.ts";
 
 interface CommentReplyListProps {
     parentId: number;
@@ -9,7 +10,6 @@ interface CommentReplyListProps {
     canEditOrDelete: (comment: CommentDto) => boolean;
     handleShowMoreReplies: (parentId: number, totalReplies: number) => void;
     handleCollapseReplies: (parentId: number) => void;
-    formatDate: (date: string) => string;
     handleLikeToggle: (comment: CommentDto) => void;
 }
 
@@ -21,7 +21,6 @@ const CommentReplyList: React.FC<CommentReplyListProps> = ({
                                                                canEditOrDelete,
                                                                handleShowMoreReplies,
                                                                handleCollapseReplies,
-                                                               formatDate,
                                                                handleLikeToggle
                                                            }) => {
     const menuRef = useRef<HTMLDivElement | null>(null);

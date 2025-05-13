@@ -11,7 +11,7 @@ import {useMemberActions} from "../../account/member/hooks/useMemberActions.ts";
 
 const RegisterSchedule = () => {
   const { scheduleData } = useSchedule();
-  const { memberInfo } = useMemberActions();
+  const { member } = useMemberActions();
   const { authFetch } = useAuthFetch();
   const navigate = useNavigate();
 
@@ -39,7 +39,7 @@ const RegisterSchedule = () => {
   ];
 
   const handleSubmit = async () => {
-    if (!memberInfo || !range || !range.from || !range.to) {
+    if (!member || !range || !range.from || !range.to) {
       alert("모든 정보를 입력해주세요.");
       return;
     }
@@ -51,7 +51,7 @@ const RegisterSchedule = () => {
         "/api/schedules",
         {
           data: {
-            hostAccountPk: memberInfo.id,
+            hostAccountPk: member.id,
             region: scheduleData.region,
             title,
             startDate: format(range.from, "yyyy-MM-dd"),

@@ -37,6 +37,7 @@ export interface DetailMemberDto {
 
 export interface SimpleMember {
     userId: number;
+    userName: string;
     userNickname: string;
     profileImageUrl: string | null;
 }

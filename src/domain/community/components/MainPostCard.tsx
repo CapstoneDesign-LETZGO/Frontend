@@ -73,7 +73,7 @@ const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
         : post.content.slice(0, availableChars) + '... ';
 
     return (
-        <div className="flex flex-col mb-1 w-full rounded-xl">
+        <div className="flex flex-col mb-1 w-full shadow-lg rounded-xl">
             {/* Image Slider */}
             <div className="w-full aspect-[9/16] max-h-[500px] bg-gray-200 rounded-t-lg overflow-hidden">
                 <Swiper
