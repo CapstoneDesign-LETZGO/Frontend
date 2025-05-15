@@ -43,10 +43,10 @@ const NavigationBar: React.FC = () => {
                     className="w-8 h-8"
                 />
             </div>
-            <div onClick={() => navigate('/schedule')}>
+            <div onClick={() => navigate('/schedule/list')}>
                 <img
                     src={
-                        isActive('/schedule')
+                        isActive('/schedule/list')
                             ? '/src/assets/icons/map/map_fill.svg'
                             : '/src/assets/icons/map/map_line.svg'
                     }
