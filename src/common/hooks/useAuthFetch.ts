@@ -7,7 +7,7 @@ export const useAuthFetch = () => {
 
     const fetch = async <T>(
         url: string,
-        data: Record<string, unknown> = {},
+        data: Record<string, unknown> | FormData = {},
         method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET'
     ): Promise<ApiResponse<T>> => {
         setLoading(true);

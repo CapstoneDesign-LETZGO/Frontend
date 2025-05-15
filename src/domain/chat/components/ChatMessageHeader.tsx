@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {MemberDto} from "../../../common/interfaces/MemberInterface.ts";
+import { useMemberActions } from '../../account/member/hooks/useMemberActions';
 
-interface ChatRoomHeaderProps {
-    member: MemberDto;
-}
-
-const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({ member }) => {
+const ChatRoomHeader: React.FC = () => {
     const navigate = useNavigate();
     const [isVisible, setIsVisible] = useState(true);
     const [lastScrollTop, setLastScrollTop] = useState(0);
+    const { member } = useMemberActions(); // 사용자 정보 가져오기
 
     const handleScroll = () => {
         const currentScrollTop = window.pageYOffset;
@@ -48,12 +45,12 @@ const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({ member }) => {
 
             {/* 사용자 닉네임 */}
             <div className="ml-4 font-semibold">
-            {member?.nickname}
+                {member?.nickname || 'Unknown User'}
             </div>
 
             {/* 그룹 아이콘 */}
             <div onClick={() => navigate('/group-chat')} className="cursor-pointer ml-auto mr-2">
-                <img src="/src/assets/icons/user/group_line.svg" alt="Group" className="h-6" />
+                <img src="/src/assets/icons/editor/menu_line.svg.svg" alt="Group" className="h-6" />
             </div>
         </header>
     );

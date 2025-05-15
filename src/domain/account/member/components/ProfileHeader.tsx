@@ -1,27 +1,42 @@
-import React from "react";
-import { UserCircle, Share2, UserPlus, Settings } from "lucide-react";
+import React, { useState } from "react";
+import { Share2, UserPlus, Settings } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import ProfileSettingOverlay from "./ProfileSettingOverlay";
 
 interface ProfileHeaderProps {
-    onEditClick: () => void;
     member?: {
         name: string;
+        nickname: string;
+        profileImageUrl: string | null;
         followMemberCount: number;
         followedMemberCount: number;
     };
 }
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({ onEditClick, member }) => {
+const ProfileHeader: React.FC<ProfileHeaderProps> = ({ member }) => {
+    const navigate = useNavigate();
+    const [showOverlay, setShowOverlay] = useState(false);
+    const profileImageSrc = member?.profileImageUrl || "/src/assets/icons/user/user_4_line.svg";
+
     return (
         <div className="bg-white rounded-2xl shadow p-4 relative">
+            {/* 닉네임 + 톱니바퀴 */}
             <div className="flex justify-between items-start">
                 <div>
-                    <h2 className="text-lg font-semibold">{member?.name ?? "사용자"}</h2>
+                    <h2 className="text-lg font-semibold">{member?.nickname ?? "사용자"}</h2>
                 </div>
-                <Settings className="w-5 h-5" />
+                <button onClick={() => setShowOverlay(true)}>
+                    <Settings className="w-5 h-5 cursor-pointer" />
+                </button>
             </div>
 
+            {/* 프로필 + 팔로워/팔로잉 */}
             <div className="flex justify-around items-center mt-4">
-                <UserCircle className="w-10 h-10" />
+                <img
+                    src={profileImageSrc}
+                    alt="프로필 이미지"
+                    className="w-10 h-10 rounded-full object-cover"
+                />
                 <div className="text-center">
                     <p className="text-sm font-medium">팔로워</p>
                     <p className="text-sm">{member?.followMemberCount ?? 0}</p>
@@ -32,12 +47,13 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ onEditClick, member }) =>
                 </div>
             </div>
 
+            {/* 하단 버튼 */}
             <div className="flex justify-around mt-4">
                 <button
                     className="flex items-center text-sm gap-1 cursor-pointer px-2 py-1 rounded transition active:bg-gray-200"
-                    onClick={onEditClick}
+                    onClick={() => navigate("/edit-profile")}
                 >
-                    <UserCircle className="w-4 h-4" />
+                    <img src="/src/assets/icons/user/user_4_line.svg" className="w-4 h-4" alt="편집 아이콘" />
                     편집
                 </button>
                 <button className="flex items-center text-sm gap-1 cursor-pointer px-2 py-1 rounded transition active:bg-gray-200">
@@ -49,6 +65,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ onEditClick, member }) =>
                     추가하기
                 </button>
             </div>
+
+            {/* 오버레이 분리된 컴포넌트 사용 */}
+            {showOverlay && <ProfileSettingOverlay onClose={() => setShowOverlay(false)} />}
         </div>
     );
 };

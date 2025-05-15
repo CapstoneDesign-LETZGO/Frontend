@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
-import {addPostApi, fetchMemberPostApi, fetchPostApi} from '../services/PostService.ts';
-import {DetailPostDto, PostForm} from '../../../common/interfaces/CommunityInterface.ts';
-import { useAuthFetch } from '../../../common/hooks/useAuthFetch';
+import {addPostApi, fetchMemberPostApi, fetchPostApi} from '../../services/PostService.ts';
+import {DetailPostDto, PostForm} from '../../../../common/interfaces/CommunityInterface.ts';
+import { useAuthFetch } from '../../../../common/hooks/useAuthFetch';
 import {toast} from "react-toastify";
 
 type Mode = 'all' | 'member' | 'none';
@@ -22,10 +22,11 @@ export const usePost = (mode: Mode = 'all', memberId?: number) => {
                 return null;
             }
         } catch (err) {
-            console.error('게시글을 가져오는 중 오류 발생:', err);
-            toast.error("게시글을 가져오는 중 오류가 발생했습니다.");
+            console.error('게시글 조회 중 오류 발생:', err);
+            toast.error("게시글 조회 중 오류가 발생했습니다.");
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     // 해당 사용자가 작성한 게시글 조회
@@ -39,25 +40,24 @@ export const usePost = (mode: Mode = 'all', memberId?: number) => {
                 return null;
             }
         } catch (err) {
-            console.error('내 게시글을 가져오는 중 오류 발생:', err);
-            toast.error("내 게시글을 가져오는 중 오류가 발생했습니다.");
+            console.error('해당 사용자의 게시글 조회 중 오류 발생:', err);
+            toast.error("해당 사용자의 게시글 조회 중 오류가 발생했습니다.");
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     // 게시글 생성
-    const addPost = async (form: PostForm, imageFile: File) => {
+    const addPost = async (form: PostForm, imageFiles: File[]) => {
         setLoading(true);
         try {
-            const success = await addPostApi(authFetch, form, imageFile);
-            if (!success) {
-                toast.error('게시글 등록에 실패했습니다.');
-            }
+            await addPostApi(authFetch, form, imageFiles);
         } catch (err) {
             console.error("게시글 등록 중 오류 발생:", err);
             toast.error("게시글 등록 중 오류가 발생했습니다.");
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     // mode에 따라 초기 fetch
@@ -77,5 +77,5 @@ export const usePost = (mode: Mode = 'all', memberId?: number) => {
         }
     };
 
-    return { addPost: addPost, posts, loading, refetchPost };
+    return { addPost, posts, loading, refetchPost };
 };

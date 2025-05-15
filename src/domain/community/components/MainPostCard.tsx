@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import { DetailPostDto } from "../../../common/interfaces/CommunityInterface.ts";
-import {useUtils} from "../hooks/useUtils.ts";
 import {Swiper, SwiperSlide} from "swiper/react";
 import { Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import {useUtils} from "../hooks/data/useUtils.ts";
 
 interface PostCardProps {
     post: DetailPostDto;
@@ -73,7 +73,7 @@ const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
         : post.content.slice(0, availableChars) + '... ';
 
     return (
-        <div className="flex flex-col mb-1 w-full rounded-xl">
+        <div className="flex flex-col mb-1 w-full shadow-lg rounded-xl">
             {/* Image Slider */}
             <div className="w-full aspect-[9/16] max-h-[500px] bg-gray-200 rounded-t-lg overflow-hidden">
                 <Swiper
@@ -133,7 +133,7 @@ const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
                                 onClick={handleToggleExpand}
                                 className="text-gray-500"
                             >
-                                접기
+                                간단히
                             </button>
                         )}
                     </p>

@@ -25,7 +25,7 @@ const PlacePage: React.FC<PlacePageProps> = ({
   const refreshReviews = async () => {
     const updated = await fetchPlaceDto(placeDto.placeId);
     if (updated) {
-      setPlaceDto(updated.placeDto);
+      setPlaceDto(updated.placeDto as PlaceDto);
       setReviews(updated.reviews);
     }
   };

@@ -1,6 +1,6 @@
 import { ApiResponse } from "../../../common/interfaces/response/ApiResponse.ts";
 import { CommentDto, CommentForm } from "../../../common/interfaces/CommunityInterface.ts";
-import { AuthFetch, isSuccess } from "../../../common/utils/fetchUtils.ts";
+import { AuthFetch, isSuccess } from "../../../common/utils/fetch.ts";
 
 // 해당 게시글에 작성된 모든 댓글 조회
 export const fetchCommentApi = async (
@@ -30,18 +30,18 @@ export const addCommentApi = async (
     authFetch: AuthFetch,
     postId: number,
     commentForm: CommentForm
-): Promise<{ success: boolean }> => {
+): Promise<boolean> => {
     try {
-        const response = await authFetch<ApiResponse<null>>(
+        const response = await authFetch<ApiResponse<string>>(
             `/rest-api/v1/post/comment/${postId}`,
             commentForm as unknown as Record<string, unknown>,
             'POST'
         );
         console.log('Add Comment Response:', response);
-        return { success: isSuccess(response) };
+        return isSuccess(response);
     } catch (err) {
         console.error("댓글 추가 중 오류:", err);
-        return { success: false };
+        return false;
     }
 };
 
@@ -50,18 +50,18 @@ export const updateCommentApi = async (
     authFetch: AuthFetch,
     commentId: number,
     commentForm: CommentForm
-): Promise<{ success: boolean }> => {
+): Promise<boolean> => {
     try {
-        const response = await authFetch<ApiResponse<null>>(
+        const response = await authFetch<ApiResponse<string>>(
             `/rest-api/v1/post/comment/${commentId}`,
             commentForm as unknown as Record<string, unknown>,
             'PUT'
         );
         console.log('Update Comment Response:', response);
-        return { success: isSuccess(response) };
+        return isSuccess(response);
     } catch (err) {
         console.error('댓글 수정 중 오류:', err);
-        return { success: false };
+        return false;
     }
 };
 
@@ -69,17 +69,17 @@ export const updateCommentApi = async (
 export const deleteCommentApi = async (
     authFetch: AuthFetch,
     commentId: number
-): Promise<{ success: boolean }> => {
+): Promise<boolean> => {
     try {
-        const response = await authFetch<ApiResponse<null>>(
+        const response = await authFetch<ApiResponse<string>>(
             `/rest-api/v1/post/comment/${commentId}`,
             undefined, 'DELETE'
         );
         console.log('Delete Comment Response:', response);
-        return { success: isSuccess(response) };
+        return isSuccess(response);
     } catch (err) {
         console.error("댓글 삭제 중 오류:", err);
-        return { success: false };
+        return false;
     }
 };
 
@@ -87,17 +87,17 @@ export const deleteCommentApi = async (
 export const likeCommentApi = async (
     authFetch: AuthFetch,
     commentId: number
-): Promise<{ success: boolean }> => {
+): Promise<boolean> => {
     try {
-        const response = await authFetch<ApiResponse<null>>(
+        const response = await authFetch<ApiResponse<string>>(
             `/rest-api/v1/post/comment/like/${commentId}`,
             {}, 'POST'
         );
         console.log('Like Comment Response:', response);
-        return { success: isSuccess(response) };
+        return isSuccess(response);
     } catch (err) {
         console.error('댓글 좋아요 중 오류:', err);
-        return { success: false };
+        return false;
     }
 };
 
@@ -105,16 +105,16 @@ export const likeCommentApi = async (
 export const cancelLikeCommentApi = async (
     authFetch: AuthFetch,
     commentId: number
-): Promise<{ success: boolean }> => {
+): Promise<boolean> => {
     try {
-        const response = await authFetch<ApiResponse<null>>(
+        const response = await authFetch<ApiResponse<string>>(
             `/rest-api/v1/post/comment/like/${commentId}`,
             {}, 'DELETE'
         );
         console.log('Cancel Like Comment Response:', response);
-        return { success: isSuccess(response) };
+        return isSuccess(response);
     } catch (err) {
         console.error('댓글 좋아요 취소 중 오류:', err);
-        return { success: false };
+        return false;
     }
 };
