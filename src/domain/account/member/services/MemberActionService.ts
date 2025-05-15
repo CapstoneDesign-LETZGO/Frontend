@@ -154,14 +154,14 @@ export const searchMemberApi = async (
     keyword: string
 ): Promise<{ members: MemberDto[] | null; success: boolean }> => {
     try {
-        const response = await authFetch<ApiResponse<MemberDto>>(
+        const response = await authFetch<ApiResponse<MemberDto[]>>(
             `/rest-api/v1/member/search?keyword=${encodeURIComponent(keyword)}`,
             {},
             "GET"
         );
         console.log("Search Member Response:", response);
         if (isSuccess(response)) {
-            return { members: response.data as unknown as MemberDto[] ?? null, success: true };
+            return { members: response?.letzgoPage?.contents as unknown as MemberDto[] ?? null, success: true };
         } else {
             console.error("회원 검색 실패:", response?.returnMessage);
             return { members: null, success: false };

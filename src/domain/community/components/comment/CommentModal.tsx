@@ -168,7 +168,7 @@ const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, 
                         onChange={handleInputChange}
                         className="w-full px-4 py-2 text-xs focus:outline-none"
                     />
-                    {comment && (
+                    {commentInput.trim() && (
                         <img
                             src="src/assets/icons/arrow/arrow_up_line.svg"
                             alt="Send Comment"

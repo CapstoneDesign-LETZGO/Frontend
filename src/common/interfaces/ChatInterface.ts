@@ -6,9 +6,7 @@ export interface ChatRoomForm {
 }
 
 export interface ChatRoomMember {
-    memberId: number; // member 엔티티의 ID 값
-    chatRoomId: number; // chatRoom 엔티티의 ID 값
-    lastReadMessageId: number | null;
+    member: { id: number };
 }
 
 export interface ChatRoomDto {

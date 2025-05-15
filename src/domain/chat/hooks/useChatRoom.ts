@@ -43,12 +43,14 @@ export const useChatRoom = () => {
             const { chatRoom, success } = await createChatRoomApi(authFetch, chatRoomForm);
             if (success) {
                 setChatRoom(chatRoom); // 생성된 채팅방 정보 저장
+                return { chatRoom, success };
             } else {
-                return null;
+                return { chatRoom: null, success: false };
             }
         } catch (err) {
             console.error('채팅방 생성 중 오류 발생:', err);
             toast.error('채팅방 생성 중 오류가 발생했습니다.');
+            return { chatRoom: null, success: false };
         } finally {
             setLoading(false);
         }
