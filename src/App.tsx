@@ -1,7 +1,7 @@
 import { JSX, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './domain/account/auth/pages/Login';
-import Signup from './domain/account/auth/pages/Signup';
+import SignUp from './domain/account/auth/pages/Signup.tsx';
 import Profile from './domain/account/member/pages/Profile';
 import EditProfile from './domain/account/member/pages/EditProfile.tsx';
 import ChatMessage from './domain/chat/pages/ChatMessage';
@@ -23,6 +23,7 @@ import RegisterSchedule from './domain/schedule/pages/RegisterSchedule';
 import ScheduleList from './domain/schedule/pages/ScheduleList';
 import { ScheduleProvider } from './domain/schedule/contexts/ScheduleContext';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 
 const queryClient = new QueryClient();
 
@@ -53,7 +54,7 @@ const App = () => {
                     <Routes>
                         {/* 로그인 관련 페이지 */}
                         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
-                        <Route path="/signup" element={<Signup />} />
+                        <Route path="/sign-up" element={<SignUp />} />
                         <Route path="/find-password" element={<FindPassword />} />
 
                         {/* 네비게이션 바 포함된 페이지 */}

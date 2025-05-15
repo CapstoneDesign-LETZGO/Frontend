@@ -5,7 +5,7 @@ import { useMemberActions } from "../hooks/useMemberActions";
 
 const EditProfile: React.FC = () => {
     const navigate = useNavigate();
-    const { detailMember, updateMember, refetchMember } = useMemberActions({mode:"detailMember"});
+    const { detailMember, updateMember, refetchMember } = useMemberActions({ mode: "detailMember" });
 
     const [form, setForm] = useState<MemberForm>({
         name: "",
