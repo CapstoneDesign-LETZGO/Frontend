@@ -5,7 +5,7 @@ import { useMemberActions } from "../../member/hooks/useMemberActions";
 
 const SignUp: React.FC = () => {
     const navigate = useNavigate();
-    const { signup } = useMemberActions();
+    const { signup } = useMemberActions({ mode: 'none' });
 
     const [form, setForm] = useState<MemberForm>({
         name: "",

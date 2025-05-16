@@ -156,24 +156,30 @@ const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, 
                 {/* Comment Input */}
                 <div className="flex items-center p-2 border-t border-gray-300"
                      style={{ borderTop: '0.1px solid #D1D5DB' }}>
+
+                    {/* Profile Image */}
                     <img
-                        src="src/assets/icons/user/user_4_line.svg"
+                        src={member?.profileImageUrl || "src/assets/icons/user/user_4_line.svg"}
                         alt="User Profile"
-                        className="w-8 h-8 rounded-full ml-2"
+                        className="w-8 h-8 rounded-full ml-2 object-cover flex-shrink-0"
                     />
+
+                    {/* Input Field */}
                     <input
                         ref={inputRef}
                         type="text"
                         placeholder="댓글을 입력하세요..."
                         value={commentInput}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-2 text-xs focus:outline-none"
+                        className="flex-grow px-4 py-2 text-xs focus:outline-none mx-2"
                     />
+
+                    {/* Send Button (conditionally rendered) */}
                     {commentInput.trim() && (
                         <img
                             src="src/assets/icons/arrow/arrow_up_line.svg"
                             alt="Send Comment"
-                            className="w-6 h-6 mr-2 cursor-pointer"
+                            className="w-6 h-6 mr-2 cursor-pointer flex-shrink-0"
                             onClick={handleSubmit}
                         />
                     )}

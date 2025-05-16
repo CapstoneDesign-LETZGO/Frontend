@@ -1,6 +1,7 @@
 import ChatMessageHeader from "../components/ChatMessage/ChatMessageHeader.tsx";
 import ChatMessageInput from "../components/ChatMessage/ChatMessageInput.tsx";
 import {useLocation} from "react-router-dom";
+import ChatMessageList from "../components/ChatMessage/ChatMessageList.tsx";
 
 const ChatMessage = () => {
     const location = useLocation();
@@ -11,7 +12,10 @@ const ChatMessage = () => {
             <div className="flex flex-col w-full max-w-md min-h-screen relative bg-white">
                 <div>
                     <ChatMessageHeader chatRoom={chatRoom} member={member} />
-                    <ChatMessageInput />
+                    <div className={'pt-[50px]'}>
+                        <ChatMessageList chatRoom={chatRoom} member={member} />
+                    </div>
+                    <ChatMessageInput member={member}/>
                 </div>
             </div>
         </div>
