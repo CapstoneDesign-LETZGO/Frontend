@@ -1,15 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChatRoomDto, ChatRoomForm } from '../../../common/interfaces/ChatInterface.ts';
-import { MemberDto } from "../../../common/interfaces/MemberInterface.ts";
-import {formatDate} from "../../../common/utils/formatDate.ts";
+import { ChatRoomDto, ChatRoomForm } from '../../../../common/interfaces/ChatInterface.ts';
+import { MemberDto } from "../../../../common/interfaces/MemberInterface.ts";
+import {formatDate} from "../../../../common/utils/formatDate.ts";
 
 interface ChatRoomCardProps {
     chatRooms: ChatRoomDto[];
     refetchChatRoom: () => void;
-    createChatRoom: (chatRoomForm: ChatRoomForm) => void;
     updateChatRoomTitle: (chatRoomId: number, chatRoomForm: Partial<ChatRoomForm>) => Promise<void>;
     leaveChatRoom: (id: number) => void;
     member: MemberDto;
+    onClickChatRoom: (chatRoom: ChatRoomDto) => void;
 }
 
 const ChatRoomCard: React.FC<ChatRoomCardProps> = ({
@@ -17,17 +17,20 @@ const ChatRoomCard: React.FC<ChatRoomCardProps> = ({
                                                        refetchChatRoom,
                                                        updateChatRoomTitle,
                                                        leaveChatRoom,
-                                                       member
+                                                       member,
+                                                       onClickChatRoom,
                                                    }) => {
     const [menuOpenId, setMenuOpenId] = useState<number | null>(null);
     const [editRoomId, setEditRoomId] = useState<number | null>(null);
     const [editedTitle, setEditedTitle] = useState('');
     const menuRef = useRef<HTMLDivElement | null>(null);
+    const wasMenuClosedByClickRef = useRef(false);
 
     // 메뉴 외부 클릭 시 닫기
     useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (menuOpenId && menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                wasMenuClosedByClickRef.current = true; // 이 클릭은 메뉴 닫기 용도임
                 setMenuOpenId(null);
             }
         };
@@ -35,7 +38,7 @@ const ChatRoomCard: React.FC<ChatRoomCardProps> = ({
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, []);
+    }, [menuOpenId]);
 
     const startEditing = (roomId: number, currentTitle: string) => {
         setEditRoomId(roomId);
@@ -44,9 +47,13 @@ const ChatRoomCard: React.FC<ChatRoomCardProps> = ({
     };
 
     const submitEdit = async (roomId: number) => {
-        await updateChatRoomTitle(roomId, { title: editedTitle });
-        setEditRoomId(null);
-        refetchChatRoom();
+        try {
+            await updateChatRoomTitle(roomId, { title: editedTitle });
+            setEditRoomId(null);
+            await refetchChatRoom();  // refetch도 await 처리해서 완료 기다림
+        } catch (error) {
+            console.error("채팅방 제목 수정 실패:", error);
+        }
     };
 
     return (
@@ -69,25 +76,49 @@ const ChatRoomCard: React.FC<ChatRoomCardProps> = ({
                                 alt="Profile"
                                 className="w-8 h-8 rounded-full mr-3 ml-1 mt-[2px]"
                             />
-                            <div className="flex flex-col flex-1">
+
+                            {/* 채팅방 제목 및 메시지 클릭 시에만 이동 */}
+                            <div
+                                className="flex flex-col flex-1 cursor-pointer"
+                                onClick={() => {
+                                    if (wasMenuClosedByClickRef.current) {
+                                        // 이번 클릭은 메뉴 닫기 용도였음 → 아무 것도 하지 마!
+                                        wasMenuClosedByClickRef.current = false;
+                                        return;
+                                    }
+                                    if (!isEditing) {
+                                        onClickChatRoom(room);
+                                    }
+                                }}
+                            >
                                 {isEditing ? (
                                     <div className="flex items-center mt-1">
                                         <input
                                             type="text"
                                             value={editedTitle}
-                                            onChange={(e) => setEditedTitle(e.target.value)}
+                                            onChange={(e) => {
+                                                e.stopPropagation();
+                                                setEditedTitle(e.target.value);
+                                            }}
                                             className="text-xs border rounded px-2 py-1 w-full mr-2"
                                             autoFocus
+                                            onClick={(e) => e.stopPropagation()}
                                         />
                                         <div className="flex space-x-0">
                                             <button
-                                                onClick={() => submitEdit(room.id)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    submitEdit(room.id);
+                                                }}
                                                 className="text-black text-xs px-2 py-2 rounded whitespace-nowrap min-w-fit hover:bg-gray-100"
                                             >
                                                 저장
                                             </button>
                                             <button
-                                                onClick={() => setEditRoomId(null)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setEditRoomId(null);
+                                                }}
                                                 className="text-black text-xs px-2 py-2 rounded whitespace-nowrap min-w-fit hover:bg-gray-100"
                                             >
                                                 취소
@@ -110,7 +141,6 @@ const ChatRoomCard: React.FC<ChatRoomCardProps> = ({
                                                     })()
                                                     : `${otherMember?.userName ?? '알 수 없음'}님`}
                                         </span>
-
                                         <div className="flex items-center text-xs text-gray-500">
                                             <p className="truncate max-w-full">{room.lastMessage}</p>
                                             {room.lastMessage && room.lastMessageCreatedAt && (
@@ -126,24 +156,31 @@ const ChatRoomCard: React.FC<ChatRoomCardProps> = ({
                                 )}
                             </div>
 
+                            {/* 메뉴 아이콘 */}
                             <img
                                 src="/src/assets/icons/system/more_2_line.svg"
                                 alt="More"
                                 className="w-5 h-5 mt-2 ml-2 cursor-pointer"
-                                onClick={() =>
-                                    setMenuOpenId((prev) => (prev === room.id ? null : room.id))
-                                }
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setMenuOpenId((prev) => (prev === room.id ? null : room.id));
+                                }}
                             />
 
+                            {/* 메뉴 */}
                             {menuOpenId === room.id && (
                                 <div
                                     ref={menuRef}
                                     className="absolute right-2 top-8 bg-white rounded shadow-lg z-10"
+                                    onClick={(e) => e.stopPropagation()}
                                 >
                                     {isGroupChat && (
                                         <button
                                             className="flex items-center text-xs w-full text-left p-2 hover:bg-gray-100"
-                                            onClick={() => startEditing(room.id, room.title)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                startEditing(room.id, room.title);
+                                            }}
                                         >
                                             <img
                                                 src="/src/assets/icons/editor/edit_line.svg"
@@ -155,10 +192,15 @@ const ChatRoomCard: React.FC<ChatRoomCardProps> = ({
                                     )}
                                     <button
                                         className="flex items-center text-xs w-full text-left p-2 hover:bg-gray-100"
-                                        onClick={() => {
+                                        onClick={async (e) => {
+                                            e.stopPropagation();
                                             setMenuOpenId(null);
-                                            leaveChatRoom(room.id);
-                                            refetchChatRoom();
+                                            try {
+                                                await leaveChatRoom(room.id);  // await 추가
+                                                await refetchChatRoom();       // 완료 후 재호출
+                                            } catch (error) {
+                                                console.error("채팅방 나가기 실패:", error);
+                                            }
                                         }}
                                     >
                                         <img

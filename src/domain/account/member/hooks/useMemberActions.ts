@@ -19,6 +19,7 @@ interface UseMemberActionsOptions {
 
 export const useMemberActions = ({ mode = 'member', memberIdForOther }: UseMemberActionsOptions = {}) => {
     const [member, setMember] = useState<MemberDto | null>(null);
+    const [members, setMembers] = useState<MemberDto[] | null>(null);
     const [detailMember, setDetailMember] = useState<DetailMemberDto | null>(null);
     const [otherMember, setOtherMember] = useState<MemberDto | null>(null);
     const [otherDetailMember, setOtherDetailMember] = useState<DetailMemberDto | null>(null);
@@ -114,6 +115,8 @@ export const useMemberActions = ({ mode = 'member', memberIdForOther }: UseMembe
         try {
             const { members, success } = await searchMemberApi(authFetch, keyword);
             if (success) {
+                console.log("searchMember: ", members);
+                setMembers(members);
                 return members;
             }
         } catch (err) {
@@ -183,6 +186,7 @@ export const useMemberActions = ({ mode = 'member', memberIdForOther }: UseMembe
     return {
         refetchMember,
         member,
+        members,
         detailMember,
         otherMember,
         otherDetailMember,
