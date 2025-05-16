@@ -3,7 +3,7 @@ import { useChatRoom } from '../hooks/useChatRoom';
 import {useMemberActions} from "../../account/member/hooks/useMemberActions.ts";
 import { MemberDto } from '../../../common/interfaces/MemberInterface.ts';
 import { useNavigate } from 'react-router-dom';
-import {ChatRoomForm} from "../../../common/interfaces/ChatInterface.ts";
+import {ChatRoomDto, ChatRoomForm} from "../../../common/interfaces/ChatInterface.ts";
 import { useDebounce } from '../../../common/hooks/useDebounce.ts';
 import ChatRoomSearchBar from '../components/ChatRoom/ChatRoomSearchBar.tsx';
 import ChatRoomCard from '../components/ChatRoom/ChatRoomCard.tsx';
@@ -29,6 +29,7 @@ const ChatRoom: React.FC = () => {
     const debouncedSearchTerm = useDebounce(searchTerm, 300);
     const navigate = useNavigate();
     const searchBarRef = useRef<HTMLInputElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         // 조건: 포커스 상태이고, debounce된 검색어가 비어있지 않을 때만 실행
@@ -40,6 +41,25 @@ const ChatRoom: React.FC = () => {
         };
         fetchResults();
     }, [debouncedSearchTerm, isSearchActive]);
+
+    // 클릭이 Search 영역 밖에서 일어났는지 확인
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                containerRef.current &&
+                !containerRef.current.contains(event.target as Node)
+            ) {
+                if (!showInvite) {
+                    setIsFocused(false);
+                    setIsSearchActive(false);
+                }
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showInvite]);
 
     const handleToggleMember = (memberId: number) => {
         setSelectedMembers((prev) =>
@@ -60,7 +80,9 @@ const ChatRoom: React.FC = () => {
                 setIsSearchActive(false);
                 setIsFocused(false);
                 setShowInvite(false);
-                navigate(`/chat-message`);
+                navigate('/chat-message', {
+                    state: { member, chatRoom }
+                });
             }
         } catch (error) {
             console.error('채팅방 생성 실패:', error);
@@ -79,15 +101,19 @@ const ChatRoom: React.FC = () => {
             const { chatRoom, success } = await createChatRoom(chatRoomForm);
             if (success && chatRoom?.id) {
                 setChatRoomTitle(''); // 생성 후 초기화
-                navigate(`/chat-message`);
+                navigate('/chat-message', {
+                    state: { member, chatRoom }
+                });
             }
         } catch (error) {
             console.error('채팅방 생성 실패:', error);
         }
     };
 
-    const handleChatEnter = () => {
-        navigate(`/chat-message`);
+    const handleChatEnter = (chatRoom: ChatRoomDto) => {
+        navigate('/chat-message', {
+            state: { member, chatRoom }
+        });
     };
 
     // 헤더 그룹 아이콘 클릭 시 검색바에 포커스
@@ -105,13 +131,14 @@ const ChatRoom: React.FC = () => {
     return (
         <div className="flex flex-col min-h-screen items-center bg-[#F5F5F5]">
             <div className="flex flex-col w-full max-w-md min-h-screen relative bg-white">
-                <div>
+                <div ref={containerRef}>
                     <ChatRoomHeader
                         member={member}
                         onInviteClick={handleInviteMembers}
                         onGroupIconClick={handleHeaderGroupClick}
                         showInvite={showInvite}
                         setShowInvite={setShowInvite}
+                        setIsSearchActive={setIsSearchActive}
                     />
                     {showInvite && (
                         <div className="flex items-center pt-[70px] p-4 bg-white">
@@ -131,14 +158,6 @@ const ChatRoom: React.FC = () => {
                             onFocus={() => {
                                 setIsFocused(true);
                                 setIsSearchActive(true);
-                            }}
-                            onBlur={() => {
-                                setTimeout(() => {
-                                    if (!showInvite) {
-                                        setIsFocused(false);
-                                        setIsSearchActive(false);
-                                    }
-                                }, 100);
                             }}
                         />
                     </div>

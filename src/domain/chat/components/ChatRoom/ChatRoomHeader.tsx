@@ -8,9 +8,10 @@ interface ChatRoomHeaderProps {
     onGroupIconClick?: () => void;
     showInvite: boolean;
     setShowInvite: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsSearchActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({ member, onInviteClick, onGroupIconClick, showInvite, setShowInvite }) => {
+const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({ member, onInviteClick, onGroupIconClick, showInvite, setShowInvite, setIsSearchActive }) => {
     const navigate = useNavigate();
     const [isVisible, setIsVisible] = useState(true);
     const [lastScrollTop, setLastScrollTop] = useState(0);
@@ -40,6 +41,7 @@ const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({ member, onInviteClick, 
         if (showInvite) {
             // 새 그룹 채팅 상태에서 뒤로 가기 → 모드 종료
             setShowInvite(false);
+            setIsSearchActive(false);
         } else {
             navigate(-1);
         }
@@ -48,6 +50,7 @@ const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({ member, onInviteClick, 
     const handleInviteConfirmClick = () => {
         onInviteClick(); // 실제 채팅방 생성
         setShowInvite(false); // 모드 종료
+        setIsSearchActive(false);
     };
 
     return (

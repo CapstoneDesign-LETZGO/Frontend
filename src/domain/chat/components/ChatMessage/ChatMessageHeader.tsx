@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMemberActions } from '../../../account/member/hooks/useMemberActions';
+import {ChatRoomDto} from "../../../../common/interfaces/ChatInterface.ts";
+import { MemberDto } from '../../../../common/interfaces/MemberInterface.ts';
 
-const ChatRoomHeader: React.FC = () => {
+interface ChatRoomHeaderProps {
+    chatRoom: ChatRoomDto;
+    member: MemberDto;
+}
+
+const ChatMessageHeader: React.FC<ChatRoomHeaderProps> = ({chatRoom, member}) => {
     const navigate = useNavigate();
     const [isVisible, setIsVisible] = useState(true);
     const [lastScrollTop, setLastScrollTop] = useState(0);
-    const { member } = useMemberActions(); // 사용자 정보 가져오기
 
     const handleScroll = () => {
         const currentScrollTop = window.pageYOffset;
@@ -32,6 +37,16 @@ const ChatRoomHeader: React.FC = () => {
         };
     }, [lastScrollTop]);
 
+    // === 채팅방 제목 표시 로직 ===
+    const isGroupChat = chatRoom.chatRoomMembers.length > 2;
+    const otherMembers = chatRoom.chatRoomMembers.filter(m => m.userId !== member?.id);
+    const otherMember = otherMembers[0];
+
+    // 그룹 채팅일 때 표시할 이름
+    const groupTitle = otherMembers.length > 0
+        ? `${otherMembers[0].userName}님 외 ${otherMembers.length}명`
+        : '알 수 없음';
+
     return (
         <header
             className={`flex items-center p-4 bg-white fixed top-0 left-1/2 transform -translate-x-1/2 w-full max-w-md mx-auto z-50 transition-transform duration-300 ${
@@ -43,9 +58,13 @@ const ChatRoomHeader: React.FC = () => {
                 <img src="/src/assets/icons/arrow/left_line.svg" alt="Back" className="h-6" />
             </div>
 
-            {/* 사용자 닉네임 */}
+            {/* 채팅방 제목 */}
             <div className="ml-4 font-semibold">
-                {member?.nickname || 'Unknown User'}
+                {chatRoom.title?.trim()
+                    ? chatRoom.title
+                    : isGroupChat
+                        ? groupTitle
+                        : `${otherMember?.userName ?? '알 수 없음'}님`}
             </div>
 
             {/* 그룹 아이콘 */}
@@ -56,4 +75,4 @@ const ChatRoomHeader: React.FC = () => {
     );
 };
 
-export default ChatRoomHeader;
+export default ChatMessageHeader;

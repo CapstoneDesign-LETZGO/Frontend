@@ -9,7 +9,7 @@ interface ChatRoomCardProps {
     updateChatRoomTitle: (chatRoomId: number, chatRoomForm: Partial<ChatRoomForm>) => Promise<void>;
     leaveChatRoom: (id: number) => void;
     member: MemberDto;
-    onClickChatRoom: (chatRoomId: number) => void;
+    onClickChatRoom: (chatRoom: ChatRoomDto) => void;
 }
 
 const ChatRoomCard: React.FC<ChatRoomCardProps> = ({
@@ -87,7 +87,7 @@ const ChatRoomCard: React.FC<ChatRoomCardProps> = ({
                                         return;
                                     }
                                     if (!isEditing) {
-                                        onClickChatRoom(room.id);
+                                        onClickChatRoom(room);
                                     }
                                 }}
                             >
