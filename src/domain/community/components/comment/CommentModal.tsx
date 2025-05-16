@@ -18,7 +18,8 @@ const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, 
     const headerRef = useRef<HTMLDivElement>(null);
     const [translateY, setTranslateY] = useState('100%');
     const [isVisible, setIsVisible] = useState(false);
-    const [comment, setComment] = useState<CommentDto[]>([]);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_comment, setComment] = useState<CommentDto[]>([]);
     const [commentInput, setCommentInput] = useState<string>('');
     const [superCommentId, setSuperCommentId] = useState<number | null>(null); // 댓글 or 답글 구분
     const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
