@@ -30,7 +30,8 @@ export const useMemberActions = ({ mode = 'member', memberIdForOther }: UseMembe
     const signup = async (form: MemberForm) => {
         setLoading(true);
         try {
-            await signupApi(authFetch, form);
+            const success = await signupApi(authFetch, form);
+            return success;
         } catch (err) {
             console.error("회원가입 중 오류:", err);
             toast.error("회원가입 중 오류가 발생했습니다.");

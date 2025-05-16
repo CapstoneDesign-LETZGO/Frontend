@@ -10,13 +10,13 @@ interface LoginFormProps {
 }
 
 const LoginForm = ({
-                       email,
-                       password,
-                       setEmail,
-                       setPassword,
-                       handleSocialLogin,
-                       handleLogin
-                   }: LoginFormProps) => {
+    email,
+    password,
+    setEmail,
+    setPassword,
+    handleSocialLogin,
+    handleLogin
+}: LoginFormProps) => {
     return (
         <div className="flex flex-col min-h-screen w-full max-w-md mx-auto px-4">
             <div className="flex-1 flex flex-col items-center justify-center mt-10">
@@ -75,7 +75,7 @@ const LoginForm = ({
                         로그인
                     </button>
                     <Link
-                        to="/signup"
+                        to="/sign-up"
                         className="w-full py-3 mb-3 rounded-lg font-bold text-white bg-black text-center block hover:brightness-70"
                     >
                         새 계정 만들기

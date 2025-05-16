@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import {Review} from "../../../../common/interfaces/MapInterface.ts";
-import {useMemberActions} from "../../../account/member/hooks/useMemberActions.ts";
+import { Review } from "../../../../common/interfaces/MapInterface.ts";
+import { useMemberActions } from "../../../account/member/hooks/useMemberActions.ts";
 
 interface ReviewListProps {
   reviews: Review[];
