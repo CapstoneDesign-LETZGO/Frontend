@@ -1,22 +1,14 @@
-import { useEffect } from "react";
 import { ChatMessageDto, ChatRoomDto } from "../../../../common/interfaces/ChatInterface";
-import { useChatMessage } from "../../hooks/useChatMessage";
 import { MemberDto } from "../../../../common/interfaces/MemberInterface.ts";
 
 interface ChatMessageListProps {
     member: MemberDto;
     chatRoom: ChatRoomDto;
+    messages: ChatMessageDto[];
+    loading: boolean;
 }
 
-const ChatMessageList = ({ member, chatRoom }: ChatMessageListProps) => {
-    const { messages, fetchChatMessage, loading } = useChatMessage();
-
-    useEffect(() => {
-        if (chatRoom?.id) {
-            fetchChatMessage(chatRoom.id);
-        }
-    }, [chatRoom]);
-
+const ChatMessageList = ({ member, chatRoom, messages, loading }: ChatMessageListProps) => {
     const isMyMessage = (message: ChatMessageDto) => {
         return message.memberId === member.id;
     };
@@ -38,7 +30,7 @@ const ChatMessageList = ({ member, chatRoom }: ChatMessageListProps) => {
                     return (
                         <div
                             key={message.id}
-                            className={`flex items-end ${mine ? "justify-end" : "justify-start"}`}
+                            className={`flex items-end gap-1 ${mine ? "justify-end" : "justify-start"}`}
                         >
                             {!mine && (
                                 <img
@@ -47,26 +39,24 @@ const ChatMessageList = ({ member, chatRoom }: ChatMessageListProps) => {
                                     className="w-8 h-8 rounded-full mr-2"
                                 />
                             )}
-                            <div className="flex flex-col items-start max-w-xs">
-                                <div
-                                    className={`px-4 py-2 rounded-2xl text-sm break-words ${
-                                        mine
-                                            ? "bg-sky-400 text-white self-end"
-                                            : "bg-gray-200 text-gray-900 self-start"
-                                    }`}
-                                >
-                                    {message.content}
-                                </div>
-                                {showUnread && (
-                                    <span
-                                        className={`text-xs text-gray-500 mt-1 ${
-                                            mine ? "self-start" : "self-end"
-                                        }`}
-                                    >
-                                        {message.unreadCount}명 읽지 않음
-                                    </span>
-                                )}
+
+                            {mine && showUnread && (
+                                <span className="text-xs text-gray-500 mb-1">{message.unreadCount}</span>
+                            )}
+
+                            <div
+                                className={`px-4 py-2 rounded-2xl text-sm break-words max-w-xs ${
+                                    mine
+                                        ? "bg-sky-400 text-white self-end"
+                                        : "bg-gray-200 text-gray-900 self-start"
+                                }`}
+                            >
+                                {message.content}
                             </div>
+
+                            {!mine && showUnread && (
+                                <span className="text-xs text-gray-500 mb-1">{message.unreadCount}</span>
+                            )}
                         </div>
                     );
                 })
