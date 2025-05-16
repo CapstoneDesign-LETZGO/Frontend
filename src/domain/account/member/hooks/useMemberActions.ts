@@ -10,7 +10,7 @@ import {
     updateMemberApi
 } from '../services/MemberActionService.ts';
 
-type Mode = 'member' | 'detailMember' | 'otherMember' | 'otherDetailMember';
+type Mode = 'none' | 'member' | 'detailMember' | 'otherMember' | 'otherDetailMember';
 
 interface UseMemberActionsOptions {
     mode?: Mode;
