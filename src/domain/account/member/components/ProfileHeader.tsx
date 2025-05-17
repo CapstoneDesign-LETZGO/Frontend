@@ -41,8 +41,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     const navigate = useNavigate();
     const [showOverlay, setShowOverlay] = useState(false);
     const { followRequest, followRequestCancel, cancelFollow } = useMemberActions();
-    const profileImageSrc = member?.profileImageUrl || "/src/assets/icons/user/user_4_line.svg";
-
+    const profileImageSrc = member?.profileImageUrl || "/icons/user/user_4_line.svg";
     const isFollowing = currentUserFollowList?.includes(member?.id ?? -1);
 
     const [isRequesting, setIsRequesting] = useState<boolean>(false);
@@ -123,7 +122,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                         className="flex items-center text-sm gap-1 cursor-pointer px-2 py-1 rounded transition active:bg-gray-200"
                         onClick={() => navigate("/edit-profile")}
                     >
-                        <img src="/src/assets/icons/user/user_4_line.svg" className="w-4 h-4" alt="편집 아이콘" />
+                        <img src="/icons/user/user_4_line.svg" className="w-4 h-4" alt="편집 아이콘" />
                         편집
                     </button>
                 )}

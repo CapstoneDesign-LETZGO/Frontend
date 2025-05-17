@@ -30,7 +30,7 @@ const PostDetailCard: React.FC<Props> = ({ post }) => {
 
                 <div className="flex items-center gap-4 mt-3">
                     <img
-                        src={liked ? "/src/assets/icons/shape/heart_fill.svg" : "/src/assets/icons/shape/heart_line.svg"}
+                        src={liked ? "/icons/shape/heart_fill.svg" : "/icons/shape/heart_line.svg"}
                         alt="Like"
                         className="w-5 h-5 cursor-pointer"
                         onClick={handleLikeClick}
@@ -38,7 +38,7 @@ const PostDetailCard: React.FC<Props> = ({ post }) => {
                     <span className="text-xs text-gray-700">{post.likeCount}</span>
 
                     <img
-                        src="/src/assets/icons/contact/message_1_line.svg"
+                        src="/icons/contact/message_1_line.svg"
                         alt="Message"
                         className="w-5 h-5 cursor-pointer"
                         onClick={openCommentModal}
