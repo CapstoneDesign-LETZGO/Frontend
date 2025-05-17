@@ -35,7 +35,9 @@ export const usePullToRefresh = (refetchCallback: () => void) => {
 
             if (diffY > 0 && isScrollAtTop()) {
                 // 오직 최상단에서 아래로 당길 때만
-                e.preventDefault(); // 이 시점에만 preventDefault 호출
+                if ('touches' in e && e.cancelable) {
+                    e.preventDefault(); // 이 조건 없으면 iOS에서 scroll 막힘
+                }
                 const limitedDiffY = Math.min(diffY, 100);
                 currentTranslateYRef.current = limitedDiffY;
 
