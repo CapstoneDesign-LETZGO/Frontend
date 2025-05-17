@@ -7,7 +7,7 @@ export const usePullToRefresh = (refetchCallback: () => void) => {
     const isDraggingRef = useRef(false);
     const [showSpinner, setShowSpinner] = useState(false);
 
-    const postSectionRef = useRef<HTMLDivElement>(null);
+    const postSectionRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         const getY = (e: TouchEvent | MouseEvent) => {
