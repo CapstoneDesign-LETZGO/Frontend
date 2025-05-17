@@ -123,7 +123,7 @@ const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, 
                 >
                     {/* Drag Handle Bar */}
                     <img
-                        src="src/assets/icons/system/minimize_line.svg"
+                        src="/icons/system/minimize_line.svg"
                         alt="Minimize"
                         className="w-16 h-5 rounded-full mb-1"
                     />
@@ -159,7 +159,7 @@ const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, 
 
                     {/* Profile Image */}
                     <img
-                        src={member?.profileImageUrl || "src/assets/icons/user/user_4_line.svg"}
+                        src={member?.profileImageUrl || "/icons/user/user_4_line.svg"}
                         alt="User Profile"
                         className="w-8 h-8 rounded-full ml-2 object-cover flex-shrink-0"
                     />
@@ -177,7 +177,7 @@ const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, 
                     {/* Send Button (conditionally rendered) */}
                     {commentInput.trim() && (
                         <img
-                            src="src/assets/icons/arrow/arrow_up_line.svg"
+                            src="/icons/arrow/arrow_up_line.svg"
                             alt="Send Comment"
                             className="w-6 h-6 mr-2 cursor-pointer flex-shrink-0"
                             onClick={handleSubmit}

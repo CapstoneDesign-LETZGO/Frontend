@@ -14,8 +14,8 @@ const NavigationBar: React.FC = () => {
                 <img
                     src={
                         isActive('/community')
-                            ? '/src/assets/icons/building/home_4_fill.svg'
-                            : '/src/assets/icons/building/home_4_line.svg'
+                            ? '/icons/building/home_4_fill.svg'
+                            : '/icons/building/home_4_line.svg'
                     }
                     alt="Home"
                     className="w-6 h-6"
@@ -25,8 +25,8 @@ const NavigationBar: React.FC = () => {
                 <img
                     src={
                         isActive('/map')
-                            ? '/src/assets/icons/map/compass_fill.svg'
-                            : '/src/assets/icons/map/compass_line.svg'
+                            ? '/icons/map/compass_fill.svg'
+                            : '/icons/map/compass_line.svg'
                     }
                     alt="Navigation"
                     className="w-6 h-6"
@@ -36,8 +36,8 @@ const NavigationBar: React.FC = () => {
                 <img
                     src={
                         isActive('/add')
-                            ? '/src/assets/icons/system/add_fill.svg'
-                            : '/src/assets/icons/system/add_line.svg'
+                            ? '/icons/system/add_fill.svg'
+                            : '/icons/system/add_line.svg'
                     }
                     alt="Add"
                     className="w-8 h-8"
@@ -47,8 +47,8 @@ const NavigationBar: React.FC = () => {
                 <img
                     src={
                         isActive('/schedule/list')
-                            ? '/src/assets/icons/map/map_fill.svg'
-                            : '/src/assets/icons/map/map_line.svg'
+                            ? '/icons/map/map_fill.svg'
+                            : '/icons/map/map_line.svg'
                     }
                     alt="Calendar"
                     className="w-6 h-6"
@@ -58,8 +58,8 @@ const NavigationBar: React.FC = () => {
                 <img
                     src={
                         isActive('/profile')
-                            ? '/src/assets/icons/user/user_2_fill.svg'
-                            : '/src/assets/icons/user/user_2_line.svg'
+                            ? '/icons/user/user_2_fill.svg'
+                            : '/icons/user/user_2_line.svg'
                     }
                     alt="Profile"
                     className="w-6 h-6"

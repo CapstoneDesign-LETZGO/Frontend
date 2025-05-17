@@ -15,7 +15,7 @@ const ChatMessageList = ({ member, chatRoom, messages, loading }: ChatMessageLis
 
     const getSenderProfileImage = (message: ChatMessageDto) => {
         const sender = chatRoom.chatRoomMembers.find((m) => m.userId === message.memberId);
-        return sender?.profileImageUrl || "src/assets/icons/user/user_4_line.svg";
+        return sender?.profileImageUrl || "/icons/user/user_4_line.svg";
     };
 
     return (

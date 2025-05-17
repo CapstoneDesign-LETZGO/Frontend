@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { usePlaceInfo } from "../../hooks/usePlaceInfo";
-import markerImage from "../../../../assets/icons/map/marker_image.png"
+import markerImage from "/icons/map/marker_image.png"
 import mapStyle from "../../style/MapStyle.json"
 import { PlaceDto } from "../../../../common/interfaces/MapInterface.ts";
 

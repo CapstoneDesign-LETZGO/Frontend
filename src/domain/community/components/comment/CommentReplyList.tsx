@@ -54,7 +54,7 @@ const CommentReplyList: React.FC<CommentReplyListProps> = ({
                         <div className="flex items-center mb-1 justify-between">
                             <div className="flex items-center">
                                 <img
-                                    src={reply.profileImageUrl || '/src/assets/icons/user/user_4_line.svg'}
+                                    src={reply.profileImageUrl || '/icons/user/user_4_line.svg'}
                                     alt="Profile"
                                     className="w-5 h-5 rounded-full mr-2"
                                 />
@@ -64,7 +64,7 @@ const CommentReplyList: React.FC<CommentReplyListProps> = ({
 
                             {canEditOrDelete(reply) && (
                                 <img
-                                    src="/src/assets/icons/system/more_2_line.svg"
+                                    src="/icons/system/more_2_line.svg"
                                     alt="More"
                                     className="w-4 h-4 ml-auto mb-1 cursor-pointer"
                                     onClick={(e) => {
@@ -83,8 +83,8 @@ const CommentReplyList: React.FC<CommentReplyListProps> = ({
                             <img
                                 src={
                                     reply.liked
-                                        ? 'src/assets/icons/shape/heart_fill.svg'
-                                        : 'src/assets/icons/shape/heart_line.svg'
+                                        ? '/icons/shape/heart_fill.svg'
+                                        : '/icons/shape/heart_line.svg'
                                 }
                                 alt="Like"
                                 className="w-4 h-4 cursor-pointer"
@@ -106,7 +106,7 @@ const CommentReplyList: React.FC<CommentReplyListProps> = ({
                                         onDeleteClick(reply.id);
                                     }}
                                 >
-                                    <img src="/src/assets/icons/system/delete_line.svg" alt="Delete" className="w-3.5 h-3.5 mr-1" />
+                                    <img src="/icons/system/delete_line.svg" alt="Delete" className="w-3.5 h-3.5 mr-1" />
                                     삭제
                                 </button>
                             </div>

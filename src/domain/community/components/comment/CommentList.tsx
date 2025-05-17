@@ -117,7 +117,7 @@ const CommentList: React.FC<CommentListProps> = ({
                         {/* 댓글 헤더 */}
                         <div className="flex items-center mb-1">
                             <img
-                                src={parent.profileImageUrl || '/src/assets/icons/user/user_4_line.svg'}
+                                src={parent.profileImageUrl || '/icons/user/user_4_line.svg'}
                                 alt="Profile"
                                 className="w-6 h-6 rounded-full -ml-1 mr-2"
                             />
@@ -126,7 +126,7 @@ const CommentList: React.FC<CommentListProps> = ({
 
                             {canEditOrDelete(parent) && (
                                 <img
-                                    src="/src/assets/icons/system/more_2_line.svg"
+                                    src="/icons/system/more_2_line.svg"
                                     alt="More"
                                     className="w-4 h-4 ml-auto mb-1 cursor-pointer"
                                     onClick={() =>
@@ -144,8 +144,8 @@ const CommentList: React.FC<CommentListProps> = ({
                             <img
                                 src={
                                     parent.liked
-                                        ? 'src/assets/icons/shape/heart_fill.svg'
-                                        : 'src/assets/icons/shape/heart_line.svg'
+                                        ? '/icons/shape/heart_fill.svg'
+                                        : '/icons/shape/heart_line.svg'
                                 }
                                 alt="Like"
                                 className="w-4 h-4 cursor-pointer"
@@ -171,7 +171,7 @@ const CommentList: React.FC<CommentListProps> = ({
                                         onDeleteClick(parent.id);
                                     }}
                                 >
-                                    <img src="/src/assets/icons/system/delete_line.svg" alt="Delete" className="w-3.5 h-3.5 mr-1" />
+                                    <img src="/icons/system/delete_line.svg" alt="Delete" className="w-3.5 h-3.5 mr-1" />
                                     삭제
                                 </button>
                             </div>

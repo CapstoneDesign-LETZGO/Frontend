@@ -52,7 +52,7 @@ const ChatMessageInput: React.FC<ChatMessageInputProps> = ({member, onSendMessag
             style={{ borderTop: '0.1px solid #D1D5DB' }}
         >
             <img
-                src={member.profileImageUrl || "/src/assets/icons/user/user_4_line.svg"}
+                src={member.profileImageUrl || "/icons/user/user_4_line.svg"}
                 alt="User Profile"
                 className="w-8 h-8 rounded-full ml-2 object-cover flex-shrink-0"
             />
@@ -67,14 +67,14 @@ const ChatMessageInput: React.FC<ChatMessageInputProps> = ({member, onSendMessag
             />
             {message && (
                 <img
-                    src="/src/assets/icons/arrow/arrow_up_line.svg"
+                    src="/icons/arrow/arrow_up_line.svg"
                     alt="Send Message"
                     className="w-6 h-6 mr-2 cursor-pointer flex-shrink-0"
                     onClick={handleSend}
                 />
             )}
             <img
-                src="/src/assets/icons/file/pic_line.svg"
+                src="/icons/file/pic_line.svg"
                 alt="Attach Image"
                 className="w-6 h-6 mr-2 cursor-pointer flex-shrink-0"
                 onClick={handleImageClick}
