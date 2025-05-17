@@ -11,9 +11,17 @@ interface ProfileHeaderProps {
         followMemberCount: number;
         followedMemberCount: number;
     };
+    onFollowClick?: () => void;
+    onFollowerClick?: () => void;
+    isOtherProfile?: boolean;
 }
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({ member }) => {
+const ProfileHeader: React.FC<ProfileHeaderProps> = ({
+    member,
+    onFollowClick,
+    onFollowerClick,
+    isOtherProfile
+}) => {
     const navigate = useNavigate();
     const [showOverlay, setShowOverlay] = useState(false);
     const profileImageSrc = member?.profileImageUrl || "/src/assets/icons/user/user_4_line.svg";
@@ -37,11 +45,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ member }) => {
                     alt="프로필 이미지"
                     className="w-10 h-10 rounded-full object-cover"
                 />
-                <div className="text-center">
+                <div className="text-center cursor-pointer" onClick={onFollowerClick}>
                     <p className="text-sm font-medium">팔로워</p>
                     <p className="text-sm">{member?.followMemberCount ?? 0}</p>
                 </div>
-                <div className="text-center">
+                <div className="text-center cursor-pointer" onClick={onFollowClick}>
                     <p className="text-sm font-medium">팔로잉</p>
                     <p className="text-sm">{member?.followedMemberCount ?? 0}</p>
                 </div>
@@ -49,20 +57,26 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ member }) => {
 
             {/* 하단 버튼 */}
             <div className="flex justify-around mt-4">
-                <button
-                    className="flex items-center text-sm gap-1 cursor-pointer px-2 py-1 rounded transition active:bg-gray-200"
-                    onClick={() => navigate("/edit-profile")}
-                >
-                    <img src="/src/assets/icons/user/user_4_line.svg" className="w-4 h-4" alt="편집 아이콘" />
-                    편집
-                </button>
+                {!isOtherProfile && (
+                    <button
+                        className="flex items-center text-sm gap-1 cursor-pointer px-2 py-1 rounded transition active:bg-gray-200"
+                        onClick={() => navigate("/edit-profile")}
+                    >
+                        <img src="/src/assets/icons/user/user_4_line.svg" className="w-4 h-4" alt="편집 아이콘" />
+                        편집
+                    </button>
+                )}
+
+                {isOtherProfile && (
+                    <button className="flex items-center text-sm gap-1 cursor-pointer px-2 py-1 rounded transition active:bg-gray-200">
+                        <UserPlus className="w-4 h-4" />
+                        추가하기
+                    </button>
+                )}
+
                 <button className="flex items-center text-sm gap-1 cursor-pointer px-2 py-1 rounded transition active:bg-gray-200">
                     <Share2 className="w-4 h-4" />
                     공유
-                </button>
-                <button className="flex items-center text-sm gap-1 cursor-pointer px-2 py-1 rounded transition active:bg-gray-200">
-                    <UserPlus className="w-4 h-4" />
-                    추가하기
                 </button>
             </div>
 
