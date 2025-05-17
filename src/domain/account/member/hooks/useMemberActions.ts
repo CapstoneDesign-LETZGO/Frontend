@@ -10,7 +10,13 @@ import {
     updateMemberApi,
     sendCodeToEmailApi,
     verifyEmailCodeApi,
-    resetPasswordApi
+    resetPasswordApi,
+    followRequestApi,
+    followRequestCancelApi,
+    AcceptfollowApi,
+    RejectfollowApi,
+    CancelfollowApi,
+    DeletefollowerApi
 } from '../services/MemberActionService.ts';
 
 type Mode = 'none' | 'member' | 'detailMember' | 'otherMember' | 'otherDetailMember';
@@ -207,6 +213,67 @@ export const useMemberActions = ({ mode = 'member', memberIdForOther }: UseMembe
         }
     };
 
+
+    const followRequest = async (memberId: number): Promise<boolean> => {
+        try {
+            const { success } = await followRequestApi(authFetch, memberId);
+            return success;
+        } catch (err) {
+            toast.error("팔로우 요청 실패");
+            return false;
+        }
+    };
+
+    const followRequestCancel = async (memberId: number): Promise<boolean> => {
+        try {
+            const { success } = await followRequestCancelApi(authFetch, memberId);
+            return success;
+        } catch (err) {
+            toast.error("팔로우 요청 취소 실패");
+            return false;
+        }
+    };
+
+    const acceptFollowRequest = async (memberId: number): Promise<boolean> => {
+        try {
+            const { success } = await AcceptfollowApi(authFetch, memberId);
+            return success;
+        } catch (err) {
+            toast.error("팔로우 수락 실패");
+            return false;
+        }
+    };
+
+    const rejectFollowRequest = async (memberId: number): Promise<boolean> => {
+        try {
+            const { success } = await RejectfollowApi(authFetch, memberId);
+            return success;
+        } catch (err) {
+            toast.error("팔로우 거절 실패");
+            return false;
+        }
+    };
+
+    const cancelFollow = async (memberId: number): Promise<boolean> => {
+        try {
+            const { success } = await CancelfollowApi(authFetch, memberId);
+            return success;
+        } catch (err) {
+            toast.error("팔로우 취소 실패");
+            return false;
+        }
+    };
+
+    const deleteFollower = async (memberId: number): Promise<boolean> => {
+        try {
+            const { success } = await DeletefollowerApi(authFetch, memberId);
+            return success;
+        } catch (err) {
+            toast.error("팔로워 삭제 실패");
+            return false;
+        }
+    };
+
     useEffect(() => {
         if (mode === 'member') {
             fetchMember();
@@ -247,6 +314,12 @@ export const useMemberActions = ({ mode = 'member', memberIdForOther }: UseMembe
         searchMember,
         resetPassword,
         verifyEmailCode,
-        sendEmailCode
-    };
+        sendEmailCode,
+        followRequest,
+        followRequestCancel,
+        acceptFollowRequest,
+        rejectFollowRequest,
+        cancelFollow,
+        deleteFollower 
+        };
 };
