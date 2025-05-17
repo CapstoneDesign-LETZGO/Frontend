@@ -171,3 +171,70 @@ export const searchMemberApi = async (
         return { members: null, success: false };
     }
 };
+
+//이메일 인증 코드 요청
+export const sendCodeToEmailApi = async (
+    publicFetch: AuthFetch,
+    email: string
+): Promise<{ success: boolean }> => {
+    try {
+        const response = await publicFetch<ApiResponse<string>>(
+            `/find-password/send-code/email?email=${encodeURIComponent(email)}`,
+            {},
+            "GET"
+        );
+        return { success: response.returnCode === "SUCCESS" };
+    } catch (err) {
+        console.error("이메일 인증코드 요청 오류:", err);
+        return { success: false };
+    }
+};
+
+//이메일 인증 코드 확인
+export const verifyEmailCodeApi = async (
+    authFetch: AuthFetch,
+    email: string,
+    code: string
+): Promise<{ success: boolean; token?: string }> => {
+    try {
+        const response = await authFetch<ApiResponse<string>>(
+            `/find-password/verify-code?email=${encodeURIComponent(email)}&code=${encodeURIComponent(code)}`,
+            {},
+            "GET"
+        );
+
+        if (response && response.returnCode === "SUCCESS" && typeof response.data === "string") {
+            return {
+                success: true,
+                token: response?.data as string
+            };
+        } else {
+            return { success: false };
+        }
+    } catch (err) {
+        console.error("이메일 코드 검증 실패:", err);
+        return { success: false };
+    }
+};
+
+
+
+// 비밀번호 재설정
+export const resetPasswordApi = async (
+    publicFetch: AuthFetch,
+    email: string,
+    token: string,
+    newPassword: string
+): Promise<{ success: boolean }> => {
+    try {
+        const response = await publicFetch<ApiResponse<string>>(
+            `/find-password/reset-password?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}&password=${encodeURIComponent(newPassword)}`,
+            {},
+            "POST"
+        );
+        return { success: response.returnCode === "SUCCESS" };
+    } catch (err) {
+        console.error("비밀번호 재설정 오류:", err);
+        return { success: false };
+    }
+};
