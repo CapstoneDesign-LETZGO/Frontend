@@ -14,7 +14,13 @@ export const usePullToRefresh = (refetchCallback: () => void) => {
             return 'touches' in e ? e.touches[0]?.clientY ?? 0 : e.clientY;
         };
 
+        const isScrollAtTop = () => {
+            const el = postSectionRef.current;
+            return el ? el.scrollTop <= 0 : false;
+        };
+
         const onStart = (e: TouchEvent | MouseEvent) => {
+            if (!isScrollAtTop()) return;
             canDragRef.current = postSectionRef.current?.scrollTop === 0;
             if (!canDragRef.current) return;
             startYRef.current = getY(e);
@@ -23,6 +29,8 @@ export const usePullToRefresh = (refetchCallback: () => void) => {
 
         const onMove = (e: TouchEvent | MouseEvent) => {
             if (!isDraggingRef.current || !canDragRef.current || !postSectionRef.current) return;
+            if (!isScrollAtTop()) return;
+
             const currentY = getY(e);
             const diffY = currentY - startYRef.current;
 
