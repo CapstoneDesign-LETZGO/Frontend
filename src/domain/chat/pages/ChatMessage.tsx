@@ -56,17 +56,14 @@ const ChatMessage = () => {
 
             // 다수 메시지 읽음 처리
             if (data.messageType === "READALL") {
-                const { memberId: readerId, lastReadMessageId } = data;
-                if (typeof lastReadMessageId !== "number") return;
+                const readMessageIds: number[] | undefined = data.readMessageIdList;
+                if (!Array.isArray(readMessageIds)) return;
                 setCombinedMessages((prevMessages) =>
-                    prevMessages.map((msg) => {
-                        if (msg.memberId === readerId) return msg;
-                        if (msg.id <= lastReadMessageId) return msg;
-                        return {
-                            ...msg,
-                            unreadCount: Math.max(0, msg.unreadCount - 1),
-                        };
-                    })
+                    prevMessages.map((msg) =>
+                        readMessageIds.includes(msg.id)
+                            ? { ...msg, unreadCount: Math.max(0, msg.unreadCount - 1) }
+                            : msg
+                    )
                 );
             }
         },

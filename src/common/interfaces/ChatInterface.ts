@@ -43,5 +43,5 @@ export interface ChatWebSocketPayload {
     messageId?: number;
 
     // READALL일 때만 존재
-    lastReadMessageId?: number;
+    readMessageIdList?: number[];
 }
