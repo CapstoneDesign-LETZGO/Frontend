@@ -13,12 +13,14 @@ const ChatMessage = () => {
     const { member, chatRoom } = location.state || {};
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { messages: _fetchedMessages, fetchChatMessage, loading } = useChatMessage();
+    const { messages: _fetchedMessages, fetchChatMessage, writeImageMessage, loading } = useChatMessage();
     const [combinedMessages, setCombinedMessages] = useState<ChatMessageDto[]>([]);
     const ws = useRef<WebSocket | null>(null);
+    const pingInterval = useRef<NodeJS.Timeout | null>(null); // ping interval 관리
 
     const onMessageReceived = useCallback(
         (event: MessageEvent) => {
+            console.log("💬 WebSocket Message:", event.data);
             const data: ChatWebSocketPayload = JSON.parse(event.data);
 
             // 메시지 수신
@@ -83,7 +85,16 @@ const ChatMessage = () => {
         });
 
         ws.current = new WebSocket(`${WS_URL}?chatRoomId=${chatRoom.id}`);
-        ws.current.onopen = () => console.log("WebSocket connected");
+        ws.current.onopen = () => {
+            console.log("WebSocket connected");
+            // Ping every 25 seconds
+            pingInterval.current = setInterval(() => {
+                if (ws.current?.readyState === WebSocket.OPEN) {
+                    ws.current.send(JSON.stringify({ messageType: "PING" }));
+                    console.log("Sent ping to keep connection alive");
+                }
+            }, 25000);
+        };
         ws.current.onmessage = onMessageReceived;
         ws.current.onclose = () => console.log("WebSocket disconnected");
         ws.current.onerror = (error) => console.error("WebSocket error", error);
@@ -119,7 +130,7 @@ const ChatMessage = () => {
         <div className="flex flex-col min-h-screen items-center bg-[#F5F5F5]">
             <div className="flex flex-col w-full max-w-md min-h-screen relative bg-white">
                 <ChatMessageHeader chatRoom={chatRoom} member={member} />
-                <div className="pt-[50px]">
+                <div className="pt-[50px] pb-[40px]">
                     <ChatMessageList
                         chatRoom={chatRoom}
                         member={member}
@@ -127,7 +138,11 @@ const ChatMessage = () => {
                         loading={loading}
                     />
                 </div>
-                <ChatMessageInput member={member} onSendMessage={sendMessage} />
+                <ChatMessageInput
+                    member={member}
+                    onSendMessage={sendMessage}
+                    onSendImageMessage={(files) => writeImageMessage(chatRoom.id, files)}
+                />
             </div>
         </div>
     );
