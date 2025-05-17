@@ -61,7 +61,7 @@ const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({ member, onInviteClick, 
         >
             {/* 왼쪽 화살표 아이콘 */}
             <div onClick={handleBackClick} className="cursor-pointer ml-2">
-                <img src="/src/assets/icons/arrow/left_line.svg" alt="Back" className="h-6" />
+                <img src="/icons/arrow/left_line.svg" alt="Back" className="h-6" />
             </div>
 
             {/* 사용자 닉네임 */}
@@ -73,14 +73,14 @@ const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({ member, onInviteClick, 
             <div className="ml-auto mr-2">
                 {showInvite ? (
                     <img
-                        src="/src/assets/icons/system/check_line.svg"
+                        src="/icons/system/check_line.svg"
                         alt="Check"
                         className="h-6 cursor-pointer"
                         onClick={handleInviteConfirmClick}
                     />
                 ) : (
                     <img
-                        src="/src/assets/icons/user/group_line.svg"
+                        src="/icons/user/group_line.svg"
                         alt="Group"
                         className="h-6 cursor-pointer"
                         onClick={handleGroupIconClick}

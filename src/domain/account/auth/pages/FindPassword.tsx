@@ -20,7 +20,7 @@ const FindAccountPage: React.FC = () => {
                 {step === 1 && (
                     <>
                         <div className="flex flex-col items-center mb-10">
-                            <img src="/src/assets/icons/system/lock_line.svg" alt="lock" className="h-40 mb-4 mt-50" />
+                            <img src="/icons/system/lock_line.svg" alt="lock" className="h-40 mb-4 mt-50" />
                             <h2 className="text-xl font-semibold">로그인이 안되시나요?</h2>
                             <p className="text-base text-gray-500 text-center mt-2 ">
                                 비밀번호를 찾기 위해 이메일주소,<br /> 전화번호 또는 사용자 이름을 입력해주세요.

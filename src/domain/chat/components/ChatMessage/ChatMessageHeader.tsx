@@ -55,7 +55,7 @@ const ChatMessageHeader: React.FC<ChatRoomHeaderProps> = ({chatRoom, member}) =>
         >
             {/* 왼쪽 화살표 아이콘 */}
             <div onClick={() => navigate(-1)} className="cursor-pointer ml-2">
-                <img src="/src/assets/icons/arrow/left_line.svg" alt="Back" className="h-6" />
+                <img src="/icons/arrow/left_line.svg" alt="Back" className="h-6" />
             </div>
 
             {/* 채팅방 제목 */}
@@ -69,7 +69,7 @@ const ChatMessageHeader: React.FC<ChatRoomHeaderProps> = ({chatRoom, member}) =>
 
             {/* 그룹 아이콘 */}
             <div className="cursor-pointer ml-auto mr-2">
-                <img src="/src/assets/icons/editor/menu_line.svg" alt="Group" className="h-6" />
+                <img src="/icons/editor/menu_line.svg" alt="Group" className="h-6" />
             </div>
         </header>
     );

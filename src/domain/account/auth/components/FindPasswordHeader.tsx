@@ -13,7 +13,7 @@ const FindAccountHeader: React.FC<FindAccountHeaderProps> = ({ title = "계정 �
             {/* 뒤로가기 버튼 */}
             <button onClick={() => navigate(-1)} className="cursor-pointer">
                 <img
-                    src="/src/assets/icons/arrow/left_line.svg"
+                    src="/icons/arrow/left_line.svg"
                     alt="뒤로가기"
                     className="h-5 w-5"
                 />
