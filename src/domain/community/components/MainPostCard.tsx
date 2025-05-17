@@ -64,7 +64,7 @@ const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
     };
 
     // 텍스트 자르기 (한글 기준 약 50자는 2줄 분량)
-    const maxChars = 84; // 기본 최대 문자 수
+    const maxChars = 77; // 기본 최대 문자 수
     const nicknameLength = post.nickname.length;
     const availableChars = maxChars - nicknameLength - 3; // 닉네임 길이와 "..." 을 고려하여 표시할 텍스트 길이 계산
     const shouldTruncate = post.content.length > availableChars;
