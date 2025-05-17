@@ -1,6 +1,6 @@
 import { ChatMessageDto, ChatRoomDto } from "../../../../common/interfaces/ChatInterface";
 import { MemberDto } from "../../../../common/interfaces/MemberInterface.ts";
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 
 interface ChatMessageListProps {
     member: MemberDto;
@@ -12,6 +12,12 @@ interface ChatMessageListProps {
 const ChatMessageList = ({ member, chatRoom, messages, loading }: ChatMessageListProps) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const bottomRef = useRef<HTMLDivElement>(null);
+    const [imagesLoadedCount, setImagesLoadedCount] = useState(0);
+    const totalImages = messages.reduce((acc, msg) => acc + (msg.imageUrls?.length || 0), 0);
+
+    const handleImageLoad = () => {
+        setImagesLoadedCount((count) => count + 1);
+    };
 
     const isMyMessage = (message: ChatMessageDto) => {
         return message.memberId === member.id;
@@ -22,6 +28,13 @@ const ChatMessageList = ({ member, chatRoom, messages, loading }: ChatMessageLis
         return sender?.profileImageUrl || "/icons/user/user_4_line.svg";
     };
 
+    // 메시지가 변경되었을 때, 그리고 이미지 로딩이 완료됐을 때 맨 아래로 스크롤
+    useEffect(() => {
+        if (totalImages === 0 || imagesLoadedCount === totalImages) {
+            bottomRef.current?.scrollIntoView({ behavior: "auto" });
+        }
+    }, [messages, imagesLoadedCount, totalImages]);
+
     // 메시지가 변경될 때마다 맨 아래로 스크롤
     useEffect(() => {
         const scrollToBottom = () => {
@@ -30,7 +43,7 @@ const ChatMessageList = ({ member, chatRoom, messages, loading }: ChatMessageLis
         // 모바일/PC 모두에서 동작 보장
         const timeout = setTimeout(() => {
             scrollToBottom();
-        }, 50); // 렌더링 후 약간의 딜레이로 scroll 보장
+        }, 100); // 렌더링 후 약간의 딜레이로 scroll 보장
         return () => clearTimeout(timeout);
     }, [messages]);
 
