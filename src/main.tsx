@@ -6,4 +6,4 @@ createRoot(document.getElementById("root")!).render(
   <App />
 );
 
-// 프론트 자동배포
+// 프론트 자동배포1
