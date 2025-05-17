@@ -4,11 +4,13 @@ import { MemberDto } from '../../../../common/interfaces/MemberInterface';
 interface ChatMessageInputProps {
     member: MemberDto;
     onSendMessage: (message: string) => void;
+    onSendImageMessage: (imageFiles: File[]) => void;
 }
 
-const ChatMessageInput: React.FC<ChatMessageInputProps> = ({member, onSendMessage}) => {
+const ChatMessageInput: React.FC<ChatMessageInputProps> = ({member, onSendMessage, onSendImageMessage}) => {
     const [message, setMessage] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setMessage(e.target.value);
@@ -26,6 +28,22 @@ const ChatMessageInput: React.FC<ChatMessageInputProps> = ({member, onSendMessag
         if (e.key === 'Enter') {
             handleSend();
         }
+    };
+
+
+    const handleImageClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files) return;
+
+        const imageFiles = Array.from(files).slice(0, 5); // 최대 5개 제한
+        onSendImageMessage(imageFiles);
+
+        // 초기화해서 같은 파일 다시 선택 가능하도록
+        e.target.value = '';
     };
 
     return (
@@ -55,6 +73,20 @@ const ChatMessageInput: React.FC<ChatMessageInputProps> = ({member, onSendMessag
                     onClick={handleSend}
                 />
             )}
+            <img
+                src="/src/assets/icons/file/pic_line.svg"
+                alt="Attach Image"
+                className="w-6 h-6 mr-2 cursor-pointer flex-shrink-0"
+                onClick={handleImageClick}
+            />
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
+            />
         </div>
     );
 };
