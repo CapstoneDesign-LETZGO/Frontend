@@ -84,6 +84,13 @@ const App = () => {
                                 </LayoutWithHeaderAndNav>
                             </RequireAuth>
                         } />
+                        <Route path="/profile/:memberId" element={
+                            <RequireAuth>
+                                <LayoutWithHeaderAndNav>
+                                    <Profile />
+                                </LayoutWithHeaderAndNav>
+                            </RequireAuth>
+                        } />
                         <Route path="/edit-profile" element={
                             <RequireAuth>
                                 <LayoutWithHeaderAndNav>
