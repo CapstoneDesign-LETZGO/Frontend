@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X } from "lucide-react";
 import { SimpleMember } from "../../../../common/interfaces/MemberInterface";
-import { useMemberActions } from "../hooks/useMemberActions";
+import { useMemberFollow } from "../hooks/useMemberFollow";
 
 interface FollowListOverlayProps {
     type: "팔로워" | "팔로우";
@@ -20,7 +20,7 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
     followRecList = [],
     isOwnProfile
 }) => {
-    const { acceptFollowRequest, rejectFollowRequest } = useMemberActions();
+    const { acceptFollowRequest, rejectFollowRequest } = useMemberFollow();
     const [localFollowRecList, setLocalFollowRecList] = useState<SimpleMember[]>([]);
 
     useEffect(() => {
