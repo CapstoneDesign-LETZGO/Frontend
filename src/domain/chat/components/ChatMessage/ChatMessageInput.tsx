@@ -19,17 +19,19 @@ const ChatMessageInput: React.FC<ChatMessageInputProps> = ({member, onSendMessag
     const handleSend = () => {
         if (!message.trim()) return;
         onSendMessage(message);
-
         setMessage('');
         inputRef.current?.focus();
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
-            handleSend();
+            e.preventDefault();
+            if (!message.trim()) return;
+            onSendMessage(message);
+            setMessage('');
+            inputRef.current?.focus();
         }
     };
-
 
     const handleImageClick = () => {
         fileInputRef.current?.click();
@@ -62,7 +64,7 @@ const ChatMessageInput: React.FC<ChatMessageInputProps> = ({member, onSendMessag
                 placeholder="메시지를 입력하세요..."
                 value={message}
                 onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
+                onKeyUp={handleKeyUp}
                 className="flex-grow px-4 py-2 text-xs focus:outline-none mx-2"
             />
             {message && (

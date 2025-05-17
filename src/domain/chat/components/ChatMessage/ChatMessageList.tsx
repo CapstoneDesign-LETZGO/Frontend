@@ -94,6 +94,7 @@ const ChatMessageList = ({ member, chatRoom, messages, loading }: ChatMessageLis
                                                             src={url}
                                                             alt={`image-${index}`}
                                                             className="w-40 h-auto rounded-xl"
+                                                            onLoad={handleImageLoad}
                                                         />
                                                     ))}
                                                 </div>
@@ -126,6 +127,7 @@ const ChatMessageList = ({ member, chatRoom, messages, loading }: ChatMessageLis
                                                             src={url}
                                                             alt={`image-${index}`}
                                                             className="w-40 h-auto rounded-xl"
+                                                            onLoad={handleImageLoad}
                                                         />
                                                     ))}
                                                 </div>
