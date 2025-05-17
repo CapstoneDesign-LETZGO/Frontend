@@ -1,16 +1,51 @@
 import React, { useState } from "react";
 import FindAccountHeader from "../components/FindPasswordHeader";
+import { useMemberActions } from "../../member/hooks/useMemberActions";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const FindAccountPage: React.FC = () => {
+    const navigate = useNavigate();
     const [step, setStep] = useState(1);
-    const [emailOrPhoneOrName, setEmailOrPhoneOrName] = useState("");
+    const [email, setEmail] = useState(""); // 이메일만 사용
     const [verificationCode, setVerificationCode] = useState("");
     const [newPassword, setNewPassword] = useState("");
+    const [token, setToken] = useState(""); // 인증코드를 토큰으로 저장
 
-    const handleNext = () => {
-        if (step === 1) setStep(2);
-        else if (step === 2) setStep(3);
-        else console.log("비밀번호 재설정 완료");
+    const {
+        sendEmailCode,
+        verifyEmailCode,
+        resetPassword,
+        loading,
+    } = useMemberActions();
+
+    const handleNext = async () => {
+        if (step === 1) {
+            const success = await sendEmailCode(email);
+            if (success) {
+                toast.success("인증코드가 이메일로 전송되었습니다.");
+                setStep(2);
+            } else {
+                toast.error("이메일 전송에 실패했습니다.");
+            }
+        } else if (step === 2) {
+            const result = await verifyEmailCode(email, verificationCode);
+            if (result.success) {
+                toast.success("인증이 완료되었습니다.");
+                setToken(result.token!);
+                setStep(3);
+            } else {
+                toast.error("인증코드가 올바르지 않습니다.");
+            }
+        } else if (step === 3) {
+            const success = await resetPassword(email, token, newPassword);
+            if (success) {
+                toast.success("비밀번호가 성공적으로 변경되었습니다.");
+                navigate("/login");
+            } else {
+                toast.error("비밀번호 재설정에 실패했습니다.");
+            }
+        }
     };
 
     return (
@@ -22,21 +57,22 @@ const FindAccountPage: React.FC = () => {
                         <div className="flex flex-col items-center mb-10">
                             <img src="/icons/system/lock_line.svg" alt="lock" className="h-40 mb-4 mt-50" />
                             <h2 className="text-xl font-semibold">로그인이 안되시나요?</h2>
-                            <p className="text-base text-gray-500 text-center mt-2 ">
-                                비밀번호를 찾기 위해 이메일주소,<br /> 전화번호 또는 사용자 이름을 입력해주세요.
+                            <p className="text-base text-gray-500 text-center mt-2">
+                                비밀번호를 찾기 위해 가입시 입력한 이메일주소를 입력해주세요.
                             </p>
                         </div>
                         <input
-                            value={emailOrPhoneOrName}
-                            onChange={(e) => setEmailOrPhoneOrName(e.target.value)}
-                            placeholder="이메일, 전화번호, 사용자 이름"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="이메일 주소"
                             className="border rounded-md px-4 py-2 w-full mb-4"
                         />
                         <button
                             onClick={handleNext}
                             className="bg-black text-white w-full py-2 rounded-md"
+                            disabled={loading}
                         >
-                            다음
+                            {loading ? "전송 중..." : "다음"}
                         </button>
                     </>
                 )}
@@ -45,13 +81,13 @@ const FindAccountPage: React.FC = () => {
                     <>
                         <h2 className="text-xl font-semibold mb-2 mt-90 text-center">인증 코드 입력</h2>
                         <p className="text-base text-gray-600 mb-2 text-center">
-                            t****@e***.com으로 전송된 인증 코드를 입력해주세요.
+                            {email} 으로 전송된 인증 코드를 입력해주세요.
                         </p>
-                        {/* 코드 재전송 버튼 */}
                         <div className="text-center">
                             <button
-                                onClick={() => console.log("코드 재전송")}
+                                onClick={() => sendEmailCode(email)}
                                 className="text-blue-800 hover:underline text-base"
+                                disabled={loading}
                             >
                                 코드 재전송
                             </button>
@@ -65,8 +101,9 @@ const FindAccountPage: React.FC = () => {
                         <button
                             onClick={handleNext}
                             className="bg-black text-white w-full py-2 rounded-md"
+                            disabled={loading}
                         >
-                            다음
+                            {loading ? "확인 중..." : "다음"}
                         </button>
                     </>
                 )}
@@ -85,10 +122,11 @@ const FindAccountPage: React.FC = () => {
                             className="border rounded-md px-4 py-2 w-full mb-4"
                         />
                         <button
-                            onClick={() => console.log("비밀번호 설정 완료")}
+                            onClick={handleNext}
                             className="bg-black text-white w-full py-2 rounded-md"
+                            disabled={loading}
                         >
-                            완료
+                            {loading ? "변경 중..." : "완료"}
                         </button>
                     </>
                 )}
