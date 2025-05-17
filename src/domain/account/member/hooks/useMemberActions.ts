@@ -7,7 +7,10 @@ import {
     fetchDetailMemberApi,
     fetchMemberApi, fetchOtherDetailMemberApi, fetchOtherMemberApi, searchMemberApi,
     signupApi,
-    updateMemberApi
+    updateMemberApi,
+    sendCodeToEmailApi,
+    verifyEmailCodeApi,
+    resetPasswordApi
 } from '../services/MemberActionService.ts';
 
 type Mode = 'none' | 'member' | 'detailMember' | 'otherMember' | 'otherDetailMember';
@@ -158,6 +161,51 @@ export const useMemberActions = ({ mode = 'member', memberIdForOther }: UseMembe
             setLoading(false);
         }
     };
+    
+    // 이메일 인증코드 전송
+    const sendEmailCode = async (email: string): Promise<boolean> => {
+        setLoading(true);
+        try {
+            const { success } = await sendCodeToEmailApi(authFetch, email);
+            return success;
+        } catch (err) {
+            toast.error("이메일 인증코드 전송 실패");
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // 인증코드 확인
+    const verifyEmailCode = async (
+    email: string,
+    code: string
+    ): Promise<{ success: boolean; token?: string }> => {
+        setLoading(true);
+        try {
+            const result = await verifyEmailCodeApi(authFetch, email, code);
+            return result; 
+        } catch (err) {
+            toast.error("인증코드 확인 실패");
+            return { success: false };
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // 비밀번호 재설정
+    const resetPassword = async (email: string, token: string, newPassword: string): Promise<boolean> => {
+        setLoading(true);
+        try {
+            const { success } = await resetPasswordApi(authFetch, email, token, newPassword);
+            return success;
+        } catch (err) {
+            toast.error("비밀번호 재설정 실패");
+            return false;
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         if (mode === 'member') {
@@ -196,6 +244,9 @@ export const useMemberActions = ({ mode = 'member', memberIdForOther }: UseMembe
         deleteMember,
         fetchOtherMember,
         fetchOtherDetailMember,
-        searchMember
+        searchMember,
+        resetPassword,
+        verifyEmailCode,
+        sendEmailCode
     };
 };
