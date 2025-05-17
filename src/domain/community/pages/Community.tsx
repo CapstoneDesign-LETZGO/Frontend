@@ -33,7 +33,7 @@ const Community: React.FC = () => {
                 {/* Main Post Cards */}
                 <section
                     ref={postSectionRef}
-                    className="flex-grow overflow-y-auto scrollbar-hide mt-14 mb-11"
+                    className="flex-grow overflow-y-auto h-[calc(100vh-56px-44px)] scrollbar-hide mt-14 mb-11"
                 >
                     {/* Pull-to-Refresh Spinner */}
                     {showSpinner && (
