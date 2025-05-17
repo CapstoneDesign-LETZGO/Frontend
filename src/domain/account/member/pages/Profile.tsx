@@ -138,6 +138,7 @@ const ProfilePage: React.FC = () => {
                             navigate(`/profile/${id}`);
                         }}
                         isOwnProfile={!isOtherProfile}
+                        refetchMember={refetchMember}
                         followRecList={loginUser?.followRecList ?? []}
                     />
                 )}

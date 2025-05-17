@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Share2, UserPlus, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ProfileSettingOverlay from "./ProfileSettingOverlay";
-import { useMemberActions } from "../hooks/useMemberActions";
+import { useMemberFollow } from "../hooks/useMemberFollow";
 import { toast } from "react-toastify";
 
 interface SimpleMember {
@@ -36,20 +36,25 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     isOtherProfile,
     currentUserFollowList,
     followReqList,
-    hasFollowRequest
+    hasFollowRequest,
 }) => {
     const navigate = useNavigate();
     const [showOverlay, setShowOverlay] = useState(false);
-    const { followRequest, followRequestCancel, cancelFollow } = useMemberActions();
+    const { followRequest, followRequestCancel, cancelFollow } = useMemberFollow();
     const profileImageSrc = member?.profileImageUrl || "/icons/user/user_4_line.svg";
-    const isFollowing = currentUserFollowList?.includes(member?.id ?? -1);
 
+    const [isFollowing, setIsFollowing] = useState<boolean>(false);
     const [isRequesting, setIsRequesting] = useState<boolean>(false);
+
+
 
     useEffect(() => {
         const initiallyRequesting = followReqList?.some((m) => m.userId === member?.id) ?? false;
         setIsRequesting(initiallyRequesting);
-    }, [followReqList, member?.id]);
+
+        const initiallyFollowing = currentUserFollowList?.includes(member?.id ?? -1) ?? false;
+        setIsFollowing(initiallyFollowing);
+    }, [followReqList, currentUserFollowList, member?.id]);
 
     const handleFollowRequest = async () => {
         if (!member) return;
@@ -78,6 +83,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         const success = await cancelFollow(member.id);
         if (success) {
             toast.success("팔로우를 취소했습니다.");
+            setIsFollowing(false);
         } else {
             toast.error("팔로우 취소에 실패했습니다.");
         }

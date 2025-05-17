@@ -10,6 +10,7 @@ interface FollowListOverlayProps {
     onMemberClick: (memberId: number) => void;
     followRecList?: SimpleMember[];
     isOwnProfile?: boolean;
+    refetchMember: () => void;
 }
 
 const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
@@ -18,7 +19,8 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
     onClose,
     onMemberClick,
     followRecList = [],
-    isOwnProfile
+    isOwnProfile,
+    refetchMember
 }) => {
     const { acceptFollowRequest, rejectFollowRequest } = useMemberFollow();
     const [localFollowRecList, setLocalFollowRecList] = useState<SimpleMember[]>([]);
@@ -31,6 +33,7 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
         const success = await acceptFollowRequest(id);
         if (success) {
             setLocalFollowRecList(prev => prev.filter(m => m.userId !== id));
+            refetchMember();
         }
     };
 
@@ -38,6 +41,7 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
         const success = await rejectFollowRequest(id);
         if (success) {
             setLocalFollowRecList(prev => prev.filter(m => m.userId !== id));
+            refetchMember();
         }
     };
 
