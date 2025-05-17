@@ -42,7 +42,7 @@ const PostDetailOverlay: React.FC<Props> = ({ post, onClose, allPosts }) => {
                 }
             >
 
-                <div className="sticky top-0 bg-white z-10 border-b p-4 flex items-center">
+                <div className="sticky top-0 bg-white z-10 p-4 flex items-center">
                     <button onClick={onClose}>
                         <ArrowLeft className="w-6 h-6 text-gray-700" />
                     </button>

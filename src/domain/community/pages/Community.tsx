@@ -9,6 +9,7 @@ const Community: React.FC = () => {
     const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
     const [selectedPostMemberId, setSelectedPostMemberId] = useState<number | null>(null);
     const [isCommentOpen, setIsCommentOpen] = useState(false);
+    const [isHeaderVisible, setIsHeaderVisible] = useState(true);
     const { posts, refetchPost } = usePost();
     const { postSectionRef, showSpinner } = usePullToRefresh(refetchPost);
 
@@ -28,12 +29,17 @@ const Community: React.FC = () => {
         <div className="flex flex-col min-h-screen items-center bg-[#F5F5F5]">
             <div className="flex flex-col w-full max-w-md min-h-screen relative bg-white">
                 {/* Header */}
-                <CommunityHeader />
+                <CommunityHeader
+                    scrollContainerRef={postSectionRef}
+                    setIsHeaderVisible={setIsHeaderVisible}
+                    isHeaderVisible={isHeaderVisible}
+                />
 
                 {/* Main Post Cards */}
                 <section
                     ref={postSectionRef}
-                    className="flex-grow overflow-y-auto h-[calc(100vh-56px-44px)] scrollbar-hide mt-14 mb-11"
+                    className="flex-grow overflow-y-auto h-[calc(100vh-56px-44px)] scrollbar-hide mb-11"
+                    style={{ marginTop: isHeaderVisible ? '14px' : '0' }} // 헤더 높이만큼 마진 줌
                 >
                     {/* Pull-to-Refresh Spinner */}
                     {showSpinner && (

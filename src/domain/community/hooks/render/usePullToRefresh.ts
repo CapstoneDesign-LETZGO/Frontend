@@ -10,67 +10,55 @@ export const usePullToRefresh = (refetchCallback: () => void) => {
     const postSectionRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const getY = (e: TouchEvent | MouseEvent) =>
-            'touches' in e ? e.touches[0]?.clientY ?? 0 : e.clientY;
-
-        const isScrollAtTop = () => {
-            const el = postSectionRef.current;
-            return el?.scrollTop === 0;
+        const getY = (e: TouchEvent | MouseEvent) => {
+            return 'touches' in e ? e.touches[0]?.clientY ?? 0 : e.clientY;
         };
 
         const onStart = (e: TouchEvent | MouseEvent) => {
-            if (!isScrollAtTop()) return;
-
-            const y = getY(e);
-            startYRef.current = y;
-            canDragRef.current = true;
+            canDragRef.current = postSectionRef.current?.scrollTop === 0;
+            if (!canDragRef.current) return;
+            startYRef.current = getY(e);
             isDraggingRef.current = true;
         };
 
         const onMove = (e: TouchEvent | MouseEvent) => {
             if (!isDraggingRef.current || !canDragRef.current || !postSectionRef.current) return;
-
             const currentY = getY(e);
             const diffY = currentY - startYRef.current;
 
-            if (diffY > 0 && isScrollAtTop()) {
-                // 오직 최상단에서 아래로 당길 때만
-                if ('touches' in e && e.cancelable) {
-                    e.preventDefault(); // 이 조건 없으면 iOS에서 scroll 막힘
-                }
+            if (diffY > 0) {
+                e.preventDefault();
                 const limitedDiffY = Math.min(diffY, 100);
                 currentTranslateYRef.current = limitedDiffY;
-
-                const el = postSectionRef.current;
-                el.style.transform = `translateY(${limitedDiffY}px)`;
-                el.style.transition = 'none';
+                postSectionRef.current.style.transform = `translateY(${limitedDiffY}px)`;
+                postSectionRef.current.style.transition = 'none';
 
                 setShowSpinner(limitedDiffY >= 30);
             }
         };
 
         const onEnd = () => {
-            const el = postSectionRef.current;
-            if (!isDraggingRef.current || !el) return;
-
+            if (!isDraggingRef.current || !postSectionRef.current) return;
             isDraggingRef.current = false;
-            canDragRef.current = false;
 
-            el.style.transition = 'transform 0.3s ease';
-            el.style.transform = 'none';
+            postSectionRef.current.style.transition = 'transform 0.3s ease';
+            postSectionRef.current.style.transform = 'none';
 
-            if (currentTranslateYRef.current >= 100) {
+            if (canDragRef.current && currentTranslateYRef.current >= 100) {
                 refetchCallback();
             }
 
             setShowSpinner(false);
+
             currentTranslateYRef.current = 0;
+            canDragRef.current = false;
         };
 
-        const el = postSectionRef.current;
-
-        el?.addEventListener('touchstart', onStart, { passive: true });
-        el?.addEventListener('mousedown', onStart);
+        const sectionEl = postSectionRef.current;
+        if (sectionEl) {
+            sectionEl.addEventListener('touchstart', onStart);
+            sectionEl.addEventListener('mousedown', onStart);
+        }
 
         window.addEventListener('touchmove', onMove, { passive: false });
         window.addEventListener('mousemove', onMove);
@@ -80,9 +68,10 @@ export const usePullToRefresh = (refetchCallback: () => void) => {
         window.addEventListener('mouseleave', onEnd);
 
         return () => {
-            el?.removeEventListener('touchstart', onStart);
-            el?.removeEventListener('mousedown', onStart);
-
+            if (sectionEl) {
+                sectionEl.removeEventListener('touchstart', onStart);
+                sectionEl.removeEventListener('mousedown', onStart);
+            }
             window.removeEventListener('touchmove', onMove);
             window.removeEventListener('mousemove', onMove);
             window.removeEventListener('touchend', onEnd);
