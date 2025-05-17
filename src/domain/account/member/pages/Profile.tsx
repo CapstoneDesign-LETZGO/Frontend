@@ -24,9 +24,10 @@ const ProfilePage: React.FC = () => {
             : { mode: "detailMember" }
     );
 
-    const { detailMember: loginUser } = useMemberActions({ mode: "detailMember" })
-
+    const { detailMember: loginUser } = useMemberActions({ mode: "detailMember" });
     const currentUserFollowIds = loginUser?.followList?.map((m) => m.userId) ?? []; //로그인유저의 팔로우중인 유저들의 id리스트(profile header에서 추가/팔로우중 표시 위함)
+    const followReqList = loginUser?.followReqList ?? [];
+    const hasFollowRequest = (loginUser?.followRecList?.length ?? 0) > 0;
 
     const memberInfo = isOtherProfile ? otherDetailMember : detailMember;
     const { posts, refetchPost } = usePost("member", parsedId ?? memberInfo?.id);
@@ -45,9 +46,7 @@ const ProfilePage: React.FC = () => {
             "touches" in e ? e.touches[0]?.clientY ?? 0 : e.clientY;
 
         const onStart = (e: TouchEvent | MouseEvent) => {
-            //PostDetailOverlay가 열려 있다면 새로고침 차단
             if (selectedPost) return;
-
             canDrag = window.scrollY === 0 || document.documentElement.scrollTop === 0;
             if (!canDrag) return;
             startY = getY(e);
@@ -58,7 +57,6 @@ const ProfilePage: React.FC = () => {
             if (!isDragging || !canDrag) return;
             const currentY = getY(e);
             const diffY = currentY - startY;
-
             if (diffY > 0) {
                 currentTranslateY = Math.min(diffY, 100);
                 document.body.style.transform = `translateY(${currentTranslateY}px)`;
@@ -109,6 +107,8 @@ const ProfilePage: React.FC = () => {
                         onFollowClick={() => setShowFollowList("팔로우")}
                         isOtherProfile={isOtherProfile}
                         currentUserFollowList={currentUserFollowIds}
+                        followReqList={followReqList}
+                        hasFollowRequest={hasFollowRequest}
                     />
                 )}
 
@@ -137,6 +137,8 @@ const ProfilePage: React.FC = () => {
                             setShowFollowList(null);
                             navigate(`/profile/${id}`);
                         }}
+                        isOwnProfile={!isOtherProfile}
+                        followRecList={loginUser?.followRecList ?? []}
                     />
                 )}
             </div>

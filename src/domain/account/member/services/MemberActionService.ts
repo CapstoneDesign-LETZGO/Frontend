@@ -203,7 +203,7 @@ export const followRequestCancelApi = async (
         );
         return { success: response.returnCode === "SUCCESS" };
     } catch (err) {
-        console.error("팔로우 요청취소소 실패:", err);
+        console.error("팔로우 요청취소 실패:", err);
         return { success: false };
     }
 };
@@ -221,7 +221,7 @@ export const AcceptfollowApi = async (
         );
         return { success: response.returnCode === "SUCCESS" };
     } catch (err) {
-        console.error("팔로우 요청취소소 실패:", err);
+        console.error("팔로우 신청수락 실패:", err);
         return { success: false };
     }
 };
@@ -239,7 +239,7 @@ export const RejectfollowApi = async (
         );
         return { success: response.returnCode === "SUCCESS" };
     } catch (err) {
-        console.error("팔로우 요청취소소 실패:", err);
+        console.error("팔로우 신청거절 실패:", err);
         return { success: false };
     }
 };
@@ -257,10 +257,30 @@ export const CancelfollowApi = async (
         );
         return { success: response.returnCode === "SUCCESS" };
     } catch (err) {
-        console.error("팔로우 요청취소소 실패:", err);
+        console.error("팔로우 취소 실패:", err);
         return { success: false };
     }
 };
+
+// 팔로워 삭제
+export const DeletefollowerApi = async (
+    authFetch: AuthFetch,
+    memberId: number
+): Promise<{ success: boolean }> => {
+    try {
+        const response = await authFetch<ApiResponse<string>>(
+            `/rest-api/v1/member/followed/${memberId}`,
+            {},
+            "DELETE"
+        );
+        return { success: response.returnCode === "SUCCESS" };
+    } catch (err) {
+        console.error("팔로워 삭제 실패:", err);
+        return { success: false };
+    }
+};
+
+
 
 
 //이메일 인증 코드 요청
