@@ -24,11 +24,16 @@ const ProfilePage: React.FC = () => {
             : { mode: "detailMember" }
     );
 
+    const { detailMember: loginUser } = useMemberActions({ mode: "detailMember" })
+
+    const currentUserFollowIds = loginUser?.followList?.map((m) => m.userId) ?? []; //로그인유저의 팔로우중인 유저들의 id리스트(profile header에서 추가/팔로우중 표시 위함)
+
     const memberInfo = isOtherProfile ? otherDetailMember : detailMember;
     const { posts, refetchPost } = usePost("member", parsedId ?? memberInfo?.id);
 
     const [selectedPost, setSelectedPost] = useState<DetailPostDto | null>(null);
     const [showFollowList, setShowFollowList] = useState<"팔로워" | "팔로우" | null>(null);
+
 
     useEffect(() => {
         let startY = 0;
@@ -103,6 +108,7 @@ const ProfilePage: React.FC = () => {
                         onFollowerClick={() => setShowFollowList("팔로워")}
                         onFollowClick={() => setShowFollowList("팔로우")}
                         isOtherProfile={isOtherProfile}
+                        currentUserFollowList={currentUserFollowIds}
                     />
                 )}
 

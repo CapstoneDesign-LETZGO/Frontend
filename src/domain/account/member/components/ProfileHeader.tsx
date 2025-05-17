@@ -5,6 +5,7 @@ import ProfileSettingOverlay from "./ProfileSettingOverlay";
 
 interface ProfileHeaderProps {
     member?: {
+        id: number
         name: string;
         nickname: string;
         profileImageUrl: string | null;
@@ -14,13 +15,15 @@ interface ProfileHeaderProps {
     onFollowClick?: () => void;
     onFollowerClick?: () => void;
     isOtherProfile?: boolean;
+    currentUserFollowList?: number[];
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     member,
     onFollowClick,
     onFollowerClick,
-    isOtherProfile
+    isOtherProfile,
+    currentUserFollowList
 }) => {
     const navigate = useNavigate();
     const [showOverlay, setShowOverlay] = useState(false);
@@ -70,7 +73,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 {isOtherProfile && (
                     <button className="flex items-center text-sm gap-1 cursor-pointer px-2 py-1 rounded transition active:bg-gray-200">
                         <UserPlus className="w-4 h-4" />
-                        추가하기
+                        {currentUserFollowList?.includes(member?.id ?? -1) ? "팔로우 중" : "추가하기"}
                     </button>
                 )}
 
