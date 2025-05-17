@@ -39,7 +39,7 @@ const Community: React.FC = () => {
                 <section
                     ref={postSectionRef}
                     className="flex-grow overflow-y-auto h-[calc(100vh-56px-44px)] scrollbar-hide mb-11"
-                    style={{ marginTop: isHeaderVisible ? '14px' : '0' }} // 헤더 높이만큼 마진 줌
+                    style={{ marginTop: isHeaderVisible ? '56.5px' : '0' }} // 헤더 높이만큼 마진 줌
                 >
                     {/* Pull-to-Refresh Spinner */}
                     {showSpinner && (
