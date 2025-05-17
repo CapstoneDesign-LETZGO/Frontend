@@ -16,7 +16,7 @@ const ChatMessage = () => {
     const { messages: _fetchedMessages, fetchChatMessage, writeImageMessage, loading } = useChatMessage();
     const [combinedMessages, setCombinedMessages] = useState<ChatMessageDto[]>([]);
     const ws = useRef<WebSocket | null>(null);
-    const pingInterval = useRef<NodeJS.Timeout | null>(null); // ping interval 관리
+    const pingInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
     const onMessageReceived = useCallback(
         (event: MessageEvent) => {
