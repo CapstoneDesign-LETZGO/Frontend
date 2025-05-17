@@ -21,12 +21,15 @@ export const useChatMessage = () => {
             const { messages, success } = await fetchChatMessageApi(authFetch, chatRoomId);
             if (success) {
                 setMessages(messages); // 이전 메시지 저장
+                return messages;
             } else {
                 setMessages([]); // 실패 시 빈 배열 반환
+                return [];
             }
         } catch (err) {
             console.error("채팅 메시지 조회 중 오류 발생:", err);
             toast.error("채팅 메시지 조회 중 오류가 발생했습니다.");
+            return [];
         } finally {
             setLoading(false);
         }

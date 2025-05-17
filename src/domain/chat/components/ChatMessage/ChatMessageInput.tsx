@@ -3,9 +3,10 @@ import { MemberDto } from '../../../../common/interfaces/MemberInterface';
 
 interface ChatMessageInputProps {
     member: MemberDto;
+    onSendMessage: (message: string) => void;
 }
 
-const ChatMessageInput: React.FC<ChatMessageInputProps> = ({member}) => {
+const ChatMessageInput: React.FC<ChatMessageInputProps> = ({member, onSendMessage}) => {
     const [message, setMessage] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -15,9 +16,7 @@ const ChatMessageInput: React.FC<ChatMessageInputProps> = ({member}) => {
 
     const handleSend = () => {
         if (!message.trim()) return;
-
-        // TODO: 메시지 전송 API 호출 또는 WebSocket 전송 로직
-        console.log('보낸 메시지:', message);
+        onSendMessage(message);
 
         setMessage('');
         inputRef.current?.focus();

@@ -30,3 +30,18 @@ export interface ChatMessageDto {
     unreadCount: number;
     createdAt: string;
 }
+
+export interface ChatWebSocketPayload {
+    messageType: 'MESSAGE' | 'READ' | 'READALL';
+    memberId?: number;
+    chatRoomId: number;
+
+    // MESSAGE일 때만 존재
+    chatMessageDto?: ChatMessageDto;
+
+    // READ일 때만 존재
+    messageId?: number;
+
+    // READALL일 때만 존재
+    readMessageIdList?: number[];
+}
