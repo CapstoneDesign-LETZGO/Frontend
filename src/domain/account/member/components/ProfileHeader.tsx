@@ -29,9 +29,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     return (
         <div className="bg-white rounded-2xl shadow p-4 relative">
             {/* 닉네임 + 톱니바퀴 */}
-            <div className="flex justify-between items-start">
+            <div className="flex items-center justify-between mb-7">
                 <div>
-                    <h2 className="text-lg font-semibold">{member?.nickname ?? "사용자"}</h2>
+                    <h2 className="text-lg font-semibold ml-3">{member?.nickname ?? "사용자"}</h2>
                 </div>
                 <button onClick={() => setShowOverlay(true)}>
                     <Settings className="w-5 h-5 cursor-pointer" />
@@ -43,7 +43,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 <img
                     src={profileImageSrc}
                     alt="프로필 이미지"
-                    className="w-10 h-10 rounded-full object-cover"
+                    className="w-15 h-15 rounded-full object-cover"
                 />
                 <div className="text-center cursor-pointer" onClick={onFollowerClick}>
                     <p className="text-sm font-medium">팔로워</p>
