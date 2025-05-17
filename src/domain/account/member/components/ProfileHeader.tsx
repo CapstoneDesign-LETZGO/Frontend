@@ -151,7 +151,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                             onClick={handleFollowRequest}
                         >
                             <UserPlus className="w-4 h-4" />
-                            추가하기
+                            팔로우
                         </button>
                     )
                 )}
