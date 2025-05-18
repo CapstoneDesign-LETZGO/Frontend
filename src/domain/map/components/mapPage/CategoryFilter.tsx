@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const categories = ["음식점", "카페", "관광지", "숙소", "쇼핑"];
+const categories = ["음식점", "관광지", "숙소", "쇼핑"];
 
 interface CategoryFilterProps {
   onCategorySelect: (category: string | null) => void;
@@ -8,6 +9,7 @@ interface CategoryFilterProps {
 
 const CategoryFilter: React.FC<CategoryFilterProps> = ({ onCategorySelect }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleCategoryClick = (category: string) => {
     const newCategory = category === selectedCategory ? null : category;
@@ -17,15 +19,23 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({ onCategorySelect }) => 
 
   return (
     <div className="flex overflow-x-auto p-2 bg-transparent">
+      <button
+        onClick={() => navigate("/recommend")}
+        className="px-4 py-2 mr-2 rounded-full text-sm whitespace-nowrap bg-gradient-to-r from-yellow-400 to-amber-500 text-white shadow-md border-none hover:brightness-110 transition"
+      >
+        추천장소
+      </button>
+
       {categories.map((category) => {
         const isSelected = selectedCategory === category;
         return (
           <button
             key={category}
             onClick={() => handleCategoryClick(category)}
-            className={`px-4 py-2 mr-2 rounded-full text-sm whitespace-nowrap border ${
-              isSelected ? "bg-gray-800 text-white border-gray-500" : "bg-gray-100 text-black border-gray-300"
-            }`}
+            className={`px-4 py-2 mr-2 rounded-full text-sm whitespace-nowrap shadow-sm transition font-medium ${isSelected
+              ? "bg-gray-700 text-white hover:bg-gray-600"
+              : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
+              }`}
           >
             {category}
           </button>
