@@ -31,7 +31,7 @@ const ChatRoomSearchBar = forwardRef<ChatRoomSearchRef, ChatRoomSearchProps>(
             <header className="flex items-center p-4 bg-white w-full max-w-md mx-auto">
                 <div className="flex items-center bg-gray-100 rounded-md px-3 py-2 flex-1 relative">
                     <img
-                        src="/src/assets/icons/file/search_line.svg"
+                        src="/icons/file/search_line.svg"
                         alt="Search"
                         className="h-4 w-4"
                     />

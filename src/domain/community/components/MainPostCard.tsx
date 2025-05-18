@@ -64,7 +64,7 @@ const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
     };
 
     // 텍스트 자르기 (한글 기준 약 50자는 2줄 분량)
-    const maxChars = 84; // 기본 최대 문자 수
+    const maxChars = 77; // 기본 최대 문자 수
     const nicknameLength = post.nickname.length;
     const availableChars = maxChars - nicknameLength - 3; // 닉네임 길이와 "..." 을 고려하여 표시할 텍스트 길이 계산
     const shouldTruncate = post.content.length > availableChars;
@@ -112,7 +112,7 @@ const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
                 <div className="overflow-hidden">
                     {/* 프로필 이미지 (왼쪽에 띄우기) */}
                     <img
-                        src={post.profileImageUrl || "/src/assets/icons/user/user_4_line.svg"}
+                        src={post.profileImageUrl || "/icons/user/user_4_line.svg"}
                         alt="Profile"
                         className="w-9 h-9 rounded-full object-cover float-left mr-2 align-top"
                     />
@@ -145,7 +145,7 @@ const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
                 {/* Like Icon */}
                 <div className="flex items-center">
                     <img
-                        src={liked ? "/src/assets/icons/shape/heart_fill.svg" : "/src/assets/icons/shape/heart_line.svg"}
+                        src={liked ? "/icons/shape/heart_fill.svg" : "/icons/shape/heart_line.svg"}
                         alt="Like"
                         className="w-5 h-5 cursor-pointer"
                         onClick={handleLikeClick}
@@ -155,7 +155,7 @@ const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
                 {/* Comment Icon */}
                 <div className="flex items-center -ml-10">
                     <img
-                        src="/src/assets/icons/contact/message_1_line.svg"
+                        src="/icons/contact/message_1_line.svg"
                         alt="Message"
                         className="w-5 h-5 cursor-pointer"
                         onClick={openCommentModal}
@@ -164,20 +164,20 @@ const MainPostCard: React.FC<PostCardProps> = ({ post, openCommentModal }) => {
                 </div>
                 {/* Share Icon */}
                 <img
-                    src="/src/assets/icons/file/external_link_line.svg"
+                    src="/icons/file/external_link_line.svg"
                     alt="Share"
                     className="w-5 h-5 -ml-6"
                 />
                 {/* Save Icon */}
                 <img
-                    src={saved ? "/src/assets/icons/education/bookmark_fill.svg" : "/src/assets/icons/education/bookmark_line.svg"}
+                    src={saved ? "/icons/education/bookmark_fill.svg" : "/icons/education/bookmark_line.svg"}
                     alt="Save"
                     className="w-5 h-5 cursor-pointer"
                     onClick={handleBookmarkClick}
                 />
                 {/* Location Icon */}
                 <img
-                    src="/src/assets/icons/map/location_line.svg"
+                    src="/icons/map/location_line.svg"
                     alt="Location"
                     className="w-5 h-5"
                 />

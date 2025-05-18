@@ -67,7 +67,7 @@ const EditProfile: React.FC = () => {
                                     <img src={URL.createObjectURL(imageFile)} alt="preview" className="w-full h-full object-cover" />
                                 ) : (
                                     <img
-                                        src={detailMember?.profileImageUrl ?? "/src/assets/icons/user/user_4_line.svg"}
+                                        src={detailMember?.profileImageUrl ?? "/icons/user/user_4_line.svg"}
                                         alt="profile"
                                         className="w-full h-full object-cover"
                                     />

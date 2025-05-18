@@ -72,7 +72,7 @@ const ChatRoomCard: React.FC<ChatRoomCardProps> = ({
                     >
                         <div className="flex items-start mb-2 relative">
                             <img
-                                src={otherMember?.profileImageUrl || '/src/assets/icons/user/user_4_line.svg'}
+                                src={otherMember?.profileImageUrl || '/icons/user/user_4_line.svg'}
                                 alt="Profile"
                                 className="w-8 h-8 rounded-full mr-3 ml-1 mt-[2px]"
                             />
@@ -158,7 +158,7 @@ const ChatRoomCard: React.FC<ChatRoomCardProps> = ({
 
                             {/* 메뉴 아이콘 */}
                             <img
-                                src="/src/assets/icons/system/more_2_line.svg"
+                                src="/icons/system/more_2_line.svg"
                                 alt="More"
                                 className="w-5 h-5 mt-2 ml-2 cursor-pointer"
                                 onClick={(e) => {
@@ -183,7 +183,7 @@ const ChatRoomCard: React.FC<ChatRoomCardProps> = ({
                                             }}
                                         >
                                             <img
-                                                src="/src/assets/icons/editor/edit_line.svg"
+                                                src="/icons/editor/edit_line.svg"
                                                 alt="Edit"
                                                 className="w-4 h-4 mr-1"
                                             />
@@ -204,7 +204,7 @@ const ChatRoomCard: React.FC<ChatRoomCardProps> = ({
                                         }}
                                     >
                                         <img
-                                            src="/src/assets/icons/system/exit_line.svg"
+                                            src="/icons/system/exit_line.svg"
                                             alt="Exit"
                                             className="w-4 h-4 mr-1"
                                         />

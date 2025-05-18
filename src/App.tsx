@@ -15,15 +15,12 @@ import FindPassword from "./domain/account/auth/pages/FindPassword.tsx";
 import NavigationBar from './common/components/NavigationBar.tsx';
 import './common/styles/global.css';
 import { LetzgoToastContainer } from './common/components/LetzgoToastContainer.tsx';
-import CommunityHeader from './domain/community/components/CommunityHeader.tsx';
-import { useLocation } from 'react-router-dom';
 
 import SelectRegion from './domain/schedule/pages/SelectRegion';
 import RegisterSchedule from './domain/schedule/pages/RegisterSchedule';
 import ScheduleList from './domain/schedule/pages/ScheduleList';
 import { ScheduleProvider } from './domain/schedule/contexts/ScheduleContext';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
 
 const queryClient = new QueryClient();
 
@@ -34,13 +31,9 @@ const App = () => {
         return isLoggedIn ? children : <Navigate to="/login" replace />;
     };
 
-    const LayoutWithHeaderAndNav = ({ children }: { children: JSX.Element }) => {
-        const location = useLocation();
-        const showCommunityHeader = location.pathname === '/community';
-
+    const LayoutWithNav = ({ children }: { children: JSX.Element }) => {
         return (
             <>
-                {showCommunityHeader && <CommunityHeader />}
                 {children}
                 <NavigationBar />
             </>
@@ -58,46 +51,48 @@ const App = () => {
                         <Route path="/find-password" element={<FindPassword />} />
 
                         {/* 네비게이션 바 포함된 페이지 */}
+                        {/* 네비게이션 바 포함된 페이지 (헤더 없이) */}
                         <Route path="/community" element={
                             <RequireAuth>
-                                <LayoutWithHeaderAndNav>
+                                <LayoutWithNav>
                                     <Community />
-                                </LayoutWithHeaderAndNav>
+                                </LayoutWithNav>
                             </RequireAuth>
                         } />
                         <Route path="/map" element={
-                            <LayoutWithHeaderAndNav>
+                            <LayoutWithNav>
                                 <Map />
-                            </LayoutWithHeaderAndNav>
+                            </LayoutWithNav>
                         } />
                         <Route path="/schedule" element={
                             <RequireAuth>
-                                <LayoutWithHeaderAndNav>
+                                <LayoutWithNav>
                                     <Schedule />
-                                </LayoutWithHeaderAndNav>
+                                </LayoutWithNav>
                             </RequireAuth>
                         } />
                         <Route path="/profile" element={
                             <RequireAuth>
-                                <LayoutWithHeaderAndNav>
+                                <LayoutWithNav>
                                     <Profile />
-                                </LayoutWithHeaderAndNav>
+                                </LayoutWithNav>
                             </RequireAuth>
                         } />
                         <Route path="/profile/:memberId" element={
                             <RequireAuth>
-                                <LayoutWithHeaderAndNav>
+                                <LayoutWithNav>
                                     <Profile />
-                                </LayoutWithHeaderAndNav>
+                                </LayoutWithNav>
                             </RequireAuth>
                         } />
                         <Route path="/edit-profile" element={
                             <RequireAuth>
-                                <LayoutWithHeaderAndNav>
+                                <LayoutWithNav>
                                     <EditProfile />
-                                </LayoutWithHeaderAndNav>
+                                </LayoutWithNav>
                             </RequireAuth>
                         } />
+
                         {/* 네비게이션 바 없이 로그인 필요 */}
                         <Route path="/chat-message" element={
                             <RequireAuth>

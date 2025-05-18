@@ -33,7 +33,7 @@ const SearchResultCard: React.FC<SearchResultCardProps> = ({
                             }}
                         >
                             <img
-                                src={member.profileImageUrl || '/src/assets/icons/user/user_4_line.svg'}
+                                src={member.profileImageUrl || '/icons/user/user_4_line.svg'}
                                 alt="Profile"
                                 className="w-8 h-8 rounded-full mr-3 ml-1 mt-[2px]"
                             />

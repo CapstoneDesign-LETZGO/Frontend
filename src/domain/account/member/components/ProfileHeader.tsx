@@ -40,6 +40,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   currentUser
 }) => {
   const navigate = useNavigate();
+  const [showOverlay, setShowOverlay] = useState(false);
+  const profileImageSrc = member?.profileImageUrl || "/icons/user/user_4_line.svg";
+  const navigate = useNavigate();
   const [showOverlay, setShowOverlay] = React.useState(false);
   const { followRequest, followRequestCancel, cancelFollow } = useMemberFollow();
   const profileImageSrc = member?.profileImageUrl || "/src/assets/icons/user/user_4_line.svg";

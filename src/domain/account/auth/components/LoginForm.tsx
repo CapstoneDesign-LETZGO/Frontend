@@ -20,28 +20,28 @@ const LoginForm = ({
     return (
         <div className="flex flex-col min-h-screen w-full max-w-md mx-auto px-4">
             <div className="flex-1 flex flex-col items-center justify-center mt-10">
-                <img src="/src/assets/icons/logo/logo-simple.png" alt="logo" className="w-16 h-16 mb-3" />
+                <img src="/icons/logo/logo-simple.png" alt="logo" className="w-16 h-16 mb-3" />
                 <h1 className="text-2xl font-bold mb-8">Letzgo</h1>
                 <div className="w-full">
                     <button
                         onClick={() => handleSocialLogin('naver')}
                         className="w-full py-3 mb-3 rounded-lg font-bold text-white bg-[#03C75A] relative hover:brightness-95"
                     >
-                        <img src="/src/assets/icons/logo/naver-simple.png" alt="Naver logo" className="w-6 h-6 absolute left-4 top-1/2 -translate-y-1/2" />
+                        <img src="/icons/logo/naver-simple.png" alt="Naver logo" className="w-6 h-6 absolute left-4 top-1/2 -translate-y-1/2" />
                         <span className="block text-center">네이버 로그인</span>
                     </button>
                     <button
                         onClick={() => handleSocialLogin('kakao')}
                         className="w-full py-3 mb-3 rounded-lg font-bold text-[#3C1E1E] bg-[#FEE500] relative hover:brightness-95"
                     >
-                        <img src="/src/assets/icons/logo/kakaotalk-simple.png" alt="Kakao logo" className="w-6 h-6 absolute left-4 top-1/2 -translate-y-1/2" />
+                        <img src="/icons/logo/kakaotalk-simple.png" alt="Kakao logo" className="w-6 h-6 absolute left-4 top-1/2 -translate-y-1/2" />
                         <span className="block text-center">카카오 로그인</span>
                     </button>
                     <button
                         onClick={() => handleSocialLogin('google')}
                         className="w-full py-3 mb-3 rounded-lg font-bold text-[#3C1E1E] bg-[#F5F5F5] relative hover:brightness-95"
                     >
-                        <img src="/src/assets/icons/logo/google-simple.png" alt="Google logo" className="w-6 h-6 absolute left-4 top-1/2 -translate-y-1/2" />
+                        <img src="/icons/logo/google-simple.png" alt="Google logo" className="w-6 h-6 absolute left-4 top-1/2 -translate-y-1/2" />
                         <span className="block text-center">구글 로그인</span>
                     </button>
                 </div>
