@@ -13,9 +13,9 @@ const Community: React.FC = () => {
     const [isCommentOpen, setIsCommentOpen] = useState(false);
     const [isHeaderVisible, setIsHeaderVisible] = useState(true);
     const { posts, refetchPost } = usePost();
-    const { postSectionRef, showSpinner } = usePullToRefresh(refetchPost);
-    const setNotifications = useNotificationStore((state) => state.setNotifications);
     const { fetchNotifications } = useNotification();
+    const { postSectionRef, showSpinner } = usePullToRefresh([refetchPost, fetchNotifications]);
+    const setNotifications = useNotificationStore((state) => state.setNotifications);
 
     useEffect(() => {
         const loadNotifications = async () => {
