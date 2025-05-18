@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import PlaceCard from "../components/PlaceCard";
 import MoreButton from "../components/MoreButton";
 import NavigationBar from "../../../common/components/NavigationBar";
@@ -15,6 +16,7 @@ interface RatedPlace extends PlaceDto {
 }
 
 const Recommend: React.FC = () => {
+  const navigate = useNavigate();
   const [visibleCount, setVisibleCount] = useState(5);
   const [ignoredIds, setIgnoredIds] = useState<string[]>([]);
   const [selectedPlaceDto, setSelectedPlaceDto] = useState<PlaceDto | null>(null);
@@ -92,9 +94,32 @@ const Recommend: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen items-center bg-[#F5F5F5]">
       <div className="flex flex-col w-full max-w-md min-h-screen relative bg-white">
-        <h2 className="sticky top-0 z-10 bg-white text-lg font-bold text-center p-4 border-b border-gray-200">
-          사용자 맞춤 장소 추천
-        </h2>
+
+        {/* 상단 바: 뒤로가기 + 타이틀 */}
+        <div className="sticky top-0 z-10 bg-white px-4 py-4 border-b border-gray-200">
+          <div className="relative flex items-center justify-center">
+            <button
+              onClick={() => navigate("/map")}
+              className="absolute left-0 p-2 rounded-full hover:bg-gray-100"
+              aria-label="뒤로가기"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 text-gray-700"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <h2 className="text-lg font-bold text-center">
+              사용자 맞춤 장소 추천
+            </h2>
+          </div>
+        </div>
 
         <div className="flex-1 overflow-y-auto p-4 pb-24">
           {loading ? (
@@ -150,7 +175,7 @@ const Recommend: React.FC = () => {
 };
 
 function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 6371; // 지구 반지름 (km)
+  const R = 6371;
   const dLat = deg2rad(lat2 - lat1);
   const dLon = deg2rad(lon2 - lon1);
   const a =

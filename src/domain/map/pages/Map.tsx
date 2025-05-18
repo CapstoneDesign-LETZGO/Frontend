@@ -122,6 +122,7 @@ const Map: React.FC = () => {
             <SearchedPlacePage
               places={searchResults}
               onPlaceClick={(place) => handleSelectPlace(place, false)}
+              userLocation={userLocation}
             />
           </div>
         )}
