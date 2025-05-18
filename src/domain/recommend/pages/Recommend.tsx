@@ -10,6 +10,7 @@ import { PlaceDto, Review } from "../../../common/interfaces/MapInterface.ts";
 
 interface RatedPlace extends PlaceDto {
   averageRating: number;
+  reviewTags?: string[];
 }
 
 const Recommend: React.FC = () => {
@@ -35,9 +36,16 @@ const Recommend: React.FC = () => {
           const data = await fetchPlaceDto(place.placeId);
           const reviews = data?.reviews ?? [];
           const avg =
-            reviews.length === 0 ? 0 : Number((reviews.reduce((acc, cur) => acc + cur.rating, 0) / reviews.length).toFixed(1));
+            reviews.length === 0
+              ? 0
+              : Number((reviews.reduce((acc, cur) => acc + cur.rating, 0) / reviews.length).toFixed(1));
+          const reviewTags = reviews.slice(0, 5).map(r => r.content.trim());
 
-          return { ...place, averageRating: avg };
+          return {
+            ...place,
+            averageRating: avg,
+            reviewTags,
+          };
         })
       );
 
@@ -54,8 +62,8 @@ const Recommend: React.FC = () => {
   const handlePlaceClick = async (place: PlaceDto) => {
     const result = await fetchPlaceDto(place.placeId);
     if (result) {
-      setSelectedPlaceDto(result.placeDto); // 장소
-      setSelectedReviews(result.reviews);     // 리뷰
+      setSelectedPlaceDto(result.placeDto);
+      setSelectedReviews(result.reviews);
     }
   };
 
@@ -75,9 +83,9 @@ const Recommend: React.FC = () => {
                 <PlaceCard
                   key={place.placeId}
                   image={`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.placePhoto}&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`}
-                  //image={""}
                   title={place.name}
                   rating={`⭐ ${place.averageRating}`}
+                  reviewTags={place.reviewTags}
                   onClick={() => handlePlaceClick(place)}
                   onIgnore={() => handleIgnore(place.placeId)}
                 />
