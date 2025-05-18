@@ -32,7 +32,6 @@ interface ProfileHeaderProps {
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
-<<<<<<< HEAD
   member,
   onFollowClick,
   onFollowerClick,
@@ -47,33 +46,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
 
 
-=======
-    member,
-    onFollowClick,
-    onFollowerClick,
-    isOtherProfile,
-    currentUserFollowList,
-    followReqList,
-    hasFollowRequest,
-}) => {
-    const navigate = useNavigate();
-    const [showOverlay, setShowOverlay] = useState(false);
-    const { followRequest, followRequestCancel, cancelFollow } = useMemberFollow();
-    const profileImageSrc = member?.profileImageUrl || "/icons/user/user_4_line.svg";
-
-    const [isFollowing, setIsFollowing] = useState<boolean>(false);
-    const [isRequesting, setIsRequesting] = useState<boolean>(false);
-
-
-
-    useEffect(() => {
-        const initiallyRequesting = followReqList?.some((m) => m.userId === member?.id) ?? false;
-        setIsRequesting(initiallyRequesting);
-
-        const initiallyFollowing = currentUserFollowList?.includes(member?.id ?? -1) ?? false;
-        setIsFollowing(initiallyFollowing);
-    }, [followReqList, currentUserFollowList, member?.id]);
->>>>>>> 4809b6ca5811d8a127f528bf0ae8af76a2c1f0d7
 
   const handleFollowRequest = async () => {
     if (!member) return;
@@ -97,7 +69,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     }
   };
 
-<<<<<<< HEAD
   const handleCancelFollow = async () => {
     if (!member) return;
     const success = await cancelFollow(member.id);
@@ -108,18 +79,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       toast.error("팔로우 취소에 실패했습니다.");
     }
   };
-=======
-    const handleCancelFollow = async () => {
-        if (!member) return;
-        const success = await cancelFollow(member.id);
-        if (success) {
-            toast.success("팔로우를 취소했습니다.");
-            setIsFollowing(false);
-        } else {
-            toast.error("팔로우 취소에 실패했습니다.");
-        }
-    };
->>>>>>> 4809b6ca5811d8a127f528bf0ae8af76a2c1f0d7
 
   return (
     <div className="bg-white rounded-2xl shadow p-4 relative">
