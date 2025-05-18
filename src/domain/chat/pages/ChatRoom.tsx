@@ -42,17 +42,21 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ member, searchMember }) => {
             if (data.messageType === "MESSAGE") {
                 const roomId = data.chatRoomId;
                 const messageContent = data.content ?? "";
+                // 메시지 업데이트 및 채팅방 위치 재정렬
                 setChatRooms((prevRooms) => {
                     if (!prevRooms) return prevRooms;
-                    return prevRooms.map((room) =>
-                        room.id === roomId
-                            ? { ...room,
-                                lastMessage: messageContent,
-                                lastMessageCreatedAt:
-                                    data.lastMessageCreatedAt ?? room.lastMessageCreatedAt,
-                            }
-                            : room
-                    );
+                    // 업데이트 대상 채팅방을 분리
+                    const updatedRoom = prevRooms.find(room => room.id === roomId);
+                    if (!updatedRoom) return prevRooms;
+                    const updatedRoomWithMessage = {
+                        ...updatedRoom,
+                        lastMessage: messageContent,
+                        lastMessageCreatedAt: data.lastMessageCreatedAt ?? updatedRoom.lastMessageCreatedAt,
+                    };
+                    // 나머지 방들 (업데이트된 방 제외)
+                    const otherRooms = prevRooms.filter(room => room.id !== roomId);
+                    // 맨 앞에 업데이트된 방을 배치하고, 나머지 방은 뒤에 붙임
+                    return [updatedRoomWithMessage, ...otherRooms];
                 });
             }
         };
