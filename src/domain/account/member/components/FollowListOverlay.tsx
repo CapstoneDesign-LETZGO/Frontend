@@ -16,6 +16,8 @@ interface FollowListOverlayProps {
     followedList: SimpleMember[];
 }
 
+type TabType = "팔로워" | "팔로우" | "검색";
+
 const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
     onClose,
     onMemberClick,
@@ -28,7 +30,7 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
     const { acceptFollowRequest, rejectFollowRequest } = useMemberFollow();
     const { searchMember } = useMemberActions();
     const [localFollowRecList, setLocalFollowRecList] = useState<SimpleMember[]>([]);
-    const [activeTab, setActiveTab] = useState<"팔로워" | "팔로우" | "검색">("팔로워");
+    const [activeTab, setActiveTab] = useState<TabType>("팔로워");
     const [searchKeyword, setSearchKeyword] = useState<string>("");
     const [searchResults, setSearchResults] = useState<SimpleMember[]>([]);
 
@@ -41,7 +43,6 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
         if (success) {
             setLocalFollowRecList(prev => prev.filter(m => m.userId !== id));
             refetchMember();
-            refetchMember();
         }
     };
 
@@ -49,7 +50,6 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
         const success = await rejectFollowRequest(id);
         if (success) {
             setLocalFollowRecList(prev => prev.filter(m => m.userId !== id));
-            refetchMember();
             refetchMember();
         }
     };
@@ -85,8 +85,8 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
                 : searchResults;
 
     return (
-        <div className="fixed inset-0 z-50 bg-white flex justify-center items-stretch">
-            <div className="w-full max-w-md h-screen shadow-xl flex flex-col">
+        <div className="fixed inset-0 z-50 bg-[#F5F5F5] flex justify-center items-stretch">
+            <div className="w-full max-w-md h-screen bg-white flex flex-col">
                 <div className="flex items-center justify-between p-4 border-b border-gray-200">
                     <h2 className="text-lg font-semibold">팔로우</h2>
                     <button onClick={onClose}>
@@ -100,7 +100,7 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
                             key={tab}
                             className={`w-1/3 py-2 text-sm font-medium ${activeTab === tab ? "border-b-2 border-black" : "text-gray-400"
                                 }`}
-                            onClick={() => setActiveTab(tab as any)}
+                            onClick={() => setActiveTab(tab as TabType)}
                         >
                             {tab}
                         </button>

@@ -100,6 +100,9 @@ const ChatMessage = () => {
         ws.current.onerror = (error) => console.error("WebSocket error", error);
 
         return () => {
+            if (pingInterval.current) {
+                clearInterval(pingInterval.current);
+            }
             ws.current?.close();
         };
     }, [chatRoom, member, onMessageReceived]);

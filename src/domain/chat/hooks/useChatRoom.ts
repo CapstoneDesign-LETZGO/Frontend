@@ -134,6 +134,7 @@ export const useChatRoom = () => {
         refetchChatRoom,
         chatRoom,
         chatRooms,
+        setChatRooms,
         loading,
         createChatRoom,
         updateChatRoomTitle,

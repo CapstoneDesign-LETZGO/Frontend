@@ -38,6 +38,7 @@ export interface ChatWebSocketPayload {
 
     // MESSAGE일 때만 존재
     chatMessageDto?: ChatMessageDto;
+    content?: string;
 
     // READ일 때만 존재
     messageId?: number;

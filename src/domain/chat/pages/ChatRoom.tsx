@@ -1,24 +1,30 @@
 import React, {useEffect, useRef, useState} from 'react';
 import { useChatRoom } from '../hooks/useChatRoom';
-import {useMemberActions} from "../../account/member/hooks/useMemberActions.ts";
 import { MemberDto } from '../../../common/interfaces/MemberInterface.ts';
 import { useNavigate } from 'react-router-dom';
-import {ChatRoomDto, ChatRoomForm} from "../../../common/interfaces/ChatInterface.ts";
+import {ChatRoomDto, ChatRoomForm, ChatWebSocketPayload} from "../../../common/interfaces/ChatInterface.ts";
 import { useDebounce } from '../../../common/hooks/useDebounce.ts';
 import ChatRoomSearchBar from '../components/ChatRoom/ChatRoomSearchBar.tsx';
 import ChatRoomCard from '../components/ChatRoom/ChatRoomCard.tsx';
 import SearchResultCard from "../components/ChatRoom/SearchResultCard.tsx";
 import ChatRoomHeader from "../components/ChatRoom/ChatRoomHeader.tsx";
+import {useChatRoomWebSocket} from "../../../common/hooks/ChatRoomWebSocketContext.tsx";
 
-const ChatRoom: React.FC = () => {
+interface ChatRoomProps {
+    member: MemberDto;
+    searchMember: (searchTerm: string) => Promise<MemberDto[]>;
+}
+
+const ChatRoom: React.FC<ChatRoomProps> = ({ member, searchMember }) => {
     const {
         chatRooms,
+        setChatRooms,
         refetchChatRoom,
         createChatRoom,
         updateChatRoomTitle,
         leaveChatRoom
     } = useChatRoom();
-    const { member, searchMember } = useMemberActions();
+    const { registerOnMessage } = useChatRoomWebSocket();
     const [searchResults, setSearchResults] = useState<MemberDto[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
@@ -30,6 +36,25 @@ const ChatRoom: React.FC = () => {
     const navigate = useNavigate();
     const searchBarRef = useRef<HTMLInputElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleMessage = (data: ChatWebSocketPayload) => {
+            if (data.messageType === "MESSAGE" && data.chatMessageDto) {
+                const roomId = data.chatRoomId;
+                const message = data.chatMessageDto;
+                setChatRooms((prevRooms) => {
+                    if (!prevRooms) return prevRooms;
+                    return prevRooms.map((room) =>
+                        room.id === roomId
+                            ? { ...room, lastMessage: message.content }
+                            : room
+                    );
+                });
+            }
+        };
+
+        registerOnMessage(handleMessage);
+    }, [registerOnMessage]);
 
     useEffect(() => {
         // 조건: 포커스 상태이고, debounce된 검색어가 비어있지 않을 때만 실행
