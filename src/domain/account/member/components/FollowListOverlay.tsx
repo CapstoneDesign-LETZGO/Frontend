@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X } from "lucide-react";
 import { SimpleMember } from "../../../../common/interfaces/MemberInterface";
-import { useMemberActions } from "../hooks/useMemberActions";
+import { useMemberFollow } from "../hooks/useMemberFollow";
 
 interface FollowListOverlayProps {
     type: "팔로워" | "팔로우";
@@ -10,6 +10,7 @@ interface FollowListOverlayProps {
     onMemberClick: (memberId: number) => void;
     followRecList?: SimpleMember[];
     isOwnProfile?: boolean;
+    refetchMember: () => void;
 }
 
 const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
@@ -18,9 +19,10 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
     onClose,
     onMemberClick,
     followRecList = [],
-    isOwnProfile
+    isOwnProfile,
+    refetchMember
 }) => {
-    const { acceptFollowRequest, rejectFollowRequest } = useMemberActions();
+    const { acceptFollowRequest, rejectFollowRequest } = useMemberFollow();
     const [localFollowRecList, setLocalFollowRecList] = useState<SimpleMember[]>([]);
 
     useEffect(() => {
@@ -31,6 +33,7 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
         const success = await acceptFollowRequest(id);
         if (success) {
             setLocalFollowRecList(prev => prev.filter(m => m.userId !== id));
+            refetchMember();
         }
     };
 
@@ -38,6 +41,7 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
         const success = await rejectFollowRequest(id);
         if (success) {
             setLocalFollowRecList(prev => prev.filter(m => m.userId !== id));
+            refetchMember();
         }
     };
 
@@ -111,7 +115,7 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
                         >
                             <div className="flex items-start">
                                 <img
-                                    src={member.profileImageUrl || '/src/assets/icons/user/user_4_line.svg'}
+                                    src={member.profileImageUrl || '/icons/user/user_4_line.svg'}
                                     alt="Profile"
                                     className="w-8 h-8 rounded-full mr-3 ml-1 mt-[2px]"
                                 />

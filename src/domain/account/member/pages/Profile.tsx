@@ -17,24 +17,35 @@ const ProfilePage: React.FC = () => {
     const {
         detailMember,
         otherDetailMember,
-        refetchMember
+        refetchMember: refetchTargetMember,
     } = useMemberActions(
         isOtherProfile
             ? { mode: "otherDetailMember", memberIdForOther: parsedId }
             : { mode: "detailMember" }
     );
 
-    const { detailMember: loginUser } = useMemberActions({ mode: "detailMember" });
-    const currentUserFollowIds = loginUser?.followList?.map((m) => m.userId) ?? []; //로그인유저의 팔로우중인 유저들의 id리스트(profile header에서 추가/팔로우중 표시 위함)
-    const followReqList = loginUser?.followReqList ?? [];
-    const hasFollowRequest = (loginUser?.followRecList?.length ?? 0) > 0;
+    const { detailMember: loginUser, refetchMember: refetchLoginUser } =
+        useMemberActions({ mode: "detailMember" });
 
-    const memberInfo = isOtherProfile ? otherDetailMember : detailMember;
+    const followRecList = loginUser?.followRecList ?? [];
+
+    const [memberInfo, setMemberInfo] = useState(
+        isOtherProfile ? otherDetailMember : detailMember
+    );
+
     const { posts, refetchPost } = usePost("member", parsedId ?? memberInfo?.id);
 
     const [selectedPost, setSelectedPost] = useState<DetailPostDto | null>(null);
     const [showFollowList, setShowFollowList] = useState<"팔로워" | "팔로우" | null>(null);
 
+    useEffect(() => {
+        setMemberInfo(isOtherProfile ? otherDetailMember : detailMember);
+    }, [detailMember, otherDetailMember, isOtherProfile]);
+
+    const refetchMember = async () => {
+        await refetchTargetMember();
+        await refetchLoginUser();
+    };
 
     useEffect(() => {
         let startY = 0;
@@ -64,18 +75,17 @@ const ProfilePage: React.FC = () => {
             }
         };
 
-        const onEnd = () => {
+        const onEnd = async () => {
             if (!isDragging) return;
             isDragging = false;
             document.body.style.transition = "transform 0.3s ease";
             document.body.style.transform = "none";
 
             if (canDrag && currentTranslateY >= 100) {
-                refetchMember();
-                if (memberInfo) {
-                    refetchPost();
-                }
+                await refetchMember();
+                refetchPost();
             }
+
             currentTranslateY = 0;
             canDrag = false;
         };
@@ -106,9 +116,8 @@ const ProfilePage: React.FC = () => {
                         onFollowerClick={() => setShowFollowList("팔로워")}
                         onFollowClick={() => setShowFollowList("팔로우")}
                         isOtherProfile={isOtherProfile}
-                        currentUserFollowList={currentUserFollowIds}
-                        followReqList={followReqList}
-                        hasFollowRequest={hasFollowRequest}
+                        refetchMember={refetchMember}
+                        currentUser={isOtherProfile ? loginUser ?? undefined : undefined}
                     />
                 )}
 
@@ -138,7 +147,8 @@ const ProfilePage: React.FC = () => {
                             navigate(`/profile/${id}`);
                         }}
                         isOwnProfile={!isOtherProfile}
-                        followRecList={loginUser?.followRecList ?? []}
+                        refetchMember={refetchMember}
+                        followRecList={followRecList}
                     />
                 )}
             </div>
