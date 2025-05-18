@@ -136,11 +136,9 @@ const ProfilePage: React.FC = () => {
                 {memberInfo && showFollowList && (
                     <FollowListOverlay
                         type={showFollowList}
-                        members={
-                            showFollowList === "팔로워"
-                                ? memberInfo.followedList
-                                : memberInfo.followList
-                        }
+                        members={showFollowList === "팔로워" ? memberInfo.followedList : memberInfo.followList}
+                        followList={memberInfo.followList}
+                        followedList={memberInfo.followedList}
                         onClose={() => setShowFollowList(null)}
                         onMemberClick={(id) => {
                             setShowFollowList(null);
