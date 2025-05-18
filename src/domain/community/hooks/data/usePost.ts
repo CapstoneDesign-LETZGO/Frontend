@@ -18,8 +18,6 @@ export const usePost = (mode: Mode = 'all', memberId?: number) => {
             const { posts, success } = await fetchPostApi(authFetch);
             if (success) {
                 setPosts(posts.map(post => ({ ...post })));
-            } else {
-                return null;
             }
         } catch (err) {
             console.error('게시글 조회 중 오류 발생:', err);
@@ -36,8 +34,6 @@ export const usePost = (mode: Mode = 'all', memberId?: number) => {
             const { posts, success } = await fetchMemberPostApi(authFetch, memberId);
             if (success) {
                 setPosts(posts.map(post => ({ ...post })));
-            } else {
-                return null;
             }
         } catch (err) {
             console.error('해당 사용자의 게시글 조회 중 오류 발생:', err);
