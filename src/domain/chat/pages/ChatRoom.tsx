@@ -39,20 +39,23 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ member, searchMember }) => {
 
     useEffect(() => {
         const handleMessage = (data: ChatWebSocketPayload) => {
-            if (data.messageType === "MESSAGE" && data.chatMessageDto) {
+            if (data.messageType === "MESSAGE") {
                 const roomId = data.chatRoomId;
-                const message = data.chatMessageDto;
+                const messageContent = data.content ?? "";
                 setChatRooms((prevRooms) => {
                     if (!prevRooms) return prevRooms;
                     return prevRooms.map((room) =>
                         room.id === roomId
-                            ? { ...room, lastMessage: message.content }
+                            ? { ...room,
+                                lastMessage: messageContent,
+                                lastMessageCreatedAt:
+                                    data.lastMessageCreatedAt ?? room.lastMessageCreatedAt,
+                            }
                             : room
                     );
                 });
             }
         };
-
         registerOnMessage(handleMessage);
     }, [registerOnMessage]);
 
