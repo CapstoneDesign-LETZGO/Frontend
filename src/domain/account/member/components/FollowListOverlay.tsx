@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X } from "lucide-react";
 import { SimpleMember } from "../../../../common/interfaces/MemberInterface";
 import { useMemberFollow } from "../hooks/useMemberFollow";
+import { useMemberActions } from "../hooks/useMemberActions";
 
 interface FollowListOverlayProps {
     type: "팔로워" | "팔로우";
@@ -16,7 +17,6 @@ interface FollowListOverlayProps {
 }
 
 const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
-    type,
     onClose,
     onMemberClick,
     followRecList = [],
@@ -26,8 +26,11 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
     followedList
 }) => {
     const { acceptFollowRequest, rejectFollowRequest } = useMemberFollow();
+    const { searchMember } = useMemberActions();
     const [localFollowRecList, setLocalFollowRecList] = useState<SimpleMember[]>([]);
-    const [activeTab, setActiveTab] = useState<"팔로워" | "팔로우">(type);
+    const [activeTab, setActiveTab] = useState<"팔로워" | "팔로우" | "검색">("팔로워");
+    const [searchKeyword, setSearchKeyword] = useState<string>("");
+    const [searchResults, setSearchResults] = useState<SimpleMember[]>([]);
 
     useEffect(() => {
         setLocalFollowRecList(followRecList);
@@ -49,12 +52,39 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
         }
     };
 
-    const displayedMembers = activeTab === "팔로워" ? followedList : followList;
+    const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const keyword = e.target.value;
+        setSearchKeyword(keyword);
+
+        if (keyword.trim()) {
+            const results = await searchMember(keyword.trim());
+
+            if (results) {
+                const simpleResults = results.map((m) => ({
+                    userId: m.id,
+                    userName: m.name,
+                    userNickname: m.nickname,
+                    profileImageUrl: m.profileImageUrl ?? null,
+                }));
+                setSearchResults(simpleResults);
+            } else {
+                setSearchResults([]);
+            }
+        } else {
+            setSearchResults([]);
+        }
+    };
+
+    const displayedMembers =
+        activeTab === "팔로워"
+            ? followedList
+            : activeTab === "팔로우"
+                ? followList
+                : searchResults;
 
     return (
         <div className="fixed inset-0 z-50 bg-white flex justify-center items-stretch">
             <div className="w-full max-w-md h-screen shadow-xl flex flex-col">
-                {/* 헤더 */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-200">
                     <h2 className="text-lg font-semibold">팔로우</h2>
                     <button onClick={onClose}>
@@ -62,25 +92,32 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
                     </button>
                 </div>
 
-                {/* 탭 */}
                 <div className="flex justify-center border-b border-gray-200">
-                    <button
-                        className={`w-1/2 py-2 text-sm font-medium ${activeTab === "팔로워" ? "border-b-2 border-black" : "text-gray-400"}`}
-                        onClick={() => setActiveTab("팔로워")}
-                    >
-                        팔로워
-                    </button>
-                    <button
-                        className={`w-1/2 py-2 text-sm font-medium ${activeTab === "팔로우" ? "border-b-2 border-black" : "text-gray-400"}`}
-                        onClick={() => setActiveTab("팔로우")}
-                    >
-                        팔로우
-                    </button>
+                    {["팔로워", "팔로우", "검색"].map(tab => (
+                        <button
+                            key={tab}
+                            className={`w-1/3 py-2 text-sm font-medium ${activeTab === tab ? "border-b-2 border-black" : "text-gray-400"
+                                }`}
+                            onClick={() => setActiveTab(tab as any)}
+                        >
+                            {tab}
+                        </button>
+                    ))}
                 </div>
 
-                {/* 내용 */}
+                {activeTab === "검색" && (
+                    <div className="p-3">
+                        <input
+                            type="text"
+                            value={searchKeyword}
+                            onChange={handleSearch}
+                            placeholder="사용자 검색..."
+                            className="w-full p-2 rounded border border-gray-300 focus:outline-none focus:ring-0 focus:border-gray-300"
+                        />
+                    </div>
+                )}
+
                 <div className="flex-1 overflow-y-auto">
-                    {/* 받은 팔로우 요청 (팔로워 탭이고 본인 프로필일 때만) */}
                     {activeTab === "팔로워" && isOwnProfile && localFollowRecList.length > 0 && (
                         <>
                             <div className="bg-gray-50 px-4 py-2 text-sm text-gray-700 font-semibold">
@@ -124,7 +161,6 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
                         </>
                     )}
 
-                    {/* 일반 팔로우/팔로워 목록 */}
                     {displayedMembers.length > 0 && (
                         <div className="bg-gray-50 px-4 py-2 text-sm text-gray-700 font-semibold">
                             {activeTab} 목록
