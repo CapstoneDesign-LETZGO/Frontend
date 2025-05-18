@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
-import { authService } from "../services/authService";
 import {toast} from "react-toastify";
+import { AuthService } from "../services/authService";
 
 export const useLogin = (setIsLoggedIn?: (value: boolean) => void) => {
     const navigate = useNavigate();
@@ -25,7 +25,7 @@ export const useLogin = (setIsLoggedIn?: (value: boolean) => void) => {
 
     const handleSocialLogin = async (provider: 'naver' | 'kakao' | 'google') => {
         try {
-            const response = await authService.getSocialRedirectUrl(provider);
+            const response = await AuthService.getSocialRedirectUrl(provider);
             const redirectUrl = response.data?.data;
             if (redirectUrl) {
                 window.location.href = redirectUrl;
@@ -41,7 +41,7 @@ export const useLogin = (setIsLoggedIn?: (value: boolean) => void) => {
 
     const handleLogin = async () => {
         try {
-            const response = await authService.login(email, password);
+            const response = await AuthService.login(email, password);
             const tokens = response.data?.data;
             const userData = {
                 accessToken: tokens.accessToken,

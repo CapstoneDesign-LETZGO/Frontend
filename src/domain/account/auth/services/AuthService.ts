@@ -1,6 +1,6 @@
 import publicApi from "../../../../common/libs/publicApi.ts";
 
-export const authService = {
+export const AuthService = {
     login: (email: string, password: string) =>
         publicApi.post('/rest-api/v1/auth/login', { email, password }),
 
