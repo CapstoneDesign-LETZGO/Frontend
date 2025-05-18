@@ -41,6 +41,7 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
         if (success) {
             setLocalFollowRecList(prev => prev.filter(m => m.userId !== id));
             refetchMember();
+            refetchMember();
         }
     };
 
@@ -48,6 +49,7 @@ const FollowListOverlay: React.FC<FollowListOverlayProps> = ({
         const success = await rejectFollowRequest(id);
         if (success) {
             setLocalFollowRecList(prev => prev.filter(m => m.userId !== id));
+            refetchMember();
             refetchMember();
         }
     };
