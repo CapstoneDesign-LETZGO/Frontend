@@ -46,7 +46,11 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ member, searchMember }) => {
                     if (!prevRooms) return prevRooms;
                     return prevRooms.map((room) =>
                         room.id === roomId
-                            ? { ...room, lastMessage: messageContent }
+                            ? { ...room,
+                                lastMessage: messageContent,
+                                lastMessageCreatedAt:
+                                    data.lastMessageCreatedAt ?? room.lastMessageCreatedAt,
+                            }
                             : room
                     );
                 });
