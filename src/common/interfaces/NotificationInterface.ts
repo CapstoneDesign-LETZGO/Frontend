@@ -1,6 +1,8 @@
 export interface NotificationDto {
     id: number;
     senderId: number;
+    senderNickname: string;
+    senderProfileUrl: string;
     receiverId: number;
     objectId: number;
     content: string;
