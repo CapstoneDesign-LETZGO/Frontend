@@ -17,18 +17,35 @@ const ProfilePage: React.FC = () => {
     const {
         detailMember,
         otherDetailMember,
-        refetchMember
+        refetchMember: refetchTargetMember,
     } = useMemberActions(
         isOtherProfile
             ? { mode: "otherDetailMember", memberIdForOther: parsedId }
             : { mode: "detailMember" }
     );
 
-    const memberInfo = isOtherProfile ? otherDetailMember : detailMember;
+    const { detailMember: loginUser, refetchMember: refetchLoginUser } =
+        useMemberActions({ mode: "detailMember" });
+
+    const followRecList = loginUser?.followRecList ?? [];
+
+    const [memberInfo, setMemberInfo] = useState(
+        isOtherProfile ? otherDetailMember : detailMember
+    );
+
     const { posts, refetchPost } = usePost("member", parsedId ?? memberInfo?.id);
 
     const [selectedPost, setSelectedPost] = useState<DetailPostDto | null>(null);
     const [showFollowList, setShowFollowList] = useState<"팔로워" | "팔로우" | null>(null);
+
+    useEffect(() => {
+        setMemberInfo(isOtherProfile ? otherDetailMember : detailMember);
+    }, [detailMember, otherDetailMember, isOtherProfile]);
+
+    const refetchMember = async () => {
+        await refetchTargetMember();
+        await refetchLoginUser();
+    };
 
     useEffect(() => {
         let startY = 0;
@@ -40,9 +57,7 @@ const ProfilePage: React.FC = () => {
             "touches" in e ? e.touches[0]?.clientY ?? 0 : e.clientY;
 
         const onStart = (e: TouchEvent | MouseEvent) => {
-            //PostDetailOverlay가 열려 있다면 새로고침 차단
             if (selectedPost) return;
-
             canDrag = window.scrollY === 0 || document.documentElement.scrollTop === 0;
             if (!canDrag) return;
             startY = getY(e);
@@ -53,7 +68,6 @@ const ProfilePage: React.FC = () => {
             if (!isDragging || !canDrag) return;
             const currentY = getY(e);
             const diffY = currentY - startY;
-
             if (diffY > 0) {
                 currentTranslateY = Math.min(diffY, 100);
                 document.body.style.transform = `translateY(${currentTranslateY}px)`;
@@ -61,18 +75,17 @@ const ProfilePage: React.FC = () => {
             }
         };
 
-        const onEnd = () => {
+        const onEnd = async () => {
             if (!isDragging) return;
             isDragging = false;
             document.body.style.transition = "transform 0.3s ease";
             document.body.style.transform = "none";
 
             if (canDrag && currentTranslateY >= 100) {
-                refetchMember();
-                if (memberInfo) {
-                    refetchPost();
-                }
+                await refetchMember();
+                refetchPost();
             }
+
             currentTranslateY = 0;
             canDrag = false;
         };
@@ -103,6 +116,8 @@ const ProfilePage: React.FC = () => {
                         onFollowerClick={() => setShowFollowList("팔로워")}
                         onFollowClick={() => setShowFollowList("팔로우")}
                         isOtherProfile={isOtherProfile}
+                        refetchMember={refetchMember}
+                        currentUser={isOtherProfile ? loginUser ?? undefined : undefined}
                     />
                 )}
 
@@ -121,16 +136,17 @@ const ProfilePage: React.FC = () => {
                 {memberInfo && showFollowList && (
                     <FollowListOverlay
                         type={showFollowList}
-                        members={
-                            showFollowList === "팔로워"
-                                ? memberInfo.followedList
-                                : memberInfo.followList
-                        }
+                        members={showFollowList === "팔로워" ? memberInfo.followedList : memberInfo.followList}
+                        followList={memberInfo.followList}
+                        followedList={memberInfo.followedList}
                         onClose={() => setShowFollowList(null)}
                         onMemberClick={(id) => {
                             setShowFollowList(null);
                             navigate(`/profile/${id}`);
                         }}
+                        isOwnProfile={!isOtherProfile}
+                        refetchMember={refetchMember}
+                        followRecList={followRecList}
                     />
                 )}
             </div>

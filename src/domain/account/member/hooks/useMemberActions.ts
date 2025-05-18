@@ -207,6 +207,7 @@ export const useMemberActions = ({ mode = 'member', memberIdForOther }: UseMembe
         }
     };
 
+
     useEffect(() => {
         if (mode === 'member') {
             fetchMember();
@@ -248,5 +249,5 @@ export const useMemberActions = ({ mode = 'member', memberIdForOther }: UseMembe
         resetPassword,
         verifyEmailCode,
         sendEmailCode
-    };
+        };
 };
