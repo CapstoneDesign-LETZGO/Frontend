@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { fetchNotificationsApi, readNotificationApi } from '../services/NotificationService.ts';
 import { NotificationDto, NotificationForm } from '../../../common/interfaces/NotificationInterface.ts';
 import { useAuthFetch } from '../../../common/hooks/useAuthFetch';
@@ -10,18 +10,20 @@ export const useNotification = () => {
     const { authFetch } = useAuthFetch();
 
     // 알림 목록 조회
-    const fetchNotifications = async () => {
+    const fetchNotifications = async ()=> {
         setLoading(true);
         try {
             const { notifications, success } = await fetchNotificationsApi(authFetch);
             if (success) {
                 setNotifications(notifications);
+                return notifications;
             } else {
-                toast.error('알림 목록 조회 실패');
+                return [];
             }
         } catch (err) {
             console.error('알림 목록 조회 중 오류:', err);
             toast.error('알림 목록 조회 중 오류가 발생했습니다.');
+            return [];
         } finally {
             setLoading(false);
         }
@@ -36,14 +38,11 @@ export const useNotification = () => {
         } catch (err) {
             console.error('알림 읽음 처리 중 오류:', err);
             toast.error('알림 읽음 처리 중 오류가 발생했습니다.');
+            return [];
         } finally {
             setLoading(false);
         }
     };
-
-    useEffect(() => {
-        fetchNotifications();
-    }, []);
 
     return { notifications, loading, fetchNotifications, readNotification };
 };

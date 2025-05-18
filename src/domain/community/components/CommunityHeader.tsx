@@ -1,5 +1,6 @@
 import React, {useState, useEffect, RefObject} from 'react';
 import { useNavigate } from 'react-router-dom';
+import {useNotificationStore} from "../../../common/hooks/useNotificationStore.ts";
 
 interface CommunityHeaderProps {
     scrollContainerRef: RefObject<HTMLDivElement | null>;
@@ -10,6 +11,9 @@ interface CommunityHeaderProps {
 const CommunityHeader: React.FC<CommunityHeaderProps>  = ({ scrollContainerRef, setIsHeaderVisible, isHeaderVisible }) => {
     const navigate = useNavigate();
     const [lastScrollTop, setLastScrollTop] = useState(0);
+    const notifications = useNotificationStore(state => state.notifications);
+
+    const hasUnreadNotifications = notifications.some(notification => !notification.isRead);
 
     const handleScroll = () => {
         const el = scrollContainerRef.current;
@@ -50,8 +54,15 @@ const CommunityHeader: React.FC<CommunityHeaderProps>  = ({ scrollContainerRef, 
 
             {/* 알람 아이콘과 send 아이콘을 한 줄에 배치 */}
             <div className="flex items-center space-x-7">
-                <div onClick={() => navigate('/notification')} className="cursor-pointer">
-                    <img src="/icons/media/notification_line.svg" alt="Notification" className="h-6" />
+                <div onClick={() => navigate('/notification')} className="relative cursor-pointer">
+                    <img
+                        src="/icons/media/notification_line.svg"
+                        alt="Notification"
+                        className="h-6"
+                    />
+                    {hasUnreadNotifications && (
+                        <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border border-white"></span>
+                    )}
                 </div>
                 <img
                     src="/icons/contact/send_line.svg"

@@ -28,7 +28,7 @@ const NotificationHeader: React.FC = () => {
                 <img src="/icons/arrow/left_line.svg" alt="Back" className="h-6" />
             </div>
             {/* 가운데 "알림" 텍스트 */}
-            <div className="ml-4 font-semibold">
+            <div className="ml-6 font-semibold">
                 알림
             </div>
             {/* 오른쪽 공간은 비워둠 (그룹 아이콘 없음) */}
