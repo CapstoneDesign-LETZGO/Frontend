@@ -24,7 +24,7 @@ const PlaceCard: React.FC<PlaceCardProps> = ({
     >
       {/* 관심없음 버튼 (우상단 고정) */}
       <button
-        className="absolute top-2 right-2 px-2 py-1 text-xs text-gray-600 bg-gray-100 border border-gray-300 rounded hover:bg-gray-200 z-10"
+        className="absolute top-2 right-2 px-2 py-1 text-xs text-gray-400 bg-gray-100 border border-gray-200 rounded hover:bg-gray-200 z-10"
         onClick={(e) => {
           e.stopPropagation();
           onIgnore();

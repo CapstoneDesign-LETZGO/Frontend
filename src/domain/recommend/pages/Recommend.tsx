@@ -11,6 +11,7 @@ import { PlaceDto, Review } from "../../../common/interfaces/MapInterface.ts";
 interface RatedPlace extends PlaceDto {
   averageRating: number;
   reviewTags?: string[];
+  distanceKm?: number;
 }
 
 const Recommend: React.FC = () => {
@@ -19,8 +20,24 @@ const Recommend: React.FC = () => {
   const [selectedPlaceDto, setSelectedPlaceDto] = useState<PlaceDto | null>(null);
   const [ratedPlaces, setRatedPlaces] = useState<RatedPlace[]>([]);
   const [selectedReviews, setSelectedReviews] = useState<Review[]>([]);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const { recommendPlace: allPlacesData, fetchRecommend, loading } = useRecommend();
   const { fetchPlaceDto } = usePlaceInfo();
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserLocation({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        });
+      },
+      (err) => {
+        console.warn("위치 정보를 가져올 수 없습니다:", err);
+        setUserLocation(null);
+      }
+    );
+  }, []);
 
   useEffect(() => {
     fetchRecommend();
@@ -28,6 +45,8 @@ const Recommend: React.FC = () => {
 
   useEffect(() => {
     const fetchRatings = async () => {
+      if (!userLocation) return;
+
       const filtered = allPlacesData.filter(p => !ignoredIds.includes(p.placeId));
       const sliced = filtered.slice(0, visibleCount);
 
@@ -41,10 +60,13 @@ const Recommend: React.FC = () => {
               : Number((reviews.reduce((acc, cur) => acc + cur.rating, 0) / reviews.length).toFixed(1));
           const reviewTags = reviews.slice(0, 5).map(r => r.content.trim());
 
+          const distance = getDistanceFromLatLonInKm(userLocation.lat, userLocation.lng, place.lat, place.lng);
+
           return {
             ...place,
             averageRating: avg,
             reviewTags,
+            distanceKm: distance,
           };
         })
       );
@@ -52,10 +74,10 @@ const Recommend: React.FC = () => {
       setRatedPlaces(results);
     };
 
-    if (allPlacesData.length > 0) {
+    if (allPlacesData.length > 0 && userLocation) {
       fetchRatings();
     }
-  }, [allPlacesData, visibleCount, ignoredIds]);
+  }, [allPlacesData, visibleCount, ignoredIds, userLocation]);
 
   const handleMoreClick = () => setVisibleCount((prev) => prev + 2);
   const handleIgnore = (id: string) => setIgnoredIds((prev) => [...prev, id]);
@@ -84,7 +106,7 @@ const Recommend: React.FC = () => {
                   key={place.placeId}
                   image={`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.placePhoto}&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`}
                   title={place.name}
-                  rating={`⭐ ${place.averageRating}`}
+                  rating={`⭐ ${place.averageRating} · ${place.distanceKm?.toFixed(1)}km`}
                   reviewTags={place.reviewTags}
                   onClick={() => handlePlaceClick(place)}
                   onIgnore={() => handleIgnore(place.placeId)}
@@ -126,5 +148,21 @@ const Recommend: React.FC = () => {
     </div>
   );
 };
+
+function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371; // 지구 반지름 (km)
+  const dLat = deg2rad(lat2 - lat1);
+  const dLon = deg2rad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function deg2rad(deg: number): number {
+  return deg * (Math.PI / 180);
+}
 
 export default Recommend;
