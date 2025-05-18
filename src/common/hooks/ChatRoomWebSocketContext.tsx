@@ -1,7 +1,7 @@
 import {createContext, useContext, useEffect, useRef, ReactNode, useState, useCallback} from "react";
 import {ChatWebSocketPayload} from "../interfaces/ChatInterface.ts";
 
-const WS_URL = import.meta.env.VITE_CORE_WEBSOCKET_URL;
+const WS_ROOM_URL = import.meta.env.VITE_CORE_WEBSOCKET_URL+"-room";
 
 interface ChatRoomWebSocketContextType {
     ws: WebSocket | null;
@@ -33,10 +33,10 @@ export const ChatRoomWebSocketProvider = ({ memberId, children }: Props) => {
 
     useEffect(() => {
         if (!memberId) return;
-        const socketInstance = new WebSocket(`${WS_URL}?memberId=${memberId}`);
+        const socketInstance = new WebSocket(`${WS_ROOM_URL}?memberId=${memberId}`);
         setSocket(socketInstance);
         ws.current = socketInstance;
-
+        console.log("Connecting to:", `${WS_ROOM_URL}?memberId=${memberId}`);
         ws.current.onopen = () => {
             console.log("WebSocket connected");
             // Ping every 25 seconds
