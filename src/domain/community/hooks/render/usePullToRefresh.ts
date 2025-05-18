@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-export const usePullToRefresh = (refetchCallback: () => void) => {
+export const usePullToRefresh = (refetchCallbacks: (() => void)[]) => {
     const startYRef = useRef(0);
     const canDragRef = useRef(false);
     const currentTranslateYRef = useRef(0);
@@ -40,16 +40,13 @@ export const usePullToRefresh = (refetchCallback: () => void) => {
         const onEnd = () => {
             if (!isDraggingRef.current || !postSectionRef.current) return;
             isDraggingRef.current = false;
-
             postSectionRef.current.style.transition = 'transform 0.3s ease';
             postSectionRef.current.style.transform = 'none';
 
             if (canDragRef.current && currentTranslateYRef.current >= 100) {
-                refetchCallback();
+                refetchCallbacks.forEach((cb) => cb());
             }
-
             setShowSpinner(false);
-
             currentTranslateYRef.current = 0;
             canDragRef.current = false;
         };
@@ -79,7 +76,7 @@ export const usePullToRefresh = (refetchCallback: () => void) => {
             window.removeEventListener('touchcancel', onEnd);
             window.removeEventListener('mouseleave', onEnd);
         };
-    }, [refetchCallback]);
+    }, [refetchCallbacks]);
 
     return { postSectionRef, showSpinner };
 };
