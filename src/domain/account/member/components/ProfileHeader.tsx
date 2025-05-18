@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Share2, UserPlus, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ProfileSettingOverlay from "./ProfileSettingOverlay";
@@ -42,10 +42,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const navigate = useNavigate();
   const [showOverlay, setShowOverlay] = useState(false);
   const profileImageSrc = member?.profileImageUrl || "/icons/user/user_4_line.svg";
-  const navigate = useNavigate();
-  const [showOverlay, setShowOverlay] = React.useState(false);
   const { followRequest, followRequestCancel, cancelFollow } = useMemberFollow();
-  const profileImageSrc = member?.profileImageUrl || "/src/assets/icons/user/user_4_line.svg";
+
 
 
 
