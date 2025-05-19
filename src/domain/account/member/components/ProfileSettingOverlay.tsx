@@ -1,16 +1,15 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import {useLogin} from "../../auth/hooks/useLogin.ts";
 
 interface Props {
     onClose: () => void;
 }
 
 const ProfileSettingOverlay: React.FC<Props> = ({ onClose }) => {
-    const navigate = useNavigate();
+    const { logout } = useLogin();
 
-    const handleLogout = () => {
-        localStorage.removeItem("userToken");
-        navigate("/login");
+    const handleLogout = async () => {
+        await logout();
     };
 
     return (

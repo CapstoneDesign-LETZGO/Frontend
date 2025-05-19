@@ -19,3 +19,7 @@ export type NotificationTargetObject =
 export interface NotificationForm {
     notificationIdList: number[];
 }
+
+export interface FcmToken {
+    fcmToken: string;
+}
