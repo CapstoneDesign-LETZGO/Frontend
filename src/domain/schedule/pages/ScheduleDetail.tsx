@@ -18,7 +18,6 @@ import {
   InfoWindow,
   useLoadScript,
 } from "@react-google-maps/api";
-import { useMemberActions } from "../../account/member/hooks/useMemberActions";
 import NavigationBar from "../../../common/components/NavigationBar";
 
 dayjs.extend(weekday);
@@ -28,7 +27,6 @@ dayjs.locale("ko");
 const ScheduleDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { member } = useMemberActions({ mode: "member" });
   const mapRef = useRef<google.maps.Map | null>(null);
   const [schedule, setSchedule] = useState<ScheduleDto | null>(null);
   const [groupedPlaces, setGroupedPlaces] = useState<Record<number, SchedulePlaceDto[]>>({});
@@ -38,7 +36,7 @@ const ScheduleDetail = () => {
   const [showRouteModal, setShowRouteModal] = useState(false);
   const [optimalRoute, setOptimalRoute] = useState<SchedulePlaceDto[]>([]);
   const [currentDay, setCurrentDay] = useState<number | null>(null);
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
   const { isLoaded } = useLoadScript({ googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY });
 
   const fetchSchedule = async () => {
@@ -235,12 +233,12 @@ const ScheduleDetail = () => {
 
                 <GoogleMap
                   mapContainerStyle={{ width: "100%", height: "100%" }}
-                  onLoad={(map) => {
+                  onLoad={(map: google.maps.Map | null) => {
                     const bounds = new window.google.maps.LatLngBounds();
                     optimalRoute.forEach((place) => {
                       bounds.extend({ lat: place.latitude, lng: place.longitude });
                     });
-                    map.fitBounds(bounds);
+                    map?.fitBounds(bounds);
                     mapRef.current = map;
                   }}
                   options={{
