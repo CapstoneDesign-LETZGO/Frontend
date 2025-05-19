@@ -14,18 +14,20 @@ const Community: React.FC = () => {
     const [isHeaderVisible, setIsHeaderVisible] = useState(true);
     const { posts, refetchPost } = usePost();
     const { fetchNotifications } = useNotification();
-    const { postSectionRef, showSpinner } = usePullToRefresh([refetchPost, fetchNotifications]);
     const setNotifications = useNotificationStore((state) => state.setNotifications);
 
+    const loadNotifications = async () => {
+        try {
+            const data = await fetchNotifications();
+            setNotifications(data);
+        } catch (error) {
+            console.error('알림을 불러오는 데 실패했습니다:', error);
+        }
+    };
+
+    const { postSectionRef, showSpinner } = usePullToRefresh([refetchPost, loadNotifications]);
+
     useEffect(() => {
-        const loadNotifications = async () => {
-            try {
-                const data = await fetchNotifications();
-                setNotifications(data);
-            } catch (error) {
-                console.error('알림을 불러오는 데 실패했습니다:', error);
-            }
-        };
         loadNotifications();
     }, []);
 
