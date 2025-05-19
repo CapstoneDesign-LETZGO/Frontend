@@ -19,25 +19,23 @@ export const messaging = getMessaging(firebaseApp);
 
 function NotificationToast({ notification }: { notification: NotificationDto }) {
     return (
-        <div className="w-full p-3 bg-white text-xs flex items-center space-x-3">
+        <div className="w-full p-1 bg-white text-xs flex items-center space-x-3">
             <img
                 src={notification.senderProfileUrl ?? '/icons/user/user_4_line.svg'}
                 alt="프로필"
                 className="w-8 h-8 rounded-full object-cover"
             />
-            <div className="text-gray-800 flex flex-col">
+            <div className="text-gray-800 text-xs leading-tight break-words">
                 <span>
-                    <span className="font-semibold">
-                        {notification.senderNickname ?? '알 수 없음'}
-                    </span>
-                    {notification.content}
+                    <span className="font-semibold">{notification.senderNickname ?? '알 수 없음'}</span>{' '}
+                    {notification.content}{' '}
+                    {notification.createdAt && (
+                        <>
+                            <span className="text-gray-500">·</span>{' '}
+                            <span className="text-gray-500">{formatDate(notification.createdAt)}</span>
+                        </>
+                    )}
                 </span>
-                {notification.createdAt && (
-                    <div className="flex items-center text-gray-500 text-[11px] mt-0.5">
-                        <span className="mx-1">·</span>
-                        <span>{formatDate(notification.createdAt)}</span>
-                    </div>
-                )}
             </div>
         </div>
     );
@@ -52,15 +50,16 @@ export function initFirebaseMessaging() {
             // NotificationDto 타입으로 역직렬화
             const notification: NotificationDto = JSON.parse(body);
             toast(<NotificationToast notification={notification} />, {
-                position: 'top-right',
+                position: 'top-center',
                 autoClose: 5000,
                 closeOnClick: true,
                 hideProgressBar: true,
                 pauseOnHover: true,
                 draggable: false,
+                icon: false,
                 style: {
                     minWidth: '280px',
-                    maxWidth: '360px',
+                    maxWidth: '560px',
                 },
             });
         } catch (err) {
