@@ -5,7 +5,7 @@ import {toast} from "react-toastify";
 import {AuthService, logoutApi} from "../services/AuthService";
 import { authFetch } from "../../../../common/services/authFetchService";
 import {useNotification} from "../../../notification/hooks/useNotification.ts";
-import { firebaseApp } from "../../../../common/libs/firebase.ts";
+import { firebaseApp } from "../../../../common/libs/firebase.tsx";
 import {getMessaging, getToken} from "firebase/messaging";
 
 export const useLogin = (setIsLoggedIn?: (value: boolean) => void) => {

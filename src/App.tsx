@@ -23,7 +23,7 @@ import SchedulePlaceRegister from './domain/schedule/pages/SchedulePlaceRegister
 import { ScheduleProvider } from './domain/schedule/contexts/ScheduleContext';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ChatRoomWithProvider from "./domain/chat/components/ChatRoom/ChatRoomWithProvider.tsx";
-import {initFirebaseMessaging} from "./common/libs/firebase.ts";
+import {initFirebaseMessaging} from "./common/libs/firebase.tsx";
 
 const queryClient = new QueryClient();
 
