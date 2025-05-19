@@ -16,6 +16,7 @@
     "@types/sockjs-client": "^1.5.4",
     "axios": "^1.8.4",
     "date-fns": "^4.1.0",
+    "firebase": "^11.7.3",
     "framer-motion": "^12.9.4",
     "lodash": "^4.17.21",
     "lucide-react": "^0.486.0",
