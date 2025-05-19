@@ -36,6 +36,7 @@ const ScheduleDetail = () => {
   const [memoText, setMemoText] = useState("");
   const [showMemoModal, setShowMemoModal] = useState(false);
   const [showRouteModal, setShowRouteModal] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
   const [optimalRoute, setOptimalRoute] = useState<SchedulePlaceDto[]>([]);
   const [currentDay, setCurrentDay] = useState<number | null>(null);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
