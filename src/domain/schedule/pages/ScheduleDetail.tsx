@@ -18,7 +18,6 @@ import {
   InfoWindow,
   useLoadScript,
 } from "@react-google-maps/api";
-import { useMemberActions } from "../../account/member/hooks/useMemberActions";
 import NavigationBar from "../../../common/components/NavigationBar";
 
 dayjs.extend(weekday);
@@ -28,7 +27,6 @@ dayjs.locale("ko");
 const ScheduleDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { member } = useMemberActions({ mode: "member" });
   const mapRef = useRef<google.maps.Map | null>(null);
   const [schedule, setSchedule] = useState<ScheduleDto | null>(null);
   const [groupedPlaces, setGroupedPlaces] = useState<Record<number, SchedulePlaceDto[]>>({});
@@ -36,10 +34,11 @@ const ScheduleDetail = () => {
   const [memoText, setMemoText] = useState("");
   const [showMemoModal, setShowMemoModal] = useState(false);
   const [showRouteModal, setShowRouteModal] = useState(false);
-  const [showInviteModal, setShowInviteModal] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_showInviteModal, setShowInviteModal] = useState(false);
   const [optimalRoute, setOptimalRoute] = useState<SchedulePlaceDto[]>([]);
   const [currentDay, setCurrentDay] = useState<number | null>(null);
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
   const { isLoaded } = useLoadScript({ googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY });
 
   const fetchSchedule = async () => {
@@ -48,12 +47,16 @@ const ScheduleDetail = () => {
   };
 
   const fetchGroupedPlaces = async () => {
-    const res = await authFetchData(`/api/schedules/${id}/places/grouped`);
+    const res = await authFetchData<Record<number, SchedulePlaceDto[]>>(
+        `/api/schedules/${id}/places/grouped`
+    );
     setGroupedPlaces(res);
   };
 
   const fetchOptimalRoute = async (day: number) => {
-    const res = await authFetchData(`/api/schedules/${id}/optimal-route?day=${day}`);
+    const res = await authFetchData<SchedulePlaceDto[]>(
+        `/api/schedules/${id}/optimal-route?day=${day}`
+    );
     setOptimalRoute(res);
     setCurrentDay(day);
     setShowRouteModal(true);
@@ -61,7 +64,7 @@ const ScheduleDetail = () => {
 
   const handleReorder = async () => {
     const placePks = optimalRoute.map((p) => p.schedulePlacePk);
-    await authFetchData(`/api/schedules/${id}/reorder?day=${currentDay}`, placePks, "POST");
+    await authFetchData(`/api/schedules/${id}/reorder?day=${currentDay}`, { placePks }, "POST");
     setShowRouteModal(false);
     fetchGroupedPlaces();
   };
@@ -236,12 +239,12 @@ const ScheduleDetail = () => {
 
                 <GoogleMap
                   mapContainerStyle={{ width: "100%", height: "100%" }}
-                  onLoad={(map) => {
+                  onLoad={(map: google.maps.Map | null) => {
                     const bounds = new window.google.maps.LatLngBounds();
                     optimalRoute.forEach((place) => {
                       bounds.extend({ lat: place.latitude, lng: place.longitude });
                     });
-                    map.fitBounds(bounds);
+                    map?.fitBounds(bounds);
                     mapRef.current = map;
                   }}
                   options={{

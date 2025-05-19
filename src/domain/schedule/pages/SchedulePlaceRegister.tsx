@@ -101,14 +101,14 @@ const SchedulePlaceRegister: React.FC = () => {
     };
 
     try {
-      const savedPk = await authFetchData<number>(
-        `/api/schedules/${scheduleId}/places`,
-        payload,
-        "POST"
+      await authFetchData<number>(
+          `/api/schedules/${scheduleId}/places`,
+          payload,
+          "POST"
       );
       alert("장소가 성공적으로 등록되었습니다.");
       navigate(`/schedule/detail/${scheduleId}`);
-    } catch (error) {
+    } catch {
       alert("장소 저장에 실패했습니다.");
     }
   };

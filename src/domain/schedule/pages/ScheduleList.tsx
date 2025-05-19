@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserCircle, MoreVertical, Heart } from "lucide-react";
+import { MoreVertical, Heart } from "lucide-react";
 import { authFetchData } from "../../../common/services/authFetchService";
 import { useMemberActions } from "../../account/member/hooks/useMemberActions";
 import { ScheduleDto } from "../../../common/interfaces/ScheduleInterface";
