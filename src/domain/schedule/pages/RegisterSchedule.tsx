@@ -1,31 +1,57 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSchedule } from "../contexts/ScheduleContext";
-import { useAuthFetch } from "../../../common/hooks/useAuthFetch";
-import {DateRange, DayPicker } from "react-day-picker";
+import { useMemberActions } from "../../account/member/hooks/useMemberActions.ts";
+import { authFetchData } from "../../../common/services/authFetchService"; // ✅ 수정된 import
+import { DateRange, DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { ko } from "date-fns/locale";
 import { format } from "date-fns";
 import { X } from "lucide-react";
-import {useMemberActions} from "../../account/member/hooks/useMemberActions.ts";
 
 const RegisterSchedule = () => {
   const { scheduleData } = useSchedule();
-  const { member } = useMemberActions();
-  const { authFetch } = useAuthFetch();
+  const { member, loading } = useMemberActions({ mode: "member" });
   const navigate = useNavigate();
 
   const [range, setRange] = useState<DateRange | undefined>(undefined);
-
   const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const handleSubmit = async () => {
+    if (!member?.id || !range?.from || !range?.to) {
+      alert("모든 정보를 입력해주세요.");
+      return;
+    }
+
+    const title = `${scheduleData.region} 여행`;
+
+    try {
+      const newScheduleId = await authFetchData<number>(
+        "/api/schedules",
+        {
+          hostAccountPk: member.id,
+          region: scheduleData.region,
+          title,
+          startDate: format(range.from, "yyyy-MM-dd"),
+          endDate: format(range.to, "yyyy-MM-dd"),
+        },
+        "POST"
+      );
+
+      console.log("✅ 등록된 일정 ID:", newScheduleId);
+      navigate("/schedule/list");
+    } catch (error) {
+      console.error("❌ 일정 등록 실패:", error);
+      alert("일정 등록에 실패했습니다.");
+    }
+  };
 
   const cityList = [
     { name: "가평·양평", imageUrl: "/images/gapyeong.jpg" },
@@ -37,35 +63,6 @@ const RegisterSchedule = () => {
     { name: "전주", imageUrl: "/images/jeonju.jpg" },
     { name: "제주", imageUrl: "/images/jeju.jpg" },
   ];
-
-  const handleSubmit = async () => {
-    if (!member || !range || !range.from || !range.to) {
-      alert("모든 정보를 입력해주세요.");
-      return;
-    }
-
-    const title = `${scheduleData.region} 여행`;
-
-    try {
-      await authFetch(
-        "/api/schedules",
-        {
-          data: {
-            hostAccountPk: member.id,
-            region: scheduleData.region,
-            title,
-            startDate: format(range.from, "yyyy-MM-dd"),
-            endDate: format(range.to, "yyyy-MM-dd"),
-          },
-        },
-        "POST"
-      );
-      navigate("/schedule/list");
-    } catch (error) {
-      console.error("등록 실패", error);
-      alert("일정 등록에 실패했습니다.");
-    }
-  };
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-[#F5F5F5]">
@@ -116,7 +113,7 @@ const RegisterSchedule = () => {
               <DayPicker
                 mode="range"
                 selected={range}
-                onSelect={(range) => setRange(range)}
+                onSelect={setRange}
                 numberOfMonths={isMobile ? 1 : 3}
                 pagedNavigation={false}
                 locale={ko}
@@ -129,11 +126,7 @@ const RegisterSchedule = () => {
                     paddingBottom: "16px",
                   },
                   head_cell: { color: "#999", fontSize: "13px" },
-                  day: {
-                    height: 40,
-                    width: 40,
-                    margin: 2,
-                  },
+                  day: { height: 40, width: 40, margin: 2 },
                 }}
                 modifiersStyles={{
                   weekend: { color: "#D14343" },
@@ -160,7 +153,7 @@ const RegisterSchedule = () => {
         <div className="px-4 py-3 sticky bottom-0 bg-white">
           <button
             onClick={handleSubmit}
-            disabled={!range ||!range.from || !range.to}
+            disabled={loading || !range?.from || !range?.to}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg text-sm font-semibold disabled:opacity-40"
           >
             등록 완료
