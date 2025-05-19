@@ -12,8 +12,20 @@ export const useAuthFetch = () => {
     ): Promise<ApiResponse<T>> => {
         setLoading(true);
 
-        const response = await authFetch<T>(url, data, method);
-        return response as ApiResponse<T>;
+        try {
+            const response = await authFetch<T>(url, data, method);
+
+            if (response.returnCode !== 'SUCCESS') {
+                throw new Error(response.returnMessage || '요청 처리 실패');
+            }
+
+            return response;
+        } catch (error) {
+            console.error('[useAuthFetch] Error:', error);
+            throw error;
+        } finally {
+            setLoading(false);
+        }
     };
 
     return { authFetch: fetch, loading };
