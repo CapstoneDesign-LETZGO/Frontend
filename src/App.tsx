@@ -19,6 +19,8 @@ import { LetzgoToastContainer } from './common/components/LetzgoToastContainer.t
 import SelectRegion from './domain/schedule/pages/SelectRegion';
 import RegisterSchedule from './domain/schedule/pages/RegisterSchedule';
 import ScheduleList from './domain/schedule/pages/ScheduleList';
+import ScheduleDetail from './domain/schedule/pages/ScheduleDetail';
+import SchedulePlaceRegister from './domain/schedule/pages/SchedulePlaceRegister';
 import { ScheduleProvider } from './domain/schedule/contexts/ScheduleContext';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -136,6 +138,21 @@ const App = () => {
                                     <ScheduleList />
                                 </ScheduleProvider>
                             </RequireAuth>
+                        } />
+                        <Route path="/schedule/detail/:id" element={
+                          <RequireAuth>
+                            <ScheduleProvider>
+                              <ScheduleDetail />
+                            </ScheduleProvider>
+                          </RequireAuth>
+                        } />
+
+                        <Route path="/schedule/register/place/:scheduleId" element={
+                          <RequireAuth>
+                            <ScheduleProvider>
+                              <SchedulePlaceRegister />
+                            </ScheduleProvider>
+                          </RequireAuth>
                         } />
 
                         {/* 기본 경로 */}
