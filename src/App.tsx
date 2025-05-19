@@ -1,4 +1,4 @@
-import { JSX, useState } from 'react';
+import {JSX, useEffect, useState} from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './domain/account/auth/pages/Login';
 import SignUp from './domain/account/auth/pages/Signup.tsx';
@@ -23,6 +23,7 @@ import SchedulePlaceRegister from './domain/schedule/pages/SchedulePlaceRegister
 import { ScheduleProvider } from './domain/schedule/contexts/ScheduleContext';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ChatRoomWithProvider from "./domain/chat/components/ChatRoom/ChatRoomWithProvider.tsx";
+import {initFirebaseMessaging} from "./common/libs/firebase.ts";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,28 @@ const App = () => {
             </>
         );
     };
+
+    useEffect(() => {
+        initFirebaseMessaging();
+
+        Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+                console.log('알림 권한이 허용되었습니다.');
+            } else {
+                console.log('알림 권한이 거부되었습니다.');
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                .then(registration => {
+                    console.log('Service Worker registered:', registration);
+                })
+                .catch(err => {
+                    console.error('Service Worker registration failed:', err);
+                });
+        }
+    }, []);
 
     return (
         <QueryClientProvider client={queryClient}>
