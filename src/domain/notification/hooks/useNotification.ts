@@ -1,6 +1,11 @@
 import { useState } from 'react';
-import { fetchNotificationsApi, readNotificationApi } from '../services/NotificationService.ts';
-import { NotificationDto, NotificationForm } from '../../../common/interfaces/NotificationInterface.ts';
+import {
+    deleteFcmTokenApi,
+    fetchNotificationsApi,
+    readNotificationApi,
+    saveFcmTokenApi
+} from '../services/NotificationService.ts';
+import {FcmToken, NotificationDto, NotificationForm} from '../../../common/interfaces/NotificationInterface.ts';
 import { useAuthFetch } from '../../../common/hooks/useAuthFetch';
 import { toast } from 'react-toastify';
 
@@ -44,5 +49,32 @@ export const useNotification = () => {
         }
     };
 
-    return { notifications, loading, fetchNotifications, readNotification };
+    // FCM 토큰 저장
+    const saveFcmToken = async (token: string) => {
+        setLoading(true);
+        try {
+            const fcmToken: FcmToken = { fcmToken: token };
+            await saveFcmTokenApi(authFetch, fcmToken);
+        } catch (err) {
+            console.error('FCM 토큰 저장 중 오류:', err);
+            toast.error('FCM 토큰 저장 중 오류가 발생했습니다.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // FCM 토큰 삭제
+    const deleteFcmToken = async () => {
+        setLoading(true);
+        try {
+            await deleteFcmTokenApi(authFetch);
+        } catch (err) {
+            console.error('FCM 토큰 삭제 중 오류:', err);
+            toast.error('FCM 토큰 삭제 중 오류가 발생했습니다.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return { notifications, loading, fetchNotifications, readNotification, saveFcmToken, deleteFcmToken };
 };

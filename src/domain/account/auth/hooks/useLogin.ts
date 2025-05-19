@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import {toast} from "react-toastify";
-import { AuthService } from "../services/AuthService";
+import {AuthService, logoutApi} from "../services/AuthService";
+import { authFetch } from "../../../../common/services/authFetchService";
 
 export const useLogin = (setIsLoggedIn?: (value: boolean) => void) => {
     const navigate = useNavigate();
@@ -60,6 +61,24 @@ export const useLogin = (setIsLoggedIn?: (value: boolean) => void) => {
         }
     };
 
+    const logout = async () => {
+        try {
+            const success = await logoutApi(authFetch);
+            if (success) {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('userToken');
+                setIsLoggedIn?.(false);
+                toast.success("로그아웃 되었습니다.");
+                navigate('/login'); // 로그아웃 후 리디렉션 경로는 상황에 맞게 수정 가능
+            } else {
+                toast.error("로그아웃에 실패했습니다.");
+            }
+        } catch (err) {
+            console.error("로그아웃 중 오류:", err);
+            toast.error("로그아웃 중 오류가 발생했습니다.");
+        }
+    };
+
     return {
         email,
         password,
@@ -67,6 +86,7 @@ export const useLogin = (setIsLoggedIn?: (value: boolean) => void) => {
         setPassword,
         handleSocialLogin,
         handleLogin,
+        logout
     };
 };
 
