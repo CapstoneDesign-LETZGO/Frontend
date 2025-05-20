@@ -3,6 +3,7 @@ import { fetchPlaceDtoApi, postReviewApi, deleteReviewApi, fetchPlaceSearchApi }
 import { useAuthFetch } from '../../../common/hooks/useAuthFetch';
 import {PlaceDto, Review} from "../../../common/interfaces/MapInterface.ts";
 import {toast} from "react-toastify";
+import { RestaurantInfo, HotelInfo, fetchRestaurantInfoApi, fetchHotelInfoApi } from '../services/MapService';
 
 export const usePlaceInfo = () => {
   const [placeDto, setPlaceDto] = useState<PlaceDto | null>(null);
@@ -10,6 +11,9 @@ export const usePlaceInfo = () => {
   const [searchResults, setSearchResults] = useState<PlaceDto[]>([]);
   const [loading, setLoading] = useState(false);
   const { authFetch } = useAuthFetch();
+  const [restaurantList, setRestaurantList] = useState<RestaurantInfo[]>([]);
+  const [hotelList, setHotelList] = useState<HotelInfo[]>([]);
+
 
   // 해당 장소 조회
   const fetchPlaceDto = async (placeId: string) => {
@@ -91,6 +95,30 @@ export const usePlaceInfo = () => {
       [authFetch]
   );
 
+  const fetchRegionRestaurant = async (region: string) => {
+  setLoading(true);
+  try {
+    const data = await fetchRestaurantInfoApi(authFetch, region);
+    setRestaurantList(data);
+  } catch {
+    setRestaurantList([]);
+  } finally {
+    setLoading(false);
+  }
+};
+
+const fetchRegionHotel = async (region: string) => {
+  setLoading(true);
+  try {
+    const data = await fetchHotelInfoApi(authFetch, region);
+    setHotelList(data);
+  } catch {
+    setHotelList([]);
+  } finally {
+    setLoading(false);
+  }
+};
+
   return {
     placeDto,
     reviews,
@@ -100,5 +128,9 @@ export const usePlaceInfo = () => {
     fetchPlaceSearch,
     deleteReview,
     loading,
+    fetchRegionRestaurant,
+    fetchRegionHotel,
+    restaurantList,
+    hotelList
   };
 };
