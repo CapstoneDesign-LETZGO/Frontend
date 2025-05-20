@@ -8,6 +8,7 @@ import SearchedPlacePage from "../components/searchedPlacePage/SearchedPlacePage
 import { usePlaceInfo } from "../hooks/usePlaceInfo";
 import { motion, AnimatePresence } from "framer-motion";
 import { PlaceDto, Review } from "../../../common/interfaces/MapInterface.ts";
+import RegionOverlay from "../components/hotelandResutanrantInfoPage/RegionOverlay.tsx";
 
 const Map: React.FC = () => {
   const [placeDto, setPlaceDto] = useState<PlaceDto | null>(null);
@@ -18,6 +19,7 @@ const Map: React.FC = () => {
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [isPoiClick, setIsPoiClick] = useState(false);
   const { fetchPlaceDto, fetchPlaceSearch, searchResults } = usePlaceInfo();
+  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -146,6 +148,30 @@ const Map: React.FC = () => {
             </div>
           )}
         </AnimatePresence>
+
+        {isOverlayOpen && (
+          <div className="z-[70] absolute inset-0">
+            <RegionOverlay onClose={() => setIsOverlayOpen(false)} />
+          </div>
+        )}
+        <div className="absolute bottom-14 left-4 z-65">
+          <button
+            onClick={() => setIsOverlayOpen(true)}
+            className="flex items-center gap-2 bg-white border border-gray-300 text-gray-800 px-4 py-2 rounded-full shadow-lg hover:bg-gray-50 hover:shadow-xl transition-all duration-200 text-sm font-medium"
+          >
+            <svg
+              className="w-4 h-4 text-gray-500"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 5h18M3 12h18M3 19h18" />
+            </svg>
+            지역 숙소, 식당 목록
+          </button>
+        </div>
+
 
         <div className="absolute bottom-0 left-0 right-0 z-70">
           <NavigationBar />

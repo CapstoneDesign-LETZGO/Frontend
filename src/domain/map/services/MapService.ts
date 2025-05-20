@@ -2,6 +2,29 @@ import { PlaceDto, Review } from '../../../common/interfaces/MapInterface.ts';
 import { ApiResponse } from '../../../common/interfaces/response/ApiResponse';
 import { AuthFetch, isSuccess } from '../../../common/utils/fetch.ts';
 
+export interface RestaurantInfo {
+  name: string;
+  region: string;
+  location: string;
+  rating: number;
+  category: string;
+  imagePath: string;
+  lat: number;
+  lng: number;
+}
+
+export interface HotelInfo {
+  name: string;
+  region: string;
+  location: string;
+  rating: number;
+  sukbakPrice: number;
+  daesilPrice: number;
+  imagePath: string;
+  lat: number;
+  lng: number;
+}
+
 // 해당 장소 조회
 export const fetchPlaceDtoApi = async (
     authFetch: AuthFetch,
@@ -92,5 +115,42 @@ export const fetchPlaceSearchApi = async (
   } catch (err) {
     console.error('장소 검색 중 오류:', err);
     return { places: [], success: false };
+  }
+};
+
+// 지역별 식당 조회
+export const fetchRestaurantInfoApi = async (
+  authFetch: AuthFetch,
+  region: string
+): Promise<RestaurantInfo[]> => {
+  try {
+    const response: ApiResponse<RestaurantInfo[]> = await authFetch(
+      `/restaurant/info?region=${encodeURIComponent(region)}`,
+      {},
+      'GET'
+    );
+    return response.data ?? [];
+  } catch (err) {
+    console.error("식당 정보 불러오기 실패:", err);
+    return [];
+  }
+};
+
+
+// 지역별 호텔 조회
+export const fetchHotelInfoApi = async (
+  authFetch: AuthFetch,
+  region: string
+): Promise<HotelInfo[]> => {
+  try {
+    const response: ApiResponse<HotelInfo[]> = await authFetch(
+      `/hotel/info?region=${encodeURIComponent(region)}`,
+      {},
+      'GET'
+    );
+    return response.data ?? [];
+  } catch (err) {
+    console.error("호텔 정보 불러오기 실패:", err);
+    return [];
   }
 };
