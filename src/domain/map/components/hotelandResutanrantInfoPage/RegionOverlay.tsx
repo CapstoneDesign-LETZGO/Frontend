@@ -34,6 +34,7 @@ const RegionOverlay: React.FC<RegionOverlayProps> = ({ onClose }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [sortOption, setSortOption] = useState<"rating" | "distance" | "priceHigh" | "priceLow">("rating");
     const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+    const [categoryQuery, setCategoryQuery] = useState("");
 
     const {
         fetchRegionRestaurant,
@@ -79,7 +80,15 @@ const RegionOverlay: React.FC<RegionOverlayProps> = ({ onClose }) => {
         new Map(dataListWithDistance.map(item => [item.name, item])).values()
     );
 
-    const sortedDataList = [...uniqueDataList].sort((a, b) => {
+    const filteredDataList = selectedTab === "식당" && categoryQuery.trim() !== ""
+        ? uniqueDataList.filter((item) =>
+            (item as any).category?.split(" ").some((tag: string) =>
+                tag.toLowerCase().includes(categoryQuery.trim().toLowerCase())
+            )
+        )
+        : uniqueDataList;
+
+    const sortedDataList = [...filteredDataList].sort((a, b) => {
         const isHotel = selectedTab === "숙소";
 
         if (isHotel) {
@@ -101,15 +110,17 @@ const RegionOverlay: React.FC<RegionOverlayProps> = ({ onClose }) => {
         <div className="absolute inset-0 z-90 bg-white flex flex-col p-0 h-full">
             <div className="sticky top-0 bg-white z-10 p-4 pb-2">
                 <div className="flex justify-end mb-0">
-                    <button onClick={onClose} className="text-sm text-gray-500">
-                        닫기 ✕
-                    </button>
+                    <button onClick={onClose} className="text-sm text-gray-500">닫기 ✕</button>
                 </div>
+
                 <div className="flex justify-around border-b border-gray-200 mb-2">
                     {["식당", "숙소"].map((tab) => (
                         <button
                             key={tab}
-                            onClick={() => setSelectedTab(tab as "식당" | "숙소")}
+                            onClick={() => {
+                                setSelectedTab(tab as "식당" | "숙소");
+                                setCategoryQuery("");
+                            }}
                             className={`flex-1 text-center py-2 font-medium ${selectedTab === tab ? "text-black border-b-[2px] border-black" : "text-gray-400"}`}
                         >
                             {tab}
@@ -149,33 +160,25 @@ const RegionOverlay: React.FC<RegionOverlayProps> = ({ onClose }) => {
                     </div>
                 </div>
 
+                {selectedTab === "식당" && (
+                    <div className="mb-2">
+                        <input
+                            type="text"
+                            placeholder="카테고리 검색"
+                            value={categoryQuery}
+                            onChange={(e) => setCategoryQuery(e.target.value)}
+                            className="w-full border border-gray-300 px-4 py-2 rounded text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                        />
+                    </div>
+                )}
+
                 <div className="flex flex-wrap gap-2">
-                    <button
-                        onClick={() => setSortOption("rating")}
-                        className={`${baseBtnClass} ${sortOption === "rating" ? "bg-black text-white border-black" : "bg-white text-gray-600 border-gray-300"}`}
-                    >
-                        평점순
-                    </button>
-                    <button
-                        onClick={() => setSortOption("distance")}
-                        className={`${baseBtnClass} ${sortOption === "distance" ? "bg-black text-white border-black" : "bg-white text-gray-600 border-gray-300"}`}
-                    >
-                        거리순
-                    </button>
+                    <button onClick={() => setSortOption("rating")} className={`${baseBtnClass} ${sortOption === "rating" ? "bg-black text-white border-black" : "bg-white text-gray-600 border-gray-300"}`}>평점순</button>
+                    <button onClick={() => setSortOption("distance")} className={`${baseBtnClass} ${sortOption === "distance" ? "bg-black text-white border-black" : "bg-white text-gray-600 border-gray-300"}`}>거리순</button>
                     {selectedTab === "숙소" && (
                         <>
-                            <button
-                                onClick={() => setSortOption("priceHigh")}
-                                className={`${baseBtnClass} ${sortOption === "priceHigh" ? "bg-black text-white border-black" : "bg-white text-gray-600 border-gray-300"}`}
-                            >
-                                높은가격순
-                            </button>
-                            <button
-                                onClick={() => setSortOption("priceLow")}
-                                className={`${baseBtnClass} ${sortOption === "priceLow" ? "bg-black text-white border-black" : "bg-white text-gray-600 border-gray-300"}`}
-                            >
-                                낮은가격순
-                            </button>
+                            <button onClick={() => setSortOption("priceHigh")} className={`${baseBtnClass} ${sortOption === "priceHigh" ? "bg-black text-white border-black" : "bg-white text-gray-600 border-gray-300"}`}>높은가격순</button>
+                            <button onClick={() => setSortOption("priceLow")} className={`${baseBtnClass} ${sortOption === "priceLow" ? "bg-black text-white border-black" : "bg-white text-gray-600 border-gray-300"}`}>낮은가격순</button>
                         </>
                     )}
                 </div>
