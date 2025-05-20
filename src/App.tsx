@@ -1,11 +1,10 @@
-import { JSX, useState } from 'react';
+import {JSX, useEffect, useState} from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './domain/account/auth/pages/Login';
 import SignUp from './domain/account/auth/pages/Signup.tsx';
 import Profile from './domain/account/member/pages/Profile';
 import EditProfile from './domain/account/member/pages/EditProfile.tsx';
 import ChatMessage from './domain/chat/pages/ChatMessage';
-import ChatRoom from './domain/chat/pages/ChatRoom';
 import Community from './domain/community/pages/Community';
 import Map from './domain/map/pages/Map.tsx';
 import Notificate from './domain/notification/pages/Notificate.tsx';
@@ -19,8 +18,12 @@ import { LetzgoToastContainer } from './common/components/LetzgoToastContainer.t
 import SelectRegion from './domain/schedule/pages/SelectRegion';
 import RegisterSchedule from './domain/schedule/pages/RegisterSchedule';
 import ScheduleList from './domain/schedule/pages/ScheduleList';
+import ScheduleDetail from './domain/schedule/pages/ScheduleDetail';
+import SchedulePlaceRegister from './domain/schedule/pages/SchedulePlaceRegister';
 import { ScheduleProvider } from './domain/schedule/contexts/ScheduleContext';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import ChatRoomWithProvider from "./domain/chat/components/ChatRoom/ChatRoomWithProvider.tsx";
+import {initFirebaseMessaging} from "./common/libs/firebase.tsx";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +43,28 @@ const App = () => {
         );
     };
 
+    useEffect(() => {
+        initFirebaseMessaging();
+
+        Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+                console.log('알림 권한이 허용되었습니다.');
+            } else {
+                console.log('알림 권한이 거부되었습니다.');
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                .then(registration => {
+                    console.log('Service Worker registered:', registration);
+                })
+                .catch(err => {
+                    console.error('Service Worker registration failed:', err);
+                });
+        }
+    }, []);
+
     return (
         <QueryClientProvider client={queryClient}>
             <Router>
@@ -50,7 +75,6 @@ const App = () => {
                         <Route path="/sign-up" element={<SignUp />} />
                         <Route path="/find-password" element={<FindPassword />} />
 
-                        {/* 네비게이션 바 포함된 페이지 */}
                         {/* 네비게이션 바 포함된 페이지 (헤더 없이) */}
                         <Route path="/community" element={
                             <RequireAuth>
@@ -101,7 +125,7 @@ const App = () => {
                         } />
                         <Route path="/chat-room" element={
                             <RequireAuth>
-                                <ChatRoom />
+                                <ChatRoomWithProvider />
                             </RequireAuth>
                         } />
                         <Route path="/notification" element={
@@ -136,6 +160,21 @@ const App = () => {
                                     <ScheduleList />
                                 </ScheduleProvider>
                             </RequireAuth>
+                        } />
+                        <Route path="/schedule/detail/:id" element={
+                          <RequireAuth>
+                            <ScheduleProvider>
+                              <ScheduleDetail />
+                            </ScheduleProvider>
+                          </RequireAuth>
+                        } />
+
+                        <Route path="/schedule/register/place/:scheduleId" element={
+                          <RequireAuth>
+                            <ScheduleProvider>
+                              <SchedulePlaceRegister />
+                            </ScheduleProvider>
+                          </RequireAuth>
                         } />
 
                         {/* 기본 경로 */}

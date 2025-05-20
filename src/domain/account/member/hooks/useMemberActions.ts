@@ -161,7 +161,7 @@ export const useMemberActions = ({ mode = 'member', memberIdForOther }: UseMembe
             setLoading(false);
         }
     };
-    
+
     // 이메일 인증코드 전송
     const sendEmailCode = async (email: string): Promise<boolean> => {
         setLoading(true);
@@ -184,7 +184,7 @@ export const useMemberActions = ({ mode = 'member', memberIdForOther }: UseMembe
         setLoading(true);
         try {
             const result = await verifyEmailCodeApi(authFetch, email, code);
-            return result; 
+            return result;
         } catch (err) {
             toast.error("인증코드 확인 실패");
             return { success: false };
@@ -206,7 +206,6 @@ export const useMemberActions = ({ mode = 'member', memberIdForOther }: UseMembe
             setLoading(false);
         }
     };
-
 
     useEffect(() => {
         if (mode === 'member') {

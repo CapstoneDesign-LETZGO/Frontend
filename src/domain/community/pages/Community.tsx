@@ -1,9 +1,11 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import MainPostCard from '../components/MainPostCard.tsx';
 import CommentModal from '../components/comment/CommentModal';
 import CommunityHeader from "../components/CommunityHeader.tsx";
 import { usePost } from '../hooks/data/usePost.ts';
 import {usePullToRefresh} from "../hooks/render/usePullToRefresh.ts";
+import { useNotificationStore } from '../../../common/hooks/useNotificationStore.ts';
+import {useNotification} from "../../notification/hooks/useNotification.ts";
 
 const Community: React.FC = () => {
     const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
@@ -11,7 +13,23 @@ const Community: React.FC = () => {
     const [isCommentOpen, setIsCommentOpen] = useState(false);
     const [isHeaderVisible, setIsHeaderVisible] = useState(true);
     const { posts, refetchPost } = usePost();
-    const { postSectionRef, showSpinner } = usePullToRefresh(refetchPost);
+    const { fetchNotifications } = useNotification();
+    const setNotifications = useNotificationStore((state) => state.setNotifications);
+
+    const loadNotifications = async () => {
+        try {
+            const data = await fetchNotifications();
+            setNotifications(data);
+        } catch (error) {
+            console.error('알림을 불러오는 데 실패했습니다:', error);
+        }
+    };
+
+    const { postSectionRef, showSpinner } = usePullToRefresh([refetchPost, loadNotifications]);
+
+    useEffect(() => {
+        loadNotifications();
+    }, []);
 
     const openCommentModal = (postId: number, postMemberId: number) => {
         setSelectedPostId(postId);
