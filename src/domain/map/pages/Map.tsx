@@ -9,10 +9,12 @@ import { usePlaceInfo } from "../hooks/usePlaceInfo";
 import { motion, AnimatePresence } from "framer-motion";
 import { PlaceDto, Review } from "../../../common/interfaces/MapInterface.ts";
 import RegionOverlay from "../components/hotelandResutanrantInfoPage/RegionOverlay.tsx";
+import {useNavigate} from "react-router-dom";
 
-const Map: React.FC = () => {
+const Map: React.FC = ( ) => {
   const [placeDto, setPlaceDto] = useState<PlaceDto | null>(null);
-  const [placeReviews, setPlaceReviews] = useState<Review[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_placeReviews, setPlaceReviews] = useState<Review[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -20,6 +22,7 @@ const Map: React.FC = () => {
   const [isPoiClick, setIsPoiClick] = useState(false);
   const { fetchPlaceDto, fetchPlaceSearch, searchResults } = usePlaceInfo();
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -139,11 +142,18 @@ const Map: React.FC = () => {
                 exit={{ opacity: 0, y: 50 }}
                 transition={{ duration: 0.3 }}
               >
-                <PlacePage
-                  placeDto={placeDto}
-                  reviews={placeReviews}
-                  onClose={() => setPlaceDto(null)}
-                />
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-black/40 bg-opacity-40">
+                  <PlacePage
+                      placeDto={placeDto}
+                      reviews={_placeReviews} // 또는 실제 리뷰 상태로 바꾸기
+                      onClose={() => setPlaceDto(null)}
+                      onSelect={(place) => {
+                        // 장소 선택 시, 이전 페이지로 돌아가되 선택된 장소를 저장할 수 있게
+                        sessionStorage.setItem("selectedPlace", JSON.stringify(place));
+                        navigate(-1);
+                      }}
+                  />
+                </div>
               </motion.div>
             </div>
           )}
@@ -171,7 +181,6 @@ const Map: React.FC = () => {
             지역 숙소, 식당 목록
           </button>
         </div>
-
 
         <div className="absolute bottom-0 left-0 right-0 z-70">
           <NavigationBar />

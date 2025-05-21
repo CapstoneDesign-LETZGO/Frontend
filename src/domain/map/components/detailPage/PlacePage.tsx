@@ -9,12 +9,14 @@ interface PlacePageProps {
   placeDto: PlaceDto;
   reviews: Review[];
   onClose: () => void;
+  onSelect?: (placeDto: PlaceDto) => void;
 }
 
 const PlacePage: React.FC<PlacePageProps> = ({
   placeDto: initialPlaceDto,
   reviews: initialReviews,
   onClose,
+  onSelect,
 }) => {
   const [showForm, setShowForm] = useState(false);
   const [placeDto, setPlaceDto] = useState<PlaceDto>(initialPlaceDto);
@@ -71,14 +73,23 @@ const PlacePage: React.FC<PlacePageProps> = ({
         <PlaceHeader placeDto={placeDto} />
       </div>
 
-      {/* 리뷰 작성 버튼 */}
-      <div className="flex justify-end px-4 mt-2">
+      {/* 리뷰 작성 버튼 + 선택 버튼 */}
+      <div className="flex justify-end gap-2 px-4 mt-2">
         <button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-gray-500 text-white text-sm px-3 py-1.5 rounded hover:bg-gray-600"
+            onClick={() => setShowForm(!showForm)}
+            className="bg-gray-500 text-white text-sm px-3 py-1.5 rounded hover:bg-gray-600"
         >
-          리뷰 작성
+          {showForm ? "작성 취소" : "리뷰 작성"}
         </button>
+
+        {onSelect && (
+            <button
+                onClick={() => onSelect(placeDto)}
+                className="bg-blue-600 text-white text-sm px-3 py-1.5 rounded hover:bg-blue-700"
+            >
+              선택
+            </button>
+        )}
       </div>
 
       {/* 리뷰 작성 폼 */}

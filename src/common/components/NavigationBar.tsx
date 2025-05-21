@@ -32,13 +32,9 @@ const NavigationBar: React.FC = () => {
                     className="w-6 h-6"
                 />
             </div>
-            <div onClick={() => navigate('/add')}>
+            <div onClick={() => navigate('/manage-post')}>
                 <img
-                    src={
-                        isActive('/add')
-                            ? '/icons/system/add_fill.svg'
-                            : '/icons/system/add_line.svg'
-                    }
+                    src="/icons/system/add_line.svg"
                     alt="Add"
                     className="w-8 h-8"
                 />

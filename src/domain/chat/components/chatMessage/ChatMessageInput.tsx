@@ -11,6 +11,7 @@ const ChatMessageInput: React.FC<ChatMessageInputProps> = ({member, onSendMessag
     const [message, setMessage] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const MAX_IMAGES = 5;
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setMessage(e.target.value);
@@ -41,10 +42,15 @@ const ChatMessageInput: React.FC<ChatMessageInputProps> = ({member, onSendMessag
         const files = e.target.files;
         if (!files) return;
 
-        const imageFiles = Array.from(files).slice(0, 5); // 최대 5개 제한
-        onSendImageMessage(imageFiles);
+        const selectedFiles = Array.from(files);
+        if (selectedFiles.length > MAX_IMAGES) {
+            alert(`이미지는 최대 ${MAX_IMAGES}장까지만 선택할 수 있습니다.`);
+        }
 
-        // 초기화해서 같은 파일 다시 선택 가능하도록
+        const limitedFiles = selectedFiles.slice(0, MAX_IMAGES);
+        onSendImageMessage(limitedFiles);
+
+        // input 초기화 (같은 파일 다시 선택 가능)
         e.target.value = '';
     };
 
