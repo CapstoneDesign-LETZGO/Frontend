@@ -185,7 +185,7 @@ const RegionOverlay: React.FC<RegionOverlayProps> = ({ onClose }) => {
             </div>
 
             <div className="flex-1 overflow-y-auto px-4 pb-4">
-                {sortedDataList.map((item, idx) => {
+                {sortedDataList.map((item) => {
                     const isHotel = selectedTab === "숙소";
                     return (
                         <PlaceCard
