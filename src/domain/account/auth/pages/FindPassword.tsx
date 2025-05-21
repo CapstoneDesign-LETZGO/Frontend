@@ -79,7 +79,7 @@ const FindAccountPage: React.FC = () => {
 
                 {step === 2 && (
                     <>
-                        <h2 className="text-xl font-semibold mb-2 mt-90 text-center">인증 코드 입력</h2>
+                        <h2 className="text-xl font-semibold mb-2 mt-60 text-center">인증 코드 입력</h2>
                         <p className="text-base text-gray-600 mb-2 text-center">
                             {email} 으로 전송된 인증 코드를 입력해주세요.
                         </p>
@@ -110,7 +110,7 @@ const FindAccountPage: React.FC = () => {
 
                 {step === 3 && (
                     <>
-                        <h2 className="text-center text-xl font-semibold mb-2 mt-90">새 비밀번호 입력</h2>
+                        <h2 className="text-center text-xl font-semibold mb-2 mt-55">새 비밀번호 입력</h2>
                         <p className="text-base text-gray-600 mb-10 text-center">
                             보안을 위해 특수문자를 포함한 6자 이상의<br />비밀번호를 만들어주세요.
                         </p>
