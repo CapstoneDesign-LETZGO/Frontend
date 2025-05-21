@@ -4,10 +4,10 @@ import { MemberDto } from '../../../common/interfaces/MemberInterface.ts';
 import { useNavigate } from 'react-router-dom';
 import {ChatRoomDto, ChatRoomForm, ChatWebSocketPayload} from "../../../common/interfaces/ChatInterface.ts";
 import { useDebounce } from '../../../common/hooks/useDebounce.ts';
-import ChatRoomSearchBar from '../components/ChatRoom/ChatRoomSearchBar.tsx';
-import ChatRoomCard from '../components/ChatRoom/ChatRoomCard.tsx';
-import SearchResultCard from "../components/ChatRoom/SearchResultCard.tsx";
-import ChatRoomHeader from "../components/ChatRoom/ChatRoomHeader.tsx";
+import ChatRoomSearchBar from '../components/chatRoom/ChatRoomSearchBar.tsx';
+import ChatRoomCard from '../components/chatRoom/ChatRoomCard.tsx';
+import SearchResultCard from "../components/chatRoom/SearchResultCard.tsx";
+import ChatRoomHeader from "../components/chatRoom/ChatRoomHeader.tsx";
 import {useChatRoomWebSocket} from "../../../common/hooks/ChatRoomWebSocketContext.tsx";
 
 interface ChatRoomProps {

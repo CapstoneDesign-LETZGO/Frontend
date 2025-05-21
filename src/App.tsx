@@ -22,8 +22,9 @@ import ScheduleDetail from './domain/schedule/pages/ScheduleDetail';
 import SchedulePlaceRegister from './domain/schedule/pages/SchedulePlaceRegister';
 import { ScheduleProvider } from './domain/schedule/contexts/ScheduleContext';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import ChatRoomWithProvider from "./domain/chat/components/ChatRoom/ChatRoomWithProvider.tsx";
+import ChatRoomWithProvider from "./domain/chat/components/chatRoom/ChatRoomWithProvider.tsx";
 import {initFirebaseMessaging} from "./common/libs/firebase.tsx";
+import ManagePost from "./domain/community/components/managePost/ManagePost.tsx";
 
 const queryClient = new QueryClient();
 
@@ -118,6 +119,11 @@ const App = () => {
                         } />
 
                         {/* 네비게이션 바 없이 로그인 필요 */}
+                        <Route path="/manage-post" element={
+                            <RequireAuth>
+                                <ManagePost />
+                            </RequireAuth>
+                        } />
                         <Route path="/chat-message" element={
                             <RequireAuth>
                                 <ChatMessage />

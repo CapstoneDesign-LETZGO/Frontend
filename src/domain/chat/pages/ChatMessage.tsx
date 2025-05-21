@@ -1,7 +1,7 @@
-import ChatMessageHeader from "../components/ChatMessage/ChatMessageHeader.tsx";
-import ChatMessageInput from "../components/ChatMessage/ChatMessageInput.tsx";
+import ChatMessageHeader from "../components/chatMessage/ChatMessageHeader.tsx";
+import ChatMessageInput from "../components/chatMessage/ChatMessageInput.tsx";
 import { useLocation } from "react-router-dom";
-import ChatMessageList from "../components/ChatMessage/ChatMessageList.tsx";
+import ChatMessageList from "../components/chatMessage/ChatMessageList.tsx";
 import { ChatMessageDto, ChatWebSocketPayload } from "../../../common/interfaces/ChatInterface.ts";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useChatMessage } from "../hooks/useChatMessage.ts";
