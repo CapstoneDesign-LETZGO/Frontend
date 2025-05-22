@@ -57,7 +57,7 @@ export const addPostApi = async (
         const formData = new FormData();
         formData.append('postForm', new Blob([JSON.stringify(form)], { type: 'application/json' }));
         imageFiles.forEach((file) => {
-            formData.append('imageFile', file);
+            formData.append('imageFiles', file);
         });
         const response = await authFetch<ApiResponse<string>>(
             '/rest-api/v1/post',
@@ -139,6 +139,25 @@ export const cancelSavePostApi = async (
         return { success: isSuccess(response) };
     } catch (err) {
         console.error("저장 취소 처리 중 오류:", err);
+        return { success: false };
+    }
+};
+
+// 게시글 삭제
+export const deletePostApi = async (
+    authFetch: AuthFetch,
+    postId: number
+): Promise<{ success: boolean }> => {
+    try {
+        const response = await authFetch<ApiResponse<null>>(
+            `/rest-api/v1/post/${postId}`,
+            {},
+            'DELETE'
+        );
+        console.log('Delete Post Response:', response);
+        return { success: isSuccess(response) };
+    } catch (err) {
+        console.error("게시글 삭제 중 오류:", err);
         return { success: false };
     }
 };

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { DetailPostDto } from "../../../../common/interfaces/CommunityInterface";
-import MainPostCard from "../../../community/components/MainPostCard";
+import MainPostCard from "../../../community/components/post/MainPostCard";
 import CommentModal from "../../../community/components/comment/CommentModal";
 
 interface Props {

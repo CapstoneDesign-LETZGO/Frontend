@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {addPostApi, fetchMemberPostApi, fetchPostApi} from '../../services/PostService.ts';
+import {addPostApi, deletePostApi, fetchMemberPostApi, fetchPostApi} from '../../services/PostService.ts';
 import {DetailPostDto, PostForm} from '../../../../common/interfaces/CommunityInterface.ts';
 import { useAuthFetch } from '../../../../common/hooks/useAuthFetch';
 import {toast} from "react-toastify";
@@ -56,6 +56,19 @@ export const usePost = (mode: Mode = 'all', memberId?: number) => {
         }
     };
 
+    // 게시글 삭제
+    const deletePost = async (postId: number) => {
+        setLoading(true);
+        try {
+            await deletePostApi(authFetch, postId);
+        } catch (err) {
+            console.error('게시글 삭제 중 오류 발생:', err);
+            toast.error('게시글 삭제 중 오류가 발생했습니다.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     // mode에 따라 초기 fetch
     useEffect(() => {
         if (mode === 'all') {
@@ -73,5 +86,5 @@ export const usePost = (mode: Mode = 'all', memberId?: number) => {
         }
     };
 
-    return { addPost, posts, loading, refetchPost };
+    return { addPost, posts, loading, refetchPost, deletePost };
 };

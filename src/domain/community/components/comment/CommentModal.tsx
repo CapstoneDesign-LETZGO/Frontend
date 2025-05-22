@@ -3,16 +3,17 @@ import CommentList from './CommentList.tsx';
 import {useDraggableModal} from "../../hooks/render/useDraggableModal.ts";
 import {useComment} from "../../hooks/data/useComment.ts";
 import { CommentDto } from '../../../../common/interfaces/CommunityInterface.ts';
-import {useMemberActions} from "../../../account/member/hooks/useMemberActions.ts";
+import { MemberDto } from '../../../../common/interfaces/MemberInterface.ts';
 
 interface CommentModalProps {
     isOpen: boolean;
     closeModal: () => void;
     postId: number | null;
     postMemberId: number | null;
+    member: MemberDto | null;
 }
 
-const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, postMemberId}) => {
+const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, postMemberId, member}) => {
     const commentsRef = useRef<HTMLDivElement>(null);
     const modalRef = useRef<HTMLDivElement>(null);
     const headerRef = useRef<HTMLDivElement>(null);
@@ -24,7 +25,6 @@ const CommentModal: React.FC<CommentModalProps> = ({isOpen, closeModal, postId, 
     const [superCommentId, setSuperCommentId] = useState<number | null>(null); // 댓글 or 답글 구분
     const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
     const { comments, addComment, updateComment, deleteComment, likeComment, cancelLikeComment, refetchComment } = useComment(postId || 0);
-    const { member } = useMemberActions();
     const inputRef = useRef<HTMLInputElement>(null);
 
     const fetchAndSetComments = async () => {

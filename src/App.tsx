@@ -25,6 +25,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ChatRoomWithProvider from "./domain/chat/components/chatRoom/ChatRoomWithProvider.tsx";
 import {initFirebaseMessaging} from "./common/libs/firebase.tsx";
 import ManagePost from "./domain/community/components/managePost/ManagePost.tsx";
+import {RecoilRoot} from "recoil";
 
 const queryClient = new QueryClient();
 
@@ -67,131 +68,48 @@ const App = () => {
     }, []);
 
     return (
-        <QueryClientProvider client={queryClient}>
-            <Router>
-                <div className="min-h-screen flex flex-col bg-white lg:bg-gray-100">
-                    <Routes>
-                        {/* 로그인 관련 페이지 */}
-                        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
-                        <Route path="/sign-up" element={<SignUp />} />
-                        <Route path="/find-password" element={<FindPassword />} />
+        <RecoilRoot> {/* Recoil 상태를 사용하는 모든 컴포넌트를 감싸는 최상위 루트 */}
+            <QueryClientProvider client={queryClient}>
+                <Router>
+                    <div className="min-h-screen flex flex-col bg-white lg:bg-gray-100">
+                        <Routes>
+                            {/* 로그인 관련 */}
+                            <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+                            <Route path="/sign-up" element={<SignUp />} />
+                            <Route path="/find-password" element={<FindPassword />} />
 
-                        {/* 네비게이션 바 포함된 페이지 (헤더 없이) */}
-                        <Route path="/community" element={
-                            <RequireAuth>
-                                <LayoutWithNav>
-                                    <Community />
-                                </LayoutWithNav>
-                            </RequireAuth>
-                        } />
-                        <Route path="/map" element={
-                            <LayoutWithNav>
-                                <Map />
-                            </LayoutWithNav>
-                        } />
-                        <Route path="/schedule" element={
-                            <RequireAuth>
-                                <LayoutWithNav>
-                                    <Schedule />
-                                </LayoutWithNav>
-                            </RequireAuth>
-                        } />
-                        <Route path="/profile" element={
-                            <RequireAuth>
-                                <LayoutWithNav>
-                                    <Profile />
-                                </LayoutWithNav>
-                            </RequireAuth>
-                        } />
-                        <Route path="/profile/:memberId" element={
-                            <RequireAuth>
-                                <LayoutWithNav>
-                                    <Profile />
-                                </LayoutWithNav>
-                            </RequireAuth>
-                        } />
-                        <Route path="/edit-profile" element={
-                            <RequireAuth>
-                                <LayoutWithNav>
-                                    <EditProfile />
-                                </LayoutWithNav>
-                            </RequireAuth>
-                        } />
+                            {/* 네비게이션 바 포함 */}
+                            <Route path="/community" element={<RequireAuth><LayoutWithNav><Community /></LayoutWithNav></RequireAuth>} />
+                            <Route path="/map" element={<LayoutWithNav><Map /></LayoutWithNav>} />
+                            <Route path="/schedule" element={<RequireAuth><LayoutWithNav><Schedule /></LayoutWithNav></RequireAuth>} />
+                            <Route path="/profile" element={<RequireAuth><LayoutWithNav><Profile /></LayoutWithNav></RequireAuth>} />
+                            <Route path="/profile/:memberId" element={<RequireAuth><LayoutWithNav><Profile /></LayoutWithNav></RequireAuth>} />
+                            <Route path="/edit-profile" element={<RequireAuth><LayoutWithNav><EditProfile /></LayoutWithNav></RequireAuth>} />
 
-                        {/* 네비게이션 바 없이 로그인 필요 */}
-                        <Route path="/manage-post" element={
-                            <RequireAuth>
-                                <ManagePost />
-                            </RequireAuth>
-                        } />
-                        <Route path="/chat-message" element={
-                            <RequireAuth>
-                                <ChatMessage />
-                            </RequireAuth>
-                        } />
-                        <Route path="/chat-room" element={
-                            <RequireAuth>
-                                <ChatRoomWithProvider />
-                            </RequireAuth>
-                        } />
-                        <Route path="/notification" element={
-                            <RequireAuth>
-                                <Notificate />
-                            </RequireAuth>
-                        } />
-                        <Route path="/recommend" element={
-                            <RequireAuth>
-                                <Recommend />
-                            </RequireAuth>
-                        } />
+                            {/* 로그인 필요하나 네비게이션 바 없음 */}
+                            <Route path="/manage-post" element={<RequireAuth><ManagePost /></RequireAuth>} />
+                            <Route path="/chat-message" element={<RequireAuth><ChatMessage /></RequireAuth>} />
+                            <Route path="/chat-room" element={<RequireAuth><ChatRoomWithProvider /></RequireAuth>} />
+                            <Route path="/notification" element={<RequireAuth><Notificate /></RequireAuth>} />
+                            <Route path="/recommend" element={<RequireAuth><Recommend /></RequireAuth>} />
 
-                        {/* 일정 등록 플로우: ScheduleProvider 적용 */}
-                        <Route path="/schedule/region" element={
-                            <RequireAuth>
-                                <ScheduleProvider>
-                                    <SelectRegion />
-                                </ScheduleProvider>
-                            </RequireAuth>
-                        } />
-                        <Route path="/schedule/register" element={
-                            <RequireAuth>
-                                <ScheduleProvider>
-                                    <RegisterSchedule />
-                                </ScheduleProvider>
-                            </RequireAuth>
-                        } />
-                        <Route path="/schedule/list" element={
-                            <RequireAuth>
-                                <ScheduleProvider>
-                                    <ScheduleList />
-                                </ScheduleProvider>
-                            </RequireAuth>
-                        } />
-                        <Route path="/schedule/detail/:id" element={
-                          <RequireAuth>
-                            <ScheduleProvider>
-                              <ScheduleDetail />
-                            </ScheduleProvider>
-                          </RequireAuth>
-                        } />
+                            {/* 일정 등록 플로우 */}
+                            <Route path="/schedule/region" element={<RequireAuth><ScheduleProvider><SelectRegion /></ScheduleProvider></RequireAuth>} />
+                            <Route path="/schedule/register" element={<RequireAuth><ScheduleProvider><RegisterSchedule /></ScheduleProvider></RequireAuth>} />
+                            <Route path="/schedule/list" element={<RequireAuth><ScheduleProvider><ScheduleList /></ScheduleProvider></RequireAuth>} />
+                            <Route path="/schedule/detail/:id" element={<RequireAuth><ScheduleProvider><ScheduleDetail /></ScheduleProvider></RequireAuth>} />
+                            <Route path="/schedule/register/place/:scheduleId" element={<RequireAuth><ScheduleProvider><SchedulePlaceRegister /></ScheduleProvider></RequireAuth>} />
 
-                        <Route path="/schedule/register/place/:scheduleId" element={
-                          <RequireAuth>
-                            <ScheduleProvider>
-                              <SchedulePlaceRegister />
-                            </ScheduleProvider>
-                          </RequireAuth>
-                        } />
+                            {/* 기본 경로 */}
+                            <Route path="/*" element={<Navigate to={isLoggedIn ? "/community" : "/login"} replace />} />
+                        </Routes>
 
-                        {/* 기본 경로 */}
-                        <Route path="/*" element={<Navigate to={isLoggedIn ? "/community" : "/login"} replace />} />
-                    </Routes>
-
-                    {/* Letzgo 토스트 컨테이너 추가 */}
-                    <LetzgoToastContainer />
-                </div>
-            </Router>
-        </QueryClientProvider>
+                        {/* 토스트 */}
+                        <LetzgoToastContainer />
+                    </div>
+                </Router>
+            </QueryClientProvider>
+        </RecoilRoot>
     );
 };
 

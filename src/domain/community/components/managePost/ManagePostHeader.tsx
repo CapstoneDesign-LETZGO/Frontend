@@ -1,38 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { usePlaceStore } from '../../../../common/libs/placeStore';
+import { openDB } from 'idb';
+
+const DB_NAME = 'ManagePostDB';
+const STORE_NAME = 'posts';
+
+async function clearPostData() {
+    const db = await openDB(DB_NAME, 1);
+    await db.delete(STORE_NAME, 'post');
+}
 
 const ManagePostHeader: React.FC = () => {
     const navigate = useNavigate();
-    const [isVisible, setIsVisible] = useState(true);
-    const [lastScrollTop, setLastScrollTop] = useState(0);
+    const { clearSelectedPlace } = usePlaceStore();
 
-    const handleScroll = () => {
-        const currentScrollTop = window.pageYOffset;
-
-        if (currentScrollTop > lastScrollTop && currentScrollTop > 60) {
-            setIsVisible(false);
-        } else {
-            setIsVisible(true);
-        }
-
-        setLastScrollTop(currentScrollTop <= 0 ? 0 : currentScrollTop);
+    const handleExit = async () => {
+        await clearPostData();           // IndexedDB 데이터 삭제
+        clearSelectedPlace();           // 선택된 장소 초기화
+        navigate(-1);                   // 이전 페이지로 이동
     };
-
-    useEffect(() => {
-        window.addEventListener('scroll', handleScroll);
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, [lastScrollTop]);
 
     return (
         <header
-            className={`flex items-center p-4 bg-white fixed top-0 left-1/2 transform -translate-x-1/2 w-full max-w-md mx-auto z-50 transition-transform duration-300 ${
-                isVisible ? 'translate-y-0' : '-translate-y-full'
-            }`}
+            className={`flex items-center p-4 bg-white fixed top-0 left-1/2 transform -translate-x-1/2 w-full max-w-md mx-auto z-50 transition-transform duration-300`}
         >
             {/* 닫기 아이콘 */}
-            <div onClick={() => navigate(-1)} className="cursor-pointer ml-2">
+            <div onClick={handleExit} className="cursor-pointer ml-2">
                 <img src="/icons/system/close_line.svg" alt="Close" className="h-6" />
             </div>
 
