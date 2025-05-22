@@ -9,7 +9,7 @@ import { usePlaceInfo } from "../hooks/usePlaceInfo";
 import { motion, AnimatePresence } from "framer-motion";
 import { PlaceDto, Review } from "../../../common/interfaces/MapInterface.ts";
 import RegionOverlay from "../components/hotelandResutanrantInfoPage/RegionOverlay.tsx";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 const Map: React.FC = ( ) => {
   const [placeDto, setPlaceDto] = useState<PlaceDto | null>(null);
@@ -23,24 +23,31 @@ const Map: React.FC = ( ) => {
   const { fetchPlaceDto, fetchPlaceSearch, searchResults } = usePlaceInfo();
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const fromManage = location.state?.from === 'manage';
+  const initialLat = location.state?.lat;
+  const initialLng = location.state?.lng;
 
   useEffect(() => {
-    if (navigator.geolocation) {
+    if (initialLat && initialLng) {
+      const loc = { lat: initialLat, lng: initialLng };
+      setMapCenter(loc);
+    } else if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const loc = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-          setUserLocation(loc);
-          setMapCenter(loc);
-        },
-        (err) => {
-          console.warn("위치 정보를 가져오는 데 실패했습니다:", err);
-        }
+          (position) => {
+            const loc = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            };
+            setUserLocation(loc);
+            setMapCenter(loc);
+          },
+          (err) => {
+            console.warn("위치 정보를 가져오는 데 실패했습니다:", err);
+          }
       );
     }
-  }, []);
+  }, [initialLat, initialLng]);
 
   const handleSearch = useCallback(
     async (query: string) => {
@@ -110,6 +117,7 @@ const Map: React.FC = ( ) => {
               center={mapCenter}
               isPoiClick={isPoiClick}
               selectedPlace={placeDto}
+              markerPosition={initialLat && initialLng ? { lat: initialLat, lng: initialLng } : null}
             />
           )}
         </div>
@@ -145,13 +153,10 @@ const Map: React.FC = ( ) => {
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-black/40 bg-opacity-40">
                   <PlacePage
                       placeDto={placeDto}
-                      reviews={_placeReviews} // 또는 실제 리뷰 상태로 바꾸기
+                      reviews={_placeReviews}
                       onClose={() => setPlaceDto(null)}
-                      onSelect={(place) => {
-                        // 장소 선택 시, 이전 페이지로 돌아가되 선택된 장소를 저장할 수 있게
-                        sessionStorage.setItem("selectedPlace", JSON.stringify(place));
-                        navigate(-1);
-                      }}
+                      onSelect={fromManage ? () => navigate(-1) : undefined}
+                      showSelectButton={fromManage}
                   />
                 </div>
               </motion.div>

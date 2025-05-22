@@ -1,6 +1,6 @@
 import React, {useState, useEffect, RefObject} from 'react';
 import { useNavigate } from 'react-router-dom';
-import {useNotificationStore} from "../../../common/hooks/useNotificationStore.ts";
+import {useNotificationStore} from "../../../../common/hooks/useNotificationStore.ts";
 
 interface CommunityHeaderProps {
     scrollContainerRef: RefObject<HTMLDivElement | null>;

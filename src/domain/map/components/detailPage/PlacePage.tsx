@@ -4,12 +4,14 @@ import ReviewList from "./ReviewList";
 import ReviewForm from "./ReviewForm";
 import { usePlaceInfo } from "../../hooks/usePlaceInfo";
 import { PlaceDto, Review } from "../../../../common/interfaces/MapInterface.ts";
+import {usePlaceStore} from "../../../../common/libs/placeStore.ts";
 
 interface PlacePageProps {
   placeDto: PlaceDto;
   reviews: Review[];
   onClose: () => void;
   onSelect?: (placeDto: PlaceDto) => void;
+  showSelectButton?: boolean;
 }
 
 const PlacePage: React.FC<PlacePageProps> = ({
@@ -17,12 +19,14 @@ const PlacePage: React.FC<PlacePageProps> = ({
   reviews: initialReviews,
   onClose,
   onSelect,
+  showSelectButton
 }) => {
   const [showForm, setShowForm] = useState(false);
   const [placeDto, setPlaceDto] = useState<PlaceDto>(initialPlaceDto);
   const [reviews, setReviews] = useState<Review[]>(initialReviews);
 
   const { postReview, fetchPlaceDto, deleteReview } = usePlaceInfo();
+  const { setSelectedPlace } = usePlaceStore(); // 전역 상태 setter 가져오기
 
   const refreshReviews = async () => {
     const updated = await fetchPlaceDto(placeDto.placeId);
@@ -82,9 +86,12 @@ const PlacePage: React.FC<PlacePageProps> = ({
           {showForm ? "작성 취소" : "리뷰 작성"}
         </button>
 
-        {onSelect && (
+        {onSelect && showSelectButton && (
             <button
-                onClick={() => onSelect(placeDto)}
+                onClick={() => {
+                  setSelectedPlace(placeDto);
+                  onSelect(placeDto);
+                }}
                 className="bg-blue-600 text-white text-sm px-3 py-1.5 rounded hover:bg-blue-700"
             >
               선택

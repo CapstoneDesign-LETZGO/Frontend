@@ -10,15 +10,16 @@ interface MapViewProps {
   center?: { lat: number; lng: number };
   isPoiClick?: boolean;
   selectedPlace?: PlaceDto | null;
+  markerPosition?: { lat: number; lng: number } | null;
 }
 
-const MapView: React.FC<MapViewProps> = ({ onSelectPlace, selectedCategory, center, isPoiClick, selectedPlace }) => {
+const MapView: React.FC<MapViewProps> = ({ onSelectPlace, selectedCategory, center, isPoiClick, selectedPlace, markerPosition }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
   const selectedMarkerRef = useRef<google.maps.Marker | null>(null); // 선택 장소용 마커
   const { fetchPlaceSearch, searchResults } = usePlaceInfo();
-
+  const markerPositionRef = useRef<google.maps.Marker | null>(null);
 
   // 구글 맵 스크립트 로드 + 초기화
   useEffect(() => {
@@ -147,6 +148,27 @@ const MapView: React.FC<MapViewProps> = ({ onSelectPlace, selectedCategory, cent
       markersRef.current.push(marker);
     });
   }, [searchResults]);
+
+  // markerPosition 마커 표시(게시글의 위치정보)
+  useEffect(() => {
+    if (!mapInstance.current || !markerPosition) return;
+    // 기존 마커 제거
+    if (markerPositionRef.current) {
+      markerPositionRef.current.setMap(null);
+    }
+    const marker = new window.google.maps.Marker({
+      position: markerPosition,
+      map: mapInstance.current,
+      title: "지정된 위치",
+      icon: {
+        url: markerImage,
+        scaledSize: new window.google.maps.Size(50, 50),
+      },
+    });
+    markerPositionRef.current = marker;
+    // 중심도 이동 (필요 시)
+    mapInstance.current.setCenter(markerPosition);
+  }, [markerPosition]);
 
   return <div ref={mapRef} className="w-full h-full m-0 p-0 min-h-screen z-10" />;
 };

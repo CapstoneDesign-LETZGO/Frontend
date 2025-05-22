@@ -2,9 +2,14 @@ import React, { useRef } from 'react';
 
 const MAX_IMAGES = 5;
 
+interface ImageData {
+    file: File;
+    preview: string;
+}
+
 interface AddImageProps {
-    images: string[];
-    setImages: React.Dispatch<React.SetStateAction<string[]>>;
+    images: ImageData[];
+    setImages: React.Dispatch<React.SetStateAction<ImageData[]>>;
 }
 
 const AddImage: React.FC<AddImageProps> = ({ images, setImages }) => {
@@ -17,15 +22,17 @@ const AddImage: React.FC<AddImageProps> = ({ images, setImages }) => {
             e.target.value = '';
             return;
         }
-        const selectedImages = files.slice(0, MAX_IMAGES - images.length);
+        const selectedFiles = files.slice(0, MAX_IMAGES - images.length);
+
         Promise.all(
-            selectedImages.map((file) => {
-                return new Promise<string>((resolve) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result as string);
-                    reader.readAsDataURL(file);
-                });
-            })
+            selectedFiles.map(
+                (file) =>
+                    new Promise<ImageData>((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve({ file, preview: reader.result as string });
+                        reader.readAsDataURL(file);
+                    })
+            )
         ).then((newImages) => {
             setImages((prev) => [...prev, ...newImages]);
         });
@@ -36,25 +43,19 @@ const AddImage: React.FC<AddImageProps> = ({ images, setImages }) => {
         <>
             {images.length > 0 && (
                 <div className="flex space-x-2 overflow-x-auto overflow-y-hidden pb-2 max-w-full">
-                    {images.map((src, index) => (
+                    {images.map(({ preview }, index) => (
                         <div key={index} className="relative w-60 h-60 flex-shrink-0">
                             <img
-                                src={src}
+                                src={preview}
                                 alt={`uploaded-${index}`}
                                 className="w-full h-full object-cover rounded-md"
                             />
                             <button
                                 type="button"
-                                onClick={() =>
-                                    setImages((prev) => prev.filter((_, i) => i !== index))
-                                }
+                                onClick={() => setImages((prev) => prev.filter((_, i) => i !== index))}
                                 className="absolute top-1 right-1 bg-white bg-opacity-70 rounded-full p-1 hover:bg-opacity-100 transition"
                             >
-                                <img
-                                    src="/icons/system/close_line.svg"
-                                    alt="삭제"
-                                    className="w-4 h-4"
-                                />
+                                <img src="/icons/system/close_line.svg" alt="삭제" className="w-4 h-4" />
                             </button>
                         </div>
                     ))}

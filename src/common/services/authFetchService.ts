@@ -3,17 +3,17 @@ import authApi from "../libs/authApi.ts";
 import publicApi from "../libs/publicApi.ts";
 import { ApiResponse } from '../interfaces/response/ApiResponse.ts';
 
-// ✅ FormData 판별
+// FormData 판별
 function isFormData(body: unknown): body is FormData {
   return typeof FormData !== 'undefined' && body instanceof FormData;
 }
 
-// ✅ AxiosError 타입 가드
+// AxiosError 타입 가드
 function isAxiosError(error: unknown): error is AxiosError {
   return (error as AxiosError).isAxiosError !== undefined;
 }
 
-// ✅ 토큰 자동 갱신 함수
+// 토큰 자동 갱신 함수
 export const tryRefreshToken = async (): Promise<boolean> => {
   const userToken = JSON.parse(localStorage.getItem('userToken') || '{}');
   const refreshUrl = '/rest-api/v1/auth/refresh-token';
@@ -38,7 +38,7 @@ export const tryRefreshToken = async (): Promise<boolean> => {
   return false;
 };
 
-// ✅ 인증 API 요청 함수 (returnCode 유무 유연 처리)
+// 인증 API 요청 함수 (returnCode 유무 유연 처리)
 export const authFetch = async <T>(
   url: string,
   data: Record<string, unknown> | FormData = {},
@@ -76,7 +76,7 @@ export const authFetch = async <T>(
     const responseData = response.data;
     console.log('[authFetch] Response:', responseData);
 
-    // ✅ returnCode가 있는 경우 (표준 응답)
+    // returnCode가 있는 경우 (표준 응답)
     if (typeof responseData === 'object' && responseData !== null && 'returnCode' in responseData) {
       if (responseData.returnCode === 'SUCCESS') {
         return responseData as ApiResponse<T>;
@@ -84,7 +84,7 @@ export const authFetch = async <T>(
       throw new Error(responseData?.returnMessage || 'Invalid response format');
     }
 
-    // ✅ 단순 숫자/문자/객체 응답인 경우 유연 처리
+    // 단순 숫자/문자/객체 응답인 경우 유연 처리
     return {
       returnCode: 'SUCCESS',
       returnMessage: 'OK',
@@ -130,7 +130,7 @@ export const authFetch = async <T>(
   }
 };
 
-// ✅ authFetch의 결과에서 data만 추출
+// authFetch의 결과에서 data만 추출
 export const authFetchData = async <T>(
   url: string,
   data: Record<string, unknown> | FormData = {},
@@ -138,7 +138,7 @@ export const authFetchData = async <T>(
 ): Promise<T> => {
   const response: any = await authFetch<T>(url, data, method);
 
-  // ✅ returnCode가 없는 경우 (단순 숫자/문자 등)
+  // returnCode가 없는 경우 (단순 숫자/문자 등)
   if (
     typeof response !== "object" ||
     response === null ||
@@ -147,7 +147,7 @@ export const authFetchData = async <T>(
     return response as T;
   }
 
-  // ✅ 정상 API 응답에서 data 추출
+  // 정상 API 응답에서 data 추출
   if (response.returnCode !== "SUCCESS") {
     throw new Error(response.returnMessage || "요청 실패");
   }

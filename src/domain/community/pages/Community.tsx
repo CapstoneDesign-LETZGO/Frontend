@@ -1,20 +1,22 @@
 import React, {useEffect, useState} from 'react';
-import MainPostCard from '../components/MainPostCard.tsx';
+import MainPostCard from '../components/post/MainPostCard.tsx';
 import CommentModal from '../components/comment/CommentModal';
-import CommunityHeader from "../components/CommunityHeader.tsx";
+import CommunityHeader from "../components/post/CommunityHeader.tsx";
 import { usePost } from '../hooks/data/usePost.ts';
 import {usePullToRefresh} from "../hooks/render/usePullToRefresh.ts";
 import { useNotificationStore } from '../../../common/hooks/useNotificationStore.ts';
 import {useNotification} from "../../notification/hooks/useNotification.ts";
+import {useMemberActions} from "../../account/member/hooks/useMemberActions.ts";
 
 const Community: React.FC = () => {
     const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
     const [selectedPostMemberId, setSelectedPostMemberId] = useState<number | null>(null);
     const [isCommentOpen, setIsCommentOpen] = useState(false);
     const [isHeaderVisible, setIsHeaderVisible] = useState(true);
-    const { posts, refetchPost } = usePost();
+    const { posts, refetchPost, deletePost } = usePost();
     const { fetchNotifications } = useNotification();
     const setNotifications = useNotificationStore((state) => state.setNotifications);
+    const { member } = useMemberActions();
 
     const loadNotifications = async () => {
         try {
@@ -73,6 +75,9 @@ const Community: React.FC = () => {
                                 key={`${post.id}-${post.likeCount}`}
                                 openCommentModal={() => openCommentModal(post.id, post.memberId)}
                                 post={post}
+                                member={member}
+                                deletePost={deletePost}
+                                refetchPost={refetchPost}
                             />
                         )))
                     }
@@ -84,6 +89,7 @@ const Community: React.FC = () => {
                     closeModal={closeCommentModal}
                     postId={selectedPostId}
                     postMemberId={selectedPostMemberId}
+                    member={member}
                 />
             </div>
         </div>
