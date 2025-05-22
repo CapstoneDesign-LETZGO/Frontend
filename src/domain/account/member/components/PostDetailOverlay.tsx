@@ -3,14 +3,18 @@ import { ArrowLeft } from "lucide-react";
 import { DetailPostDto } from "../../../../common/interfaces/CommunityInterface";
 import MainPostCard from "../../../community/components/post/MainPostCard";
 import CommentModal from "../../../community/components/comment/CommentModal";
+import { MemberDto } from "../../../../common/interfaces/MemberInterface";
 
 interface Props {
     post: DetailPostDto;
+    member: MemberDto | null;
+    refetchPost: () => void;
+    deletePost: (postId: number) => void;
     onClose: () => void;
     allPosts: DetailPostDto[];
 }
 
-const PostDetailOverlay: React.FC<Props> = ({ post, onClose, allPosts }) => {
+const PostDetailOverlay: React.FC<Props> = ({ post, onClose, allPosts, member, deletePost, refetchPost }) => {
     const startIndex = allPosts.findIndex((p) => p.id === post.id);
     const postList = allPosts.slice(startIndex).concat(allPosts.slice(0, startIndex));
 
@@ -53,6 +57,9 @@ const PostDetailOverlay: React.FC<Props> = ({ post, onClose, allPosts }) => {
                     <div className="overflow-y-auto max-h-[calc(100vh-60px)]">
                         <MainPostCard
                             post={post}
+                            member={member}
+                            deletePost={deletePost}
+                            refetchPost={refetchPost}
                             openCommentModal={() => openCommentModal(post.id, post.memberId)}
                         />
                     </div>
@@ -61,6 +68,9 @@ const PostDetailOverlay: React.FC<Props> = ({ post, onClose, allPosts }) => {
                         <MainPostCard
                             key={p.id}
                             post={p}
+                            member={member}
+                            deletePost={deletePost}
+                            refetchPost={refetchPost}
                             openCommentModal={() => openCommentModal(p.id, p.memberId)}
                         />
                     ))
@@ -72,6 +82,7 @@ const PostDetailOverlay: React.FC<Props> = ({ post, onClose, allPosts }) => {
                 closeModal={closeCommentModal}
                 postId={selectedPostId}
                 postMemberId={selectedPostMemberId}
+                member={member}
             />
         </div>
     );
