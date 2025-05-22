@@ -27,13 +27,15 @@ const ProfilePage: React.FC = () => {
     const { detailMember: loginUser, refetchMember: refetchLoginUser } =
         useMemberActions({ mode: "detailMember" });
 
+    const { member } = useMemberActions();
+
     const followRecList = loginUser?.followRecList ?? [];
 
     const [memberInfo, setMemberInfo] = useState(
         isOtherProfile ? otherDetailMember : detailMember
     );
 
-    const { posts, refetchPost } = usePost("member", parsedId ?? memberInfo?.id);
+    const { posts, refetchPost, deletePost } = usePost("member", parsedId ?? memberInfo?.id);
 
     const [selectedPost, setSelectedPost] = useState<DetailPostDto | null>(null);
     const [showFollowList, setShowFollowList] = useState<"팔로워" | "팔로우" | null>(null);
@@ -129,6 +131,9 @@ const ProfilePage: React.FC = () => {
                     <PostDetailOverlay
                         post={selectedPost}
                         allPosts={posts}
+                        member={member}
+                        refetchPost={refetchPost}
+                        deletePost={deletePost}
                         onClose={() => setSelectedPost(null)}
                     />
                 )}
