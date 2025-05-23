@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getMessaging, onMessage } from 'firebase/messaging';
+import { getMessaging, onMessage, isSupported as firebaseIsSupported } from 'firebase/messaging';
 import {toast} from "react-toastify";
 import { NotificationDto } from '../interfaces/NotificationInterface';
 import {formatDate} from "../utils/formatDate.ts";
@@ -67,3 +67,5 @@ export function initFirebaseMessaging() {
         }
     });
 }
+
+export const isSupported = firebaseIsSupported;
