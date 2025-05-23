@@ -46,6 +46,8 @@ const App = () => {
     };
 
     useEffect(() => {
+        /*
+
         const isInAppSafari = () => {
             const ua = navigator.userAgent.toLowerCase();
             return /iphone/.test(ua) && /instagram/.test(ua);
@@ -85,6 +87,8 @@ const App = () => {
                 console.log('지원되지 않는 환경입니다. (인앱 브라우저 또는 기능 미지원)');
             }
         })();
+
+         */
     }, []);
 
     return (
