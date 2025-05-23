@@ -66,6 +66,7 @@ const ManagePostForm: React.FC = () => {
         const files = imageDataList.map((img) => img.file);
 
         try {
+            console.log('postForm:', postForm, "files:", files);
             await addPost(postForm, files);
             await clearStorage();
             clearSelectedPlace();
