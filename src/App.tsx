@@ -23,7 +23,7 @@ import SchedulePlaceRegister from './domain/schedule/pages/SchedulePlaceRegister
 import { ScheduleProvider } from './domain/schedule/contexts/ScheduleContext';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ChatRoomWithProvider from "./domain/chat/components/chatRoom/ChatRoomWithProvider.tsx";
-import {initFirebaseMessaging, isSupported} from "./common/libs/firebase.tsx";
+// import {initFirebaseMessaging, isSupported} from "./common/libs/firebase.tsx";
 import ManagePost from "./domain/community/components/managePost/ManagePost.tsx";
 import {RecoilRoot} from "recoil";
 
