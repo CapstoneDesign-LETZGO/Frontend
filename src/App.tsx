@@ -46,7 +46,11 @@ const App = () => {
     };
 
     useEffect(() => {
-        if ('Notification' in window && 'serviceWorker' in navigator) {
+        const isInAppSafari = () => {
+            const ua = window.navigator.userAgent.toLowerCase();
+            return ua.includes('instagram') && ua.includes('iphone');
+        };
+        if ('Notification' in window && 'serviceWorker' in navigator && !isInAppSafari()) {
             Notification.requestPermission().then(permission => {
                 if (permission === 'granted') {
                     console.log('알림 권한이 허용되었습니다.');
@@ -62,7 +66,7 @@ const App = () => {
                 }
             });
         } else {
-            console.log('알림이나 Service Worker가 지원되지 않는 환경입니다.');
+            console.log('알림이나 Service Worker가 지원되지 않는 환경이거나 인앱 브라우저입니다.');
         }
     }, []);
 
