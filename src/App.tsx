@@ -23,7 +23,7 @@ import SchedulePlaceRegister from './domain/schedule/pages/SchedulePlaceRegister
 import { ScheduleProvider } from './domain/schedule/contexts/ScheduleContext';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ChatRoomWithProvider from "./domain/chat/components/chatRoom/ChatRoomWithProvider.tsx";
-import {initFirebaseMessaging} from "./common/libs/firebase.tsx";
+import {initFirebaseMessaging, isSupported} from "./common/libs/firebase.tsx";
 import ManagePost from "./domain/community/components/managePost/ManagePost.tsx";
 import {RecoilRoot} from "recoil";
 
@@ -47,27 +47,44 @@ const App = () => {
 
     useEffect(() => {
         const isInAppSafari = () => {
-            const ua = window.navigator.userAgent.toLowerCase();
-            return ua.includes('instagram') && ua.includes('iphone');
+            const ua = navigator.userAgent.toLowerCase();
+            return /iphone/.test(ua) && /instagram/.test(ua);
         };
-        if ('Notification' in window && 'serviceWorker' in navigator && !isInAppSafari()) {
-            Notification.requestPermission().then(permission => {
-                if (permission === 'granted') {
-                    console.log('알림 권한이 허용되었습니다.');
-                    initFirebaseMessaging();
+        const safeToRegisterPush = async () => {
+            try {
+                return await isSupported();
+            } catch (e) {
+                console.warn("isSupported check failed:", e);
+                return false;
+            }
+        };
+        (async () => {
+            if (
+                await safeToRegisterPush() &&
+                'Notification' in window &&
+                'serviceWorker' in navigator &&
+                'PushManager' in window &&
+                !isInAppSafari()
+            ) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        console.log('알림 권한이 허용되었습니다.');
+                        initFirebaseMessaging();
 
-                    navigator.serviceWorker.register('/firebase-messaging-sw.js')
-                        .then(registration => {
-                            console.log('Service Worker registered:', registration);
-                        })
-                        .catch(err => {
-                            console.error('Service Worker registration failed:', err);
-                        });
-                }
-            });
-        } else {
-            console.log('알림이나 Service Worker가 지원되지 않는 환경이거나 인앱 브라우저입니다.');
-        }
+                        navigator.serviceWorker
+                            .register('/firebase-messaging-sw.js')
+                            .then(registration => {
+                                console.log('Service Worker registered:', registration);
+                            })
+                            .catch(err => {
+                                console.error('Service Worker registration failed:', err);
+                            });
+                    }
+                });
+            } else {
+                console.log('지원되지 않는 환경입니다. (인앱 브라우저 또는 기능 미지원)');
+            }
+        })();
     }, []);
 
     return (
