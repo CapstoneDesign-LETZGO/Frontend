@@ -46,24 +46,23 @@ const App = () => {
     };
 
     useEffect(() => {
-        initFirebaseMessaging();
+        if ('Notification' in window && 'serviceWorker' in navigator) {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    console.log('알림 권한이 허용되었습니다.');
+                    initFirebaseMessaging();
 
-        Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-                console.log('알림 권한이 허용되었습니다.');
-            } else {
-                console.log('알림 권한이 거부되었습니다.');
-            }
-        });
-
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/firebase-messaging-sw.js')
-                .then(registration => {
-                    console.log('Service Worker registered:', registration);
-                })
-                .catch(err => {
-                    console.error('Service Worker registration failed:', err);
-                });
+                    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                        .then(registration => {
+                            console.log('Service Worker registered:', registration);
+                        })
+                        .catch(err => {
+                            console.error('Service Worker registration failed:', err);
+                        });
+                }
+            });
+        } else {
+            console.log('알림이나 Service Worker가 지원되지 않는 환경입니다.');
         }
     }, []);
 
